@@ -1,4 +1,4 @@
-const correctWord = "tatty";  // Set your word here
+const correctWord = "bravo";  // Set your word here
 let currentRow = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
