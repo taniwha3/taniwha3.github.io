@@ -1,0 +1,7 @@
+level1:discs=10,platforms=12,ground=700,description="Introductory level with basic layout"
+level2:discs=15,platforms=15,ground=750,description="Increased difficulty with more discs"
+level3:discs=20,platforms=24,ground=800,description="Complex platform arrangement"
+level4:discs=25,platforms=30,ground=850,description="Challenging disc and platform placement"
+level5:discs=30,platforms=34,ground=900,description="Advanced level with intricate design"
+level6:discs=35,platforms=36,ground=950,description="Ultimate challenge with complex layout and extreme height"
+level6:discs=1,platforms=1,ground=950,description="Ultimate challenge with complex layout and extreme height"
