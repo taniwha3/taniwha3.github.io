@@ -33,7 +33,7 @@ func main() {
 	}
 
 	// Set up static file server for assets
-	fs := http.FileServer(http.Dir("site/assets"))
+	fs := http.FileServer(http.Dir("docs/assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", fs))
 
 	// Handle all other requests by serving markdown files
@@ -192,16 +192,16 @@ func wrapInHTML(path string, body []byte) string {
 func buildStaticSite() {
 	log.Println("Building static site...")
 
-	// Create site directory if it doesn't exist
-	err := os.MkdirAll("site", 0755)
+	// Create docs directory if it doesn't exist
+	err := os.MkdirAll("docs", 0755)
 	if err != nil {
-		log.Fatalf("Error creating site directory: %v", err)
+		log.Fatalf("Error creating docs directory: %v", err)
 	}
 
-	// Ensure assets directory exists in site
-	err = os.MkdirAll("site/assets", 0755)
+	// Ensure assets directory exists in docs
+	err = os.MkdirAll("docs/assets", 0755)
 	if err != nil {
-		log.Fatalf("Error creating site/assets directory: %v", err)
+		log.Fatalf("Error creating docs/assets directory: %v", err)
 	}
 
 	// Process all markdown files
@@ -210,8 +210,8 @@ func buildStaticSite() {
 			return err
 		}
 
-		// Skip non-markdown files, directories, and files in the site directory
-		if info.IsDir() || !strings.HasSuffix(path, ".md") || strings.HasPrefix(path, "site/") {
+		// Skip non-markdown files, directories, and files in the docs directory
+		if info.IsDir() || !strings.HasSuffix(path, ".md") || strings.HasPrefix(path, "docs/") {
 			return nil
 		}
 
@@ -224,7 +224,7 @@ func buildStaticSite() {
 
 		// Convert path to output path
 		outPath := strings.TrimSuffix(path, ".md") + ".html"
-		outPath = filepath.Join("site", outPath)
+		outPath = filepath.Join("docs", outPath)
 
 		// Create the output directory
 		outDir := filepath.Dir(outPath)
@@ -273,8 +273,8 @@ func copyAssets() {
 		// Create default CSS file if it doesn't exist
 		cssPath := filepath.Join("assets", "style.css")
 		if _, err := os.Stat(cssPath); os.IsNotExist(err) {
-			// Create style.css file with content from the site/assets/style.css
-			cssContent, err := ioutil.ReadFile("site/assets/style.css")
+			// Create style.css file with content from the docs/assets/style.css
+			cssContent, err := ioutil.ReadFile("docs/assets/style.css")
 			if err == nil {
 				err = ioutil.WriteFile(cssPath, cssContent, 0644)
 				if err != nil {
@@ -286,8 +286,8 @@ func copyAssets() {
 		// Create default JS file if it doesn't exist
 		jsPath := filepath.Join("assets", "script.js")
 		if _, err := os.Stat(jsPath); os.IsNotExist(err) {
-			// Create script.js file with content from the site/assets/script.js
-			jsContent, err := ioutil.ReadFile("site/assets/script.js")
+			// Create script.js file with content from the docs/assets/script.js
+			jsContent, err := ioutil.ReadFile("docs/assets/script.js")
 			if err == nil {
 				err = ioutil.WriteFile(jsPath, jsContent, 0644)
 				if err != nil {
@@ -297,7 +297,7 @@ func copyAssets() {
 		}
 	}
 
-	// Copy assets to site/assets
+	// Copy assets to docs/assets
 	err := filepath.Walk("assets", func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -322,7 +322,7 @@ func copyAssets() {
 			return nil
 		}
 
-		outPath := filepath.Join("site/assets", relPath)
+		outPath := filepath.Join("docs/assets", relPath)
 
 		// Create the output directory
 		outDir := filepath.Dir(outPath)
