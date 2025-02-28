@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>README</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+    <div class="sun"></div>
+    
+    <div class="navbar">
+        <div class="logo">
+            <div class="sun-logo"></div>
+            TANI'S NOTEBOOK
+        </div>
+        <div class="nav-links">
+            <a href="/index.html">Home</a>
+            <a href="/music/index.html">Music</a>
+            <a href="/tech/">Tech</a>
+        </div>
+    </div>
+    
+    <div class="container">
+<h1 id="music-curriculum-server">Music Curriculum Server</h1>
+
+<blockquote>
+<p>Created on: 2025-02-27 | Last Updated: 2025-02-27</p>
+</blockquote>
+
+<p>This is a simple markdown server for viewing the music curriculum.</p>
+
+<h2 id="usage">Usage</h2>
+
+<h3 id="run-the-server">Run the server:</h3>
+
+<pre><code class="language-sh">go run main.go
+</code></pre>
+
+<p>Then open <a href="http://localhost:8080" target="_blank">http://localhost:8080</a> in your browser.</p>
+
+<h3 id="optional-flags">Optional flags:</h3>
+
+<ul>
+<li><p><code>-port</code>: Change the server port (default: 8080)</p>
+
+<pre><code class="language-sh">go run main.go -port 3000
+</code></pre></li>
+
+<li><p><code>-dir</code>: Change the content directory (default: current directory)</p>
+
+<pre><code class="language-sh">go run main.go -dir ./content
+</code></pre></li>
+</ul>
+
+<h2 id="dependencies">Dependencies</h2>
+
+<p>This project requires the <code>github.com/gomarkdown/markdown</code> package.</p>
+
+<p>Install dependencies:</p>
+
+<pre><code class="language-sh">go mod download
+</code></pre>
+
+<h2 id="building-a-binary">Building a binary</h2>
+
+<p>To build an executable:</p>
+
+<pre><code class="language-sh">go build -o mdserver
+</code></pre>
+
+<p>Then run it:</p>
+
+<pre><code class="language-sh">./mdserver
+</code></pre>
+
+    </div>
+    
+    <script src="/assets/script.js"></script>
+</body>
+</html>
