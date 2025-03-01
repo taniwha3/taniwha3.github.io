@@ -13,6 +13,11 @@ Welcome to the music section of Tani's Notebook. This area contains curricula fo
 
 - [**Musical Analysis Curriculum**](musical_analysis_curriculum.md) - A structured approach to analyzing music from beginner to expert level
 
+## Music Tools
+
+- [**Metronome**](tools/metronome/) - Interactive metronome with polyrhythm support
+- [**Music Tools Hub**](tools/) - Collection of tools for music practice and production
+
 ## Quick Links
 
 ### Guitar (Progressive Metal)

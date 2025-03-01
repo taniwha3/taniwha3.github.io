@@ -148,6 +148,7 @@ func init() {
             <a href="/index.html">Home</a>
             <a href="/music/index.html">Music</a>
             <a href="/tech/">Tech</a>
+            <a href="/music/tools/metronome/">Metronome</a>
         </div>
     </div>
     
@@ -203,6 +204,12 @@ func buildStaticSite() {
 	if err != nil {
 		log.Fatalf("Error creating docs/assets directory: %v", err)
 	}
+	
+	// Ensure tools directory exists in docs
+	err = os.MkdirAll("docs/music/tools", 0755)
+	if err != nil {
+		log.Fatalf("Error creating docs/music/tools directory: %v", err)
+	}
 
 	// Process all markdown files
 	err = filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
@@ -222,6 +229,9 @@ func buildStaticSite() {
 			return nil
 		}
 
+		// Check if this is a direct HTML file (starting with <!DOCTYPE html>)
+		isDirectHTML := strings.HasPrefix(strings.TrimSpace(string(content)), "<!DOCTYPE html>")
+
 		// Convert path to output path
 		outPath := strings.TrimSuffix(path, ".md") + ".html"
 		outPath = filepath.Join("docs", outPath)
@@ -234,11 +244,17 @@ func buildStaticSite() {
 			return nil
 		}
 
-		// Render markdown to HTML
-		html := renderMarkdown(content)
+		var pageHTML string
+		if isDirectHTML {
+			// Use the HTML content directly
+			pageHTML = string(content)
+		} else {
+			// Render markdown to HTML
+			html := renderMarkdown(content)
 
-		// Wrap in HTML template
-		pageHTML := wrapInHTML(path, html)
+			// Wrap in HTML template
+			pageHTML = wrapInHTML(path, html)
+		}
 
 		// Write to output file
 		err = ioutil.WriteFile(outPath, []byte(pageHTML), 0644)
@@ -259,6 +275,60 @@ func buildStaticSite() {
 	copyAssets()
 
 	log.Println("Static site build complete")
+}
+
+// copyToolsAssets copies assets from music/tools subdirectories to docs/music/tools
+func copyToolsAssets() error {
+	// Walk through the music/tools directory
+	return filepath.Walk("music/tools", func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Skip markdown files (they're handled by the main process)
+		if !info.IsDir() && strings.HasSuffix(path, ".md") {
+			return nil
+		}
+
+		// Skip directories themselves (we'll process their contents)
+		if info.IsDir() {
+			// But ensure the output directory exists
+			outDir := filepath.Join("docs", path)
+			err := os.MkdirAll(outDir, 0755)
+			if err != nil {
+				log.Printf("Error creating directory %s: %v", outDir, err)
+			}
+			return nil
+		}
+
+		// For all other files, copy them to docs
+		content, err := ioutil.ReadFile(path)
+		if err != nil {
+			log.Printf("Error reading file %s: %v", path, err)
+			return nil
+		}
+
+		// Create the output path
+		outPath := filepath.Join("docs", path)
+
+		// Create the output directory if needed
+		outDir := filepath.Dir(outPath)
+		err = os.MkdirAll(outDir, 0755)
+		if err != nil {
+			log.Printf("Error creating directory %s: %v", outDir, err)
+			return nil
+		}
+
+		// Write to output file
+		err = ioutil.WriteFile(outPath, content, 0644)
+		if err != nil {
+			log.Printf("Error writing file %s: %v", outPath, err)
+			return nil
+		}
+
+		log.Printf("Copied tool asset: %s", outPath)
+		return nil
+	})
 }
 
 func copyAssets() {
@@ -344,5 +414,11 @@ func copyAssets() {
 
 	if err != nil {
 		log.Printf("Error copying assets: %v", err)
+	}
+	
+	// Copy custom tools assets (like metronome)
+	err = copyToolsAssets()
+	if err != nil {
+		log.Printf("Error copying tools assets: %v", err)
 	}
 }

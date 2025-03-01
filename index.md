@@ -13,6 +13,7 @@ Welcome to my personal notebook. This site contains structured learning material
   - Guitar (Progressive Metal)
   - Synthwave Production
   - Music Theory & Analysis
+  - [Music Tools](music/tools/)
 - [**Technical Guides**](tech/) - Documentation, security guides, and technical notes
 
 ## Quick Links
@@ -22,6 +23,7 @@ Welcome to my personal notebook. This site contains structured learning material
 - [Synthwave Production](music/synthwave/)
 - [Musical Analysis Curriculum](music/musical_analysis_curriculum.md)
 - [Practice Guidelines](music/index.html#practice-guidelines) - Comprehensive practice recommendations
+- [Metronome](music/tools/metronome/) - Interactive metronome with polyrhythm support
 
 ### Music Resources by Year
 - [Guitar Year 1: Foundations](music/guitar/year1.md)
