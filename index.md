@@ -40,9 +40,16 @@ Welcome to my personal notebook. This site contains structured learning material
 ## Changelog
 
 ### 2025-03-01
+- **Metronome Tool**: Added interactive metronome with polyrhythm support
+- **Build System**: 
+  - Created Makefile for standardized build commands
+  - Modified build process to support custom HTML tools
+  - Changed build output from /site to /docs for GitHub Pages compatibility
+  - Removed GitHub Actions in favor of manual builds
+- **Music Tools Section**: Created new section for interactive music tools
+- **UI Enhancement**: Added metronome link to main navigation
 - **Disclaimer Added**: Added note about LLM collaboration and personal nature of the site
 - **Practice Log**: Updated with latest guitar practice sessions
-- **Build System**: Changed build output from /site to /docs for GitHub Pages compatibility
 
 ### 2025-02-27
 - **Site Reorganization**: Restructured site with music as the parent directory
