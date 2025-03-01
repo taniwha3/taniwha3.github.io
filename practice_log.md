@@ -1,7 +1,7 @@
 
 # Guitar Practice Log
 
-> Created on: 2025-02-27 | Last Updated: 2025-02-28
+> Created on: 2025-02-27 | Last Updated: 2025-03-01
 
 
 
@@ -47,3 +47,7 @@
 - Leavitt exercises are helpful supplements for developing reading skills alongside the curriculum
 - Consider adding more ear training to daily routine
 - Paranoid will help develop faster picking technique needed in later songs
+- Bernth exercises at 50% speed showing good progress (80-90% accuracy rate)
+- Practice strategy: Start at 50% tempo and work up incrementally
+- Maintaining a regular rotation of past exercises/songs to reinforce technique
+- Back in Black riff is good for developing palm muting and rock rhythm feel
