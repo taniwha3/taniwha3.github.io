@@ -1,9 +1,11 @@
 
 # Tani's Notebook
 
-> Created on: 2025-02-27 | Last Updated: 2025-02-27
+> Created on: 2025-02-27 | Last Updated: 2025-03-01
 
 Welcome to my personal notebook. This site contains structured learning materials, technical guides, and personal notes.
+
+> **Note**: This is my personal notebook to keep track of things I am interested in and my progress with them. Some content has been created in collaboration with an LLM assistant. This site is not intended to be a published article or professional resource - those I would author entirely myself. This is simply where I organize my learning journey.
 
 ## Curriculum Sections
 
@@ -34,6 +36,11 @@ Welcome to my personal notebook. This site contains structured learning material
 - [Technical Documentation Hub](tech/) - Cloud security, Kubernetes, CI/CD, and API design
 
 ## Changelog
+
+### 2025-03-01
+- **Disclaimer Added**: Added note about LLM collaboration and personal nature of the site
+- **Practice Log**: Updated with latest guitar practice sessions
+- **Build System**: Changed build output from /site to /docs for GitHub Pages compatibility
 
 ### 2025-02-27
 - **Site Reorganization**: Restructured site with music as the parent directory
