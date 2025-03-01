@@ -1,7 +1,7 @@
 
 # Guitar Practice Log
 
-> Created on: 2025-02-27 | Last Updated: 2025-02-27
+> Created on: 2025-02-27 | Last Updated: 2025-02-28
 
 
 
@@ -32,6 +32,14 @@
     - Practiced "One, Two, Three, Four" duet
 - **Focus areas**: Timing consistency, chord transitions, chromatic runs for finger independence
 - **Target areas**: Power chord transitions and picking speed
+
+### Day 4 (Completed)
+- Rock Discipline stretches (completed all exercises)
+- Bernth #365 Practice Toolbox, same exercise as last week but at 50% speed
+  - Performance was messy toward the end, need more practice at this tempo
+- Modern Guitar Book - continued working through exercises
+- Curriculum songs: 
+  - AC/DC - Back in Black: Practiced main riff up to the solo section
 
 ## Notes
 - Right hand tension has improved - continue focusing on relaxed wrist
