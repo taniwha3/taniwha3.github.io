@@ -32,6 +32,9 @@ update-metronome:
 		cp -r dist/assets/* ../music/tools/metronome/assets/; \
 		mkdir -p ../music/tools/metronome/_source; \
 		cp -r src package.json package-lock.json vite.config.js ../music/tools/metronome/_source/; \
+		# Update paths in index.md for GitHub Pages compatibility \
+		sed -i 's|src="/music/tools/metronome/assets/|src="assets/|g' ../music/tools/metronome/index.md; \
+		sed -i 's|href="/music/tools/"|href="../"|g' ../music/tools/metronome/index.md; \
 	fi
 	# Build local version if no external repo
 	if [ -d "music/tools/metronome/_source" ] && [ ! -d "metronome" ]; then \
@@ -39,6 +42,9 @@ update-metronome:
 		cd music/tools/metronome/_source && npm install && npm run build; \
 		mkdir -p ../assets; \
 		cp -r dist/assets/* ../assets/; \
+		# Update paths in index.md for GitHub Pages compatibility \
+		sed -i 's|src="/music/tools/metronome/assets/|src="assets/|g' ../index.md; \
+		sed -i 's|href="/music/tools/"|href="../"|g' ../index.md; \
 	fi
 	# Run the site build
 	go run main.go build

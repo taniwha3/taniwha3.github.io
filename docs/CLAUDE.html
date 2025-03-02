@@ -193,6 +193,13 @@ git push origin main
 <li>The metronome uses Tone.js for timing and audio</li>
 <li>Data flows one-way from parent components to children</li>
 <li>Styled with styled-components for consistent theming</li>
+<li><strong>Important:</strong> Always use relative paths in the metronome HTML file:
+
+<ul>
+<li>Use <code>src=&quot;assets/...&quot;</code> instead of <code>src=&quot;/music/tools/metronome/assets/...&quot;</code></li>
+<li>Use <code>href=&quot;../&quot;</code> instead of <code>href=&quot;/music/tools/&quot;</code></li>
+<li>This ensures compatibility with GitHub Pages hosting</li>
+</ul></li>
 </ul>
 
     </div>
