@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLAUDE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+    <div class="sun"></div>
+    
+    <div class="navbar">
+        <div class="logo">
+            <div class="sun-logo"></div>
+            TANI'S NOTEBOOK
+        </div>
+        <div class="nav-links">
+            <a href="/index.html">Home</a>
+            <a href="/music/index.html">Music</a>
+            <a href="/tech/">Tech</a>
+            <a href="/music/tools/metronome/">Metronome</a>
+        </div>
+    </div>
+    
+    <div class="container">
+<h1 id="tani-s-notebook-curriculum-technical-documentation">Tani&rsquo;s Notebook - Curriculum &amp; Technical Documentation</h1>
+
+<h2 id="project-structure">Project Structure</h2>
+
+<ul>
+<li><strong>Music</strong>:
+
+<ul>
+<li><strong>Guitar Curriculum</strong>: 10-year progressive metal guitar curriculum with weekly practice routines</li>
+<li><strong>Synthwave Curriculum</strong>: 3-year synthwave production curriculum</li>
+<li><strong>Music Theory &amp; Analysis</strong>: Resources for music analysis and theory</li>
+<li><strong>Tools</strong>: Interactive music tools (metronome, etc.)</li>
+</ul></li>
+<li><strong>Technical Documentation</strong>: Collection of technical guides and notes</li>
+<li><strong>Practice Log</strong>: Personal tracking of practice sessions and progress</li>
+</ul>
+
+<h2 id="commands">Commands</h2>
+
+<ul>
+<li><code>make serve</code> - Run the markdown server locally</li>
+<li><code>make build</code> - Generate static HTML site in the <code>/docs</code> directory</li>
+<li><code>make serve-custom</code> - Run server on custom port (8081)</li>
+<li><code>make clean</code> - Remove the <code>/docs</code> directory</li>
+<li><code>make rebuild</code> - Clean and rebuild the site</li>
+<li><code>make update-metronome</code> - Update the metronome tool with latest changes</li>
+</ul>
+
+<h2 id="code-style-guidelines">Code Style Guidelines</h2>
+
+<ul>
+<li><strong>Go</strong>: Standard Go formatting with gofmt</li>
+<li><strong>Go Imports</strong>: Group standard library, third-party, and local imports</li>
+<li><strong>Error Handling</strong>: Use explicit error checks with descriptive log messages</li>
+<li><strong>Naming</strong>: CamelCase for exported functions/variables, lowercase for unexported</li>
+<li><strong>Comments</strong>: Function/struct comments with purpose description</li>
+</ul>
+
+<h2 id="markdown-formatting">Markdown Formatting</h2>
+
+<ul>
+<li><strong>Headers</strong>: Use ## for year headers, ### for sections</li>
+<li><strong>Tables</strong>: Maintain consistent column alignment and spacing</li>
+<li><strong>Code Blocks</strong>: Use &ldquo;`language for code samples</li>
+<li><strong>Notes</strong>: Use &gt; for important notes or callouts</li>
+<li><strong>Links</strong>: Use relative paths for internal links (e.g., <code>/music/guitar/year1.md</code>)</li>
+<li><strong>HTML Conversion</strong>: All .md links are automatically converted to .html in the built site</li>
+</ul>
+
+<h2 id="content-guidelines">Content Guidelines</h2>
+
+<ul>
+<li><strong>Curriculum Entries</strong>: Year, Week, Song - Artist, Reason for Inclusion</li>
+<li><strong>Technical Docs</strong>: Clear titles, purpose, overview, implementation details</li>
+<li><strong>Practice Log</strong>: Date, focus areas, songs practiced, progress notes</li>
+<li><strong>Consistent Style</strong>: Concise descriptions focused on technique/implementation</li>
+</ul>
+
+<h2 id="site-structure">Site Structure</h2>
+
+<ul>
+<li>Content is organized in a hierarchical structure:
+
+<ul>
+<li><code>/music/guitar/</code> - All guitar curriculum content</li>
+<li><code>/music/synthwave/</code> - All synthwave production content</li>
+<li><code>/music/tools/</code> - Interactive music tools</li>
+<li><code>/music/</code> - Music theory and analysis</li>
+<li><code>/tech/</code> - Technical documentation</li>
+</ul></li>
+<li>Site builds into <code>/docs</code> directory with proper navigation</li>
+<li>URLs are automatically converted from <code>.md</code> to <code>.html</code> when building</li>
+<li>Links between pages use relative paths</li>
+<li>Synthwave aesthetic with responsive design for all devices</li>
+</ul>
+
+<h2 id="updating-the-metronome-tool">Updating the Metronome Tool</h2>
+
+<p>The metronome tool is a React application sourced from the GitHub repo <code>github.com/taniwha3/metronome</code> and integrated into the site.</p>
+
+<h3 id="workflow-overview">Workflow Overview</h3>
+
+<p>The metronome follows this update workflow:
+1. Make changes in the upstream GitHub repo (<code>github.com/taniwha3/metronome</code>)
+2. Pull the latest changes into the website repo
+3. Run the update-metronome task to build and integrate the changes</p>
+
+<h3 id="updating-from-the-github-repository">Updating from the GitHub Repository</h3>
+
+<p>To get the latest version from GitHub:</p>
+
+<ol>
+<li><p><strong>Pull and Update in One Command</strong>:</p>
+
+<pre><code class="language-sh">make pull-metronome
+</code></pre>
+<p>This command will:</p>
+
+<ul>
+<li>Pull the latest changes from GitHub (or clone the repo if it doesn&rsquo;t exist)</li>
+<li>Automatically build and integrate the metronome</li>
+</ul></li>
+
+<li><p><strong>If you prefer separate steps</strong>:
+&ldquo;`sh</p>
+
+<h1 id="first-pull-the-changes">First pull the changes</h1>
+
+<p>cd metronome &amp;&amp; git pull origin main</p></li>
+</ol>
+
+<p># Then build and integrate
+   make update-metronome</p>
+
+<pre><code>   This command will:
+   - Install dependencies
+   - Build the React application
+   - Copy the built assets to the website
+   - Update the site
+
+3. **Verify Changes**:
+   - Run `make serve` to start the server
+   - Visit http://localhost:8080/music/tools/metronome/
+
+### Local Development Workflow
+
+For local development:
+
+1. **Navigate to the metronome directory**:
+   ```sh
+   cd metronome
+</code></pre>
+
+<ol>
+<li><p><strong>Make changes</strong> to the source files:</p>
+
+<ul>
+<li>Main component: <code>src/App.jsx</code></li>
+<li>UI Controls: <code>src/components/MetronomeControls.jsx</code> and <code>src/components/PolyRhythmControls.jsx</code></li>
+<li>Visual display: <code>src/components/Visualizer.jsx</code></li>
+</ul></li>
+
+<li><p><strong>Test locally</strong>:</p>
+
+<pre><code class="language-sh">npm run dev
+</code></pre>
+<p>This will start a development server on port 5173.</p></li>
+
+<li><p><strong>When satisfied</strong>, commit changes and push to the GitHub repo:</p>
+
+<pre><code class="language-sh">git add .
+git commit -m &quot;Description of changes&quot;
+git push origin main
+</code></pre></li>
+
+<li><p><strong>Build and integrate</strong> into the website:</p>
+
+<pre><code class="language-sh">make update-metronome
+</code></pre></li>
+</ol>
+
+<h3 id="notes">Notes</h3>
+
+<ul>
+<li>The metronome uses Tone.js for timing and audio</li>
+<li>Data flows one-way from parent components to children</li>
+<li>Styled with styled-components for consistent theming</li>
+</ul>
+
+    </div>
+    
+    <script src="/assets/script.js"></script>
+</body>
+</html>

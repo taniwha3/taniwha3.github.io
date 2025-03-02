@@ -217,8 +217,9 @@ func buildStaticSite() {
 			return err
 		}
 
-		// Skip non-markdown files, directories, files in the docs directory, README.md and CLAUDE.md
-		if info.IsDir() || !strings.HasSuffix(path, ".md") || strings.HasPrefix(path, "docs/") || path == "README.md" || path == "CLAUDE.md" {
+		// Skip non-markdown files, directories, files in the docs directory, and README.md
+		// Note: We now include CLAUDE.md in the build as it contains important documentation
+		if info.IsDir() || !strings.HasSuffix(path, ".md") || strings.HasPrefix(path, "docs/") || path == "README.md" {
 			return nil
 		}
 
