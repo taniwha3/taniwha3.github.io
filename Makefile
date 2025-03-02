@@ -45,10 +45,16 @@ update-metronome:
 
 # Pull latest metronome from GitHub and update
 pull-metronome:
-	# If metronome directory exists and is a git repo
-	if [ -d "metronome/.git" ]; then \
-		echo "Pulling latest metronome from GitHub..."; \
-		cd metronome && git pull origin main; \
+	# If metronome directory exists
+	if [ -d "metronome" ]; then \
+		if [ -d "metronome/.git" ]; then \
+			echo "Pulling latest metronome from GitHub..."; \
+			cd metronome && git pull origin main; \
+		else \
+			echo "Metronome directory exists but is not a git repo. Backing up and re-cloning..."; \
+			mv metronome metronome_backup_$(shell date +%Y%m%d_%H%M%S); \
+			git clone git@github.com:taniwha3/metronome.git; \
+		fi \
 	else \
 		echo "Cloning metronome repository..."; \
 		git clone git@github.com:taniwha3/metronome.git; \

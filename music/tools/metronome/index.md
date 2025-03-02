@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <title>Metronome</title>
-  <script type="module" crossorigin src="/music/tools/metronome/assets/index-Clxp1syd.js"></script>
+  <script type="module" crossorigin src="/music/tools/metronome/assets/index-BHY9YBAI.js"></script>
 </head>
 <body>
   <div id="root"></div>
