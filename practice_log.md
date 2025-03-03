@@ -1,7 +1,7 @@
 
 # Guitar Practice Log
 
-> Created on: 2025-02-27 | Last Updated: 2025-03-01
+> Created on: 2025-02-27 | Last Updated: 2025-03-02
 
 
 
@@ -40,6 +40,15 @@
 - Modern Guitar Book - continued working through exercises
 - Curriculum songs: 
   - AC/DC - Back in Black: Practiced main riff up to the solo section
+
+### Day 5 (Completed)
+- Rock Discipline stretches
+- Bernth #365 Practice Toolbox, Exercise #1 at 50% speed
+- Review of all previous progression list songs
+  - Started at slower tempo then increased speed
+- Curriculum songs:
+  - AC/DC - Highway to Hell: Played through with no issues
+  - Metallica - Seek and Destroy: Played through once at 60bpm
 
 ## Notes
 - Right hand tension has improved - continue focusing on relaxed wrist
