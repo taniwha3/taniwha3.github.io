@@ -1,7 +1,7 @@
 
 # Tani's Notebook
 
-> Created on: 2025-02-27 | Last Updated: 2025-03-01
+> Created on: 2025-02-27 | Last Updated: 2025-03-02
 
 Welcome to my personal notebook. This site contains structured learning materials, technical guides, and personal notes.
 
@@ -15,6 +15,7 @@ Welcome to my personal notebook. This site contains structured learning material
   - Music Theory & Analysis
   - [Music Tools](music/tools/)
 - [**Technical Guides**](tech/) - Documentation, security guides, and technical notes
+- [**Practice Log**](practice_log.md) - Daily guitar practice tracking
 
 ## Quick Links
 
@@ -23,6 +24,7 @@ Welcome to my personal notebook. This site contains structured learning material
 - [Synthwave Production](music/synthwave/)
 - [Musical Analysis Curriculum](music/musical_analysis_curriculum.md)
 - [Practice Guidelines](music/index.html#practice-guidelines) - Comprehensive practice recommendations
+- [Practice Log](practice_log.md) - Track daily progress and achievements
 - [Metronome](music/tools/metronome/) - Interactive metronome with polyrhythm support
 
 ### Music Resources by Year
@@ -38,6 +40,15 @@ Welcome to my personal notebook. This site contains structured learning material
 - [Technical Documentation Hub](tech/) - Cloud security, Kubernetes, CI/CD, and API design
 
 ## Changelog
+
+### 2025-03-02
+- **Practice Log**: 
+  - Added Day 5 guitar practice session
+  - Tracked progress through Rock Discipline stretches
+  - Added completion of Highway to Hell
+  - Recorded first playthrough of Seek and Destroy at 60bpm
+- **Navigation Improvement**: Added direct links to Practice Log in main navigation
+- **UI Enhancement**: Improved Quick Links section with Practice Log access
 
 ### 2025-03-01
 - **Metronome Tool**: Added interactive metronome with polyrhythm support
