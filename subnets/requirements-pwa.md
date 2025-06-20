@@ -122,21 +122,39 @@ Outputs include:
 
 ## 6 Curriculum Modules (Client-Side)
 
-All module content stored in `src/data/curriculum.js`:
+The complete curriculum specification is documented in `curriculum-modules.md`. All module content will be stored in `src/data/curriculum.js` with the following structure:
 
 ```javascript
 export const modules = [
   {
     id: 0,
     title: "Orientation & Pre-Assessment",
-    objectives: [...],
+    goal: "Make the student emotionally comfortable and capture a baseline",
+    objectives: [
+      "Describe, in plain language, what 'subnetting' achieves",
+      "Explain why even a home user benefits"
+    ],
     content: [...],
-    exercises: [...],
-    quiz: [...]
+    activities: [...],
+    assessment: {...},
+    stickingPoints: [...]
   },
   // ... modules 1-9
 ];
 ```
+
+Each module includes:
+- Module 0: Orientation & Pre-Assessment
+- Module 1: Positional Number Systems & Powers of Two
+- Module 2: Bitwise Logic Without Programming
+- Module 3: IPv4 Address Anatomy
+- Module 4: Subnet Masks & CIDR Notation
+- Module 5: Fixed-Length Subnet Calculations
+- Module 6: Variable Length Subnet Masking (VLSM)
+- Module 7: Subnetting in Practice: Routing & ACL
+- Module 8: IPv6 Subnet Fundamentals
+- Module 9: Verification & Troubleshooting Tools
+- Graduation Capstone Project
 
 ## 7 PWA Requirements
 
