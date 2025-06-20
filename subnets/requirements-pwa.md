@@ -120,12 +120,23 @@ Outputs include:
 | T-14 | Component tests | T-09 | Test interactive components | 🔲 Pending |
 | T-15 | Responsive design | T-03 | Mobile-friendly layouts | 🔲 Pending |
 | T-16 | Deploy to GitHub Pages | All | CI/CD workflow | 🔲 Pending |
+| T-17 | Module 0 Content | T-05 | Full lesson: intro, examples, diagrams | 🔲 Pending |
+| T-18 | Module 1 Content | T-05 | Binary lesson with conversion examples | 🔲 Pending |
+| T-19 | Module 2 Content | T-05 | Bitwise AND with visual examples | 🔲 Pending |
+| T-20 | Module 3 Content | T-05 | IPv4 anatomy with diagrams | 🔲 Pending |
+| T-21 | Module 4 Content | T-05 | CIDR notation with mask ladder | 🔲 Pending |
+| T-22 | Module 5 Content | T-05 | Subnet calculations with examples | 🔲 Pending |
+| T-23 | Module 6 Content | T-05 | VLSM design with scenarios | 🔲 Pending |
+| T-24 | Module 7 Content | T-05 | Routing examples and demos | 🔲 Pending |
+| T-25 | Module 8 Content | T-05 | IPv6 with compression examples | 🔲 Pending |
+| T-26 | Module 9 Content | T-05 | Troubleshooting guides and tools | 🔲 Pending |
 
 ### Progress Summary
-- **Completed**: 7/16 tasks (44%)
+- **Completed**: 7/26 tasks (27%)
 - **Infrastructure**: ✅ Vite, React, ESLint, Prettier, PWA setup
 - **Components**: ✅ Base UI components (Layout, Navigation, Pages)
-- **Data**: ✅ Full curriculum content, quiz questions, and exercises
+- **Data Structure**: ✅ Curriculum framework, quiz questions, and exercises
+- **Content**: 🔲 Need to write actual lesson content for all 10 modules
 - **Logic**: 🔲 Need to implement subnet calculations and utilities
 - **Testing**: 🔲 Need to add test coverage
 
@@ -135,6 +146,40 @@ Outputs include:
 - Converted all curriculum content to JavaScript data structures
 - Added quiz questions (5 per module) and practice exercises
 - Created helper functions for module navigation and prerequisites
+- Added 10 new tasks (T-17 to T-26) for creating actual curriculum content
+
+### Module Content Requirements (T-17 to T-26)
+
+Each module's content should include:
+
+1. **Introduction** (Why this matters)
+   - Real-world context and applications
+   - How it connects to previous modules
+   - What problems this knowledge solves
+
+2. **Core Content**
+   - Step-by-step explanations with clear prose
+   - Multiple worked examples showing the process
+   - Common patterns and shortcuts
+   - "Try it yourself" checkpoints
+
+3. **Visual Elements**
+   - Diagrams and charts (can be ASCII art or SVG)
+   - Color-coded examples (e.g., network vs host portions)
+   - Interactive visualizations where helpful
+   - Reference tables (e.g., powers of 2, subnet masks)
+
+4. **Practice Integration**
+   - Inline practice problems with immediate feedback
+   - Progressive difficulty from simple to complex
+   - Common mistakes and how to avoid them
+   - Self-check questions throughout
+
+5. **Summary & Next Steps**
+   - Key takeaways
+   - Skills checklist
+   - Preview of next module
+   - Additional resources
 
 ## 6 Curriculum Modules (Client-Side)
 
