@@ -1,12 +1,18 @@
 import { useState } from 'react'
 import BinaryConverter from '../Interactive/BinaryConverter'
 import NetworkCalculator from '../Interactive/NetworkCalculator'
+import AndVisualizer from '../Interactive/AndVisualizer'
 import styles from './ModulePractice.module.css'
 
 function ModulePractice({ exercises, moduleId }) {
   const [currentExercise, setCurrentExercise] = useState(0)
   const [userAnswers, setUserAnswers] = useState({})
   const [showFeedback, setShowFeedback] = useState({})
+  
+  // Helper function to validate binary input
+  const validateBinary = (value) => {
+    return value.replace(/[^01]/g, '').slice(0, 8)
+  }
   
   if (!exercises || !exercises.exercises || exercises.exercises.length === 0) {
     return (
@@ -185,6 +191,111 @@ function ModulePractice({ exercises, moduleId }) {
           </div>
         )
         
+      case 'and-operation':
+        return (
+          <div className={styles.andExercise}>
+            <h3>AND Operation Practice</h3>
+            <p>Calculate the result of each AND operation.</p>
+            {exercise.problems.map((problem, index) => {
+              const key = `${currentExercise}-${index}`
+              const userAnswer = userAnswers[key] || ''
+              const isCorrect = userAnswer === problem.result
+              const showResult = showFeedback[key]
+              
+              return (
+                <div key={index} className={styles.problem}>
+                  <div className={styles.andProblem}>
+                    <div className={styles.operands}>
+                      <span className={styles.binary}>{problem.operand1}</span>
+                      <span className={styles.operator}>AND</span>
+                      <span className={styles.binary}>{problem.operand2}</span>
+                      <span className={styles.equals}>=</span>
+                    </div>
+                    <input
+                      type="text"
+                      className={`${styles.input} ${showResult ? (isCorrect ? styles.correct : styles.incorrect) : ''}`}
+                      value={userAnswer}
+                      onChange={(e) => handleAnswer(index, validateBinary(e.target.value))}
+                      placeholder="Result (8 bits)"
+                      maxLength={8}
+                    />
+                    <button 
+                      className={styles.checkBtn}
+                      onClick={() => checkAnswer(index)}
+                    >
+                      Check
+                    </button>
+                  </div>
+                  {showResult && (
+                    <div className={styles.feedback}>
+                      {isCorrect ? (
+                        <span className={styles.success}>✓ Correct!</span>
+                      ) : (
+                        <span className={styles.error}>
+                          ✗ Incorrect. The answer is {problem.result}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        )
+        
+      case 'network-address':
+        return (
+          <div className={styles.networkExercise}>
+            <h3>Find Network Addresses</h3>
+            <p>Calculate the network address for each IP and subnet mask.</p>
+            {exercise.problems.map((problem, index) => {
+              const key = `${currentExercise}-${index}`
+              const userAnswer = userAnswers[key] || ''
+              const isCorrect = userAnswer === problem.network
+              const showResult = showFeedback[key]
+              
+              return (
+                <div key={index} className={styles.problem}>
+                  <div className={styles.networkProblem}>
+                    <div className={styles.given}>
+                      <span>IP: {problem.ip}</span>
+                      <span>Mask: {problem.mask}</span>
+                    </div>
+                    <div className={styles.answerRow}>
+                      <span>Network:</span>
+                      <input
+                        type="text"
+                        className={`${styles.input} ${showResult ? (isCorrect ? styles.correct : styles.incorrect) : ''}`}
+                        value={userAnswer}
+                        onChange={(e) => handleAnswer(index, e.target.value)}
+                        placeholder="x.x.x.x"
+                        style={{width: '150px'}}
+                      />
+                      <button 
+                        className={styles.checkBtn}
+                        onClick={() => checkAnswer(index)}
+                      >
+                        Check
+                      </button>
+                    </div>
+                  </div>
+                  {showResult && (
+                    <div className={styles.feedback}>
+                      {isCorrect ? (
+                        <span className={styles.success}>✓ Correct!</span>
+                      ) : (
+                        <span className={styles.error}>
+                          ✗ Incorrect. The network address is {problem.network}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        )
+        
       default:
         return (
           <div className={styles.placeholder}>
@@ -233,7 +344,12 @@ function ModulePractice({ exercises, moduleId }) {
           <p>Use these tools to help check your work:</p>
           <div className={styles.toolsGrid}>
             {moduleId === 1 && <BinaryConverter />}
-            {moduleId === 2 && <NetworkCalculator />}
+            {moduleId === 2 && (
+              <>
+                <AndVisualizer />
+                <NetworkCalculator />
+              </>
+            )}
           </div>
         </div>
       )}

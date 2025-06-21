@@ -373,6 +373,256 @@ Next up: Module 2 - The AND Operation, where we'll use binary to find network ad
       "Common subnet mask values follow predictable binary patterns",
       "Memorizing powers of 2 (1, 2, 4, 8, 16, 32, 64, 128) is essential"
     ]
+  },
+  
+  2: {
+    title: "Bitwise AND Operation",
+    sections: [
+      {
+        type: "introduction", 
+        title: "The Magic Behind Finding Network Addresses",
+        content: `
+The AND operation is the secret sauce of subnetting. It's how routers instantly know which network an IP address belongs to. Understanding AND is like having X-ray vision for networks - you'll see through the decimal numbers to the binary logic underneath.
+
+**The Golden Rule**: To find any network address, just AND the IP address with the subnet mask. That's it!
+        `
+      },
+      {
+        type: "concept",
+        title: "How AND Works",
+        content: `
+The AND operation is beautifully simple:
+- 1 AND 1 = 1
+- 1 AND 0 = 0  
+- 0 AND 1 = 0
+- 0 AND 0 = 0
+
+**Memory Trick**: "Both must be TRUE (1) for the result to be TRUE (1)"
+
+Think of it like a security checkpoint that requires two keys:
+- Both keys present (1 AND 1) = Door opens (1)
+- One or no keys (any other combination) = Door stays closed (0)
+
+**Real-World Analogy**: 
+Imagine two switches in series controlling a light:
+- Both switches ON = Light ON
+- Any switch OFF = Light OFF
+        `
+      },
+      {
+        type: "visual-example",
+        title: "Visual AND Operation",
+        content: `
+Let's see AND in action with a simple 8-bit example:
+
+**Example 1: Basic AND**
+\`\`\`
+11001100  (204 in decimal)  AND
+11110000  (240 in decimal)
+--------
+11000000  (192 in decimal)
+\`\`\`
+
+**Step-by-step breakdown:**
+- Position 1: 1 AND 1 = 1 ✓
+- Position 2: 1 AND 1 = 1 ✓
+- Position 3: 0 AND 1 = 0 ✗
+- Position 4: 0 AND 1 = 0 ✗
+- Position 5: 1 AND 0 = 0 ✗
+- Position 6: 1 AND 0 = 0 ✗
+- Position 7: 0 AND 0 = 0 ✗
+- Position 8: 0 AND 0 = 0 ✗
+
+Notice how the AND operation "filters out" bits - only positions where BOTH inputs have a 1 will output a 1.
+        `
+      },
+      {
+        type: "networking-application",
+        title: "Finding Network Addresses",
+        content: `
+Here's where it gets exciting - this is how we find network addresses!
+
+**Example: Find the network address**
+- IP Address: 192.168.1.100
+- Subnet Mask: 255.255.255.0
+
+**Step 1: Convert to binary**
+- 192.168.1.100 = 11000000.10101000.00000001.01100100
+- 255.255.255.0 = 11111111.11111111.11111111.00000000
+
+**Step 2: Perform AND operation**
+\`\`\`
+11000000.10101000.00000001.01100100  (IP)  AND
+11111111.11111111.11111111.00000000  (Mask)
+------------------------------------
+11000000.10101000.00000001.00000000  (Network)
+\`\`\`
+
+**Step 3: Convert back to decimal**
+- Result: 192.168.1.0
+
+**Why this works**: The subnet mask has 1s in the network portion and 0s in the host portion. When we AND:
+- Network bits (1 AND original) = Original bits preserved
+- Host bits (0 AND anything) = Always 0
+
+This effectively "zeros out" the host portion, leaving only the network address!
+        `
+      },
+      {
+        type: "interactive-tool",
+        title: "Network Calculator Tool",
+        component: "NetworkCalculator"
+      },
+      {
+        type: "interactive-tool",
+        title: "AND Operation Visualizer",
+        component: "AndVisualizer"
+      },
+      {
+        type: "patterns",
+        title: "Common Subnet Mask Patterns",
+        content: `
+Understanding how different subnet masks affect the AND operation:
+
+**255.255.255.0 (/24)**
+- Binary: 11111111.11111111.11111111.00000000
+- Effect: Preserves first 3 octets, zeros out the 4th
+- Example: 192.168.1.100 → 192.168.1.0
+
+**255.255.0.0 (/16)**
+- Binary: 11111111.11111111.00000000.00000000
+- Effect: Preserves first 2 octets, zeros out last 2
+- Example: 172.16.50.100 → 172.16.0.0
+
+**255.255.255.128 (/25)**
+- Binary: 11111111.11111111.11111111.10000000
+- Effect: Preserves first 3 octets + 1 bit, zeros the rest
+- Example: 192.168.1.200 → 192.168.1.128
+
+**Pattern Recognition**: The more 1s in the mask, the smaller the network!
+        `
+      },
+      {
+        type: "practice-scenarios",
+        title: "Real Network Examples",
+        content: `
+**Scenario 1: Home Network**
+Your router's IP: 192.168.1.1/24
+Your computer: 192.168.1.50/24
+
+Both AND with 255.255.255.0:
+- Router: 192.168.1.1 AND 255.255.255.0 = 192.168.1.0
+- Computer: 192.168.1.50 AND 255.255.255.0 = 192.168.1.0
+- Same network? YES! ✓
+
+**Scenario 2: Office Network**
+Server: 10.1.5.100/16
+Printer: 10.1.20.5/16
+
+Both AND with 255.255.0.0:
+- Server: 10.1.5.100 AND 255.255.0.0 = 10.1.0.0
+- Printer: 10.1.20.5 AND 255.255.0.0 = 10.1.0.0
+- Same network? YES! ✓
+
+**Scenario 3: Misconfigured Network**
+PC1: 192.168.1.100/24 (255.255.255.0)
+PC2: 192.168.1.200/25 (255.255.255.128)
+
+- PC1: 192.168.1.100 AND 255.255.255.0 = 192.168.1.0
+- PC2: 192.168.1.200 AND 255.255.255.128 = 192.168.1.128
+- Same network? NO! ✗ (This is why they can't communicate!)
+        `
+      },
+      {
+        type: "tips",
+        title: "Pro Tips & Shortcuts",
+        content: `
+**1. The 255 Shortcut**
+- Any octet ANDed with 255 stays the same
+- Any octet ANDed with 0 becomes 0
+- This is why 255.255.255.0 is so common!
+
+**2. Quick Mental Math**
+For common masks, you can skip the binary:
+- /24 (255.255.255.0): Just zero out the last octet
+- /16 (255.255.0.0): Zero out the last two octets
+- /8 (255.0.0.0): Zero out the last three octets
+
+**3. The Boundary Check**
+For /25, /26, /27, etc., check if the host octet is above or below the boundary:
+- /25 boundary: 128 (below = .0 network, above = .128 network)
+- /26 boundaries: 0, 64, 128, 192
+- /27 boundaries: 0, 32, 64, 96, 128, 160, 192, 224
+
+**4. Remember the Purpose**
+AND doesn't change your IP - it just reveals which network it belongs to!
+        `
+      },
+      {
+        type: "summary",
+        title: "AND Mastery Achieved!",
+        content: `
+You now understand:
+- How the AND operation works at the bit level
+- Why AND with a subnet mask gives the network address
+- How to quickly identify if two IPs are on the same network
+- Common patterns and shortcuts for mental calculations
+
+The AND operation is your Swiss Army knife for subnetting. Every subnet calculation starts here!
+
+Next up: Module 3 - IPv4 Address Anatomy, where we'll explore how IP addresses are structured and why they're divided into network and host portions.
+        `
+      }
+    ],
+    practice: {
+      title: "AND Operation Practice",
+      questions: [
+        {
+          question: "What is 11001100 AND 11110000?",
+          hint: "Go bit by bit: both must be 1 for the result to be 1",
+          answer: "11000000 (only the first two positions have 1 AND 1 = 1)"
+        },
+        {
+          question: "Find the network address for 192.168.5.75/24",
+          hint: "/24 means mask is 255.255.255.0",
+          answer: "192.168.5.0 (last octet becomes 0 when ANDed with 0)"
+        },
+        {
+          question: "Are 10.1.5.100/16 and 10.1.20.5/16 on the same network?",
+          hint: "AND both with 255.255.0.0 and compare results",
+          answer: "Yes! Both result in network address 10.1.0.0"
+        },
+        {
+          question: "What's the network address for 172.16.50.100 with mask 255.255.240.0?",
+          hint: "240 in binary is 11110000, so it preserves the first 4 bits of the third octet",
+          answer: "172.16.48.0 (50 AND 240 = 48)"
+        },
+        {
+          question: "Why does 192.168.1.100/24 AND 255.255.255.0 = 192.168.1.0?",
+          hint: "Think about what happens when you AND with 0",
+          answer: "The last octet of the mask is all 0s, and anything AND 0 = 0"
+        }
+      ],
+      exercises: [
+        {
+          title: "Quick AND Calculations",
+          instructions: "Use the Network Calculator tool to verify your answers",
+          problems: [
+            "Find network addresses for: 10.0.5.67/8, 172.16.100.200/16, 192.168.50.50/24",
+            "Calculate: 11111111 AND 10101010, 11110000 AND 11001100",
+            "Which pairs are on the same network? (192.168.1.50/24, 192.168.1.200/24), (10.1.1.1/16, 10.2.1.1/16)",
+            "Find the network for 192.168.1.130/25 (hint: 128 is the boundary)"
+          ]
+        }
+      ]
+    },
+    keyTakeaways: [
+      "AND operation: Both inputs must be 1 for output to be 1",
+      "IP Address AND Subnet Mask = Network Address",
+      "Subnet masks use 1s for network portion, 0s for host portion",
+      "Common masks (/8, /16, /24) make mental math easy",
+      "The AND operation is the foundation of all subnet calculations"
+    ]
   }
 }
 

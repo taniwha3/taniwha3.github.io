@@ -1,6 +1,7 @@
 import { getModuleContent, hasModuleContent } from '../../data/moduleContent'
 import BinaryConverter from '../Interactive/BinaryConverter'
 import NetworkCalculator from '../Interactive/NetworkCalculator'
+import AndVisualizer from '../Interactive/AndVisualizer'
 import styles from './ModuleContent.module.css'
 
 function ModuleContent({ module }) {
@@ -19,9 +20,34 @@ function ModuleContent({ module }) {
               <BinaryConverter />
             ) : section.type === 'interactive-tool' && section.component === 'NetworkCalculator' ? (
               <NetworkCalculator />
+            ) : section.type === 'interactive-tool' && section.component === 'AndVisualizer' ? (
+              <AndVisualizer />
             ) : (
               <div className={styles.sectionContent}>
                 {section.content.split('\n\n').map((paragraph, pIndex) => {
+                  // Handle code blocks with triple backticks
+                  if (paragraph.includes('```')) {
+                    const parts = paragraph.split('```')
+                    return (
+                      <div key={pIndex}>
+                        {parts.map((part, partIndex) => {
+                          if (partIndex % 2 === 1) {
+                            // This is code
+                            return (
+                              <pre key={partIndex} className={styles.codeBlock}>
+                                <code>{part.trim()}</code>
+                              </pre>
+                            )
+                          } else if (part.trim()) {
+                            // This is regular text
+                            return <p key={partIndex}>{renderFormattedText(part.trim())}</p>
+                          }
+                          return null
+                        })}
+                      </div>
+                    )
+                  }
+                  
                   // Handle markdown-style formatting
                   if (paragraph.trim().startsWith('**') && paragraph.trim().endsWith('**')) {
                     return <h3 key={pIndex} className={styles.subheading}>{paragraph.slice(2, -2)}</h3>
