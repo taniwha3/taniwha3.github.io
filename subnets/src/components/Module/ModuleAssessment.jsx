@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useProgressContext } from '../../contexts/ProgressContext'
 import { useParams } from 'react-router-dom'
+import { checkAnswer } from '../../data/quizQuestions'
 import styles from './ModuleAssessment.module.css'
 
 function ModuleAssessment({ assessment, quiz }) {
@@ -12,6 +13,7 @@ function ModuleAssessment({ assessment, quiz }) {
   const [answers, setAnswers] = useState({})
   const [showResults, setShowResults] = useState(false)
   const [scoreSaved, setScoreSaved] = useState(false)
+  const [showReview, setShowReview] = useState(false)
   
   const handleAnswer = (questionId, answer) => {
     setAnswers({ ...answers, [questionId]: answer })
@@ -35,7 +37,7 @@ function ModuleAssessment({ assessment, quiz }) {
     if (!quiz) return 0
     let correct = 0
     quiz.forEach(question => {
-      if (answers[question.id] === question.correctAnswer) {
+      if (checkAnswer(question, answers[question.id])) {
         correct++
       }
     })
@@ -48,6 +50,7 @@ function ModuleAssessment({ assessment, quiz }) {
     setShowResults(false)
     setShowQuiz(false)
     setScoreSaved(false)
+    setShowReview(false)
   }
   
   if (!quiz || quiz.length === 0) {
@@ -108,9 +111,50 @@ function ModuleAssessment({ assessment, quiz }) {
             )}
           </div>
           
-          <button className={styles.primaryButton} onClick={resetQuiz}>
-            Try Again
-          </button>
+          <div className={styles.actions}>
+            <button className={styles.primaryButton} onClick={resetQuiz}>
+              Try Again
+            </button>
+            <button className={styles.secondaryButton} onClick={() => setShowReview(!showReview)}>
+              {showReview ? 'Hide Review' : 'Review Answers'}
+            </button>
+          </div>
+          
+          {showReview && (
+            <div className={styles.review}>
+              <h3>Question Review</h3>
+              {quiz.map((question, index) => {
+                const userAnswer = answers[question.id]
+                const isCorrect = checkAnswer(question, userAnswer)
+                
+                return (
+                  <div key={question.id} className={`${styles.reviewItem} ${isCorrect ? styles.correct : styles.incorrect}`}>
+                    <h4>Question {index + 1}: {question.question}</h4>
+                    
+                    <div className={styles.reviewAnswer}>
+                      <p><strong>Your answer:</strong> {
+                        question.type === 'multiple-choice' ? question.options[userAnswer] :
+                        question.type === 'true-false' ? (userAnswer ? 'True' : 'False') :
+                        userAnswer || '(No answer)'
+                      }</p>
+                      
+                      <p><strong>Correct answer:</strong> {
+                        question.type === 'multiple-choice' ? question.options[question.correctAnswer] :
+                        question.type === 'true-false' ? (question.correctAnswer ? 'True' : 'False') :
+                        question.correctAnswer
+                      }</p>
+                      
+                      {question.explanation && (
+                        <p className={styles.explanation}>
+                          <strong>Explanation:</strong> {question.explanation}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </div>
       </div>
     )
