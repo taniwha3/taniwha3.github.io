@@ -1,18 +1,114 @@
-import BinaryConverter from './BinaryConverter'
-import NetworkCalculator from './NetworkCalculator'
+import { getModuleContent, hasModuleContent } from '../../data/moduleContent'
+import BinaryConverter from '../Interactive/BinaryConverter'
+import NetworkCalculator from '../Interactive/NetworkCalculator'
 import styles from './ModuleContent.module.css'
 
 function ModuleContent({ module }) {
-  // Show interactive tools for certain modules
-  const showBinaryConverter = [1, 2].includes(module.id)
-  const showNetworkCalculator = [2, 3, 4, 5].includes(module.id)
+  const moduleContent = getModuleContent(module.id)
+  const hasContent = hasModuleContent(module.id)
   
+  // If we have full content, render it
+  if (hasContent && moduleContent) {
+    return (
+      <div className={styles.moduleContent}>
+        {moduleContent.sections.map((section, index) => (
+          <div key={index} className={styles.section}>
+            <h2 className={styles.sectionTitle}>{section.title}</h2>
+            
+            {section.type === 'interactive-tool' && section.component === 'BinaryConverter' ? (
+              <BinaryConverter />
+            ) : section.type === 'interactive-tool' && section.component === 'NetworkCalculator' ? (
+              <NetworkCalculator />
+            ) : (
+              <div className={styles.sectionContent}>
+                {section.content.split('\n\n').map((paragraph, pIndex) => {
+                  // Handle markdown-style formatting
+                  if (paragraph.trim().startsWith('**') && paragraph.trim().endsWith('**')) {
+                    return <h3 key={pIndex} className={styles.subheading}>{paragraph.slice(2, -2)}</h3>
+                  }
+                  
+                  // Handle lists
+                  if (paragraph.includes('\n-')) {
+                    const items = paragraph.split('\n-').filter(item => item.trim())
+                    return (
+                      <ul key={pIndex} className={styles.list}>
+                        {items.map((item, iIndex) => (
+                          <li key={iIndex}>{renderFormattedText(iIndex === 0 ? item : '-' + item)}</li>
+                        ))}
+                      </ul>
+                    )
+                  }
+                  
+                  // Handle numbered lists
+                  if (paragraph.match(/^\d+\./)) {
+                    const items = paragraph.split(/\n(?=\d+\.)/)
+                    return (
+                      <ol key={pIndex} className={styles.numberedList}>
+                        {items.map((item, iIndex) => (
+                          <li key={iIndex}>{renderFormattedText(item.replace(/^\d+\.\s*/, ''))}</li>
+                        ))}
+                      </ol>
+                    )
+                  }
+                  
+                  return <p key={pIndex}>{renderFormattedText(paragraph)}</p>
+                })}
+              </div>
+            )}
+          </div>
+        ))}
+        
+        {moduleContent.practice && (
+          <div className={styles.practice}>
+            <h2>{moduleContent.practice.title}</h2>
+            {moduleContent.practice.questions && moduleContent.practice.questions.map((q, index) => (
+              <div key={index} className={styles.practiceQuestion}>
+                <p className={styles.question}><strong>Q{index + 1}:</strong> {q.question}</p>
+                {q.hint && <p className={styles.hint}><em>Hint: {q.hint}</em></p>}
+                <details className={styles.answer}>
+                  <summary>Show Answer</summary>
+                  <p>{q.answer}</p>
+                </details>
+              </div>
+            ))}
+            
+            {moduleContent.practice.exercises && moduleContent.practice.exercises.map((exercise, index) => (
+              <div key={index} className={styles.exerciseSection}>
+                <h3>{exercise.title}</h3>
+                {exercise.instructions && <p className={styles.instructions}>{exercise.instructions}</p>}
+                {exercise.problems && (
+                  <ul className={styles.problemList}>
+                    {exercise.problems.map((problem, pIndex) => (
+                      <li key={pIndex}>{problem}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+        
+        {moduleContent.keyTakeaways && (
+          <div className={styles.keyTakeaways}>
+            <h2>Key Takeaways</h2>
+            <ul>
+              {moduleContent.keyTakeaways.map((takeaway, index) => (
+                <li key={index}>{takeaway}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    )
+  }
+  
+  // Otherwise show the placeholder
   return (
     <div className={styles.moduleContent}>
       <div className={styles.placeholder}>
         <h2>Lesson Content Coming Soon</h2>
         <p>
-          This is where the full lesson content for "{module.title}" will appear.
+          This is where the full lesson content for &quot;{module.title}&quot; will appear.
         </p>
         
         <div className={styles.contentPreview}>
@@ -28,7 +124,7 @@ function ModuleContent({ module }) {
         </div>
         
         <div className={styles.stickingPoints}>
-          <h3>Common Challenges We'll Address:</h3>
+          <h3>Common Challenges We&apos;ll Address:</h3>
           {module.stickingPoints.map((point, index) => (
             <div key={index} className={styles.stickingPoint}>
               <strong>Issue:</strong> {point.issue}
@@ -37,22 +133,17 @@ function ModuleContent({ module }) {
             </div>
           ))}
         </div>
-        
-        {showBinaryConverter && (
-          <div className={styles.interactiveTool}>
-            <h3>Try It Yourself</h3>
-            <BinaryConverter />
-          </div>
-        )}
-        
-        {showNetworkCalculator && (
-          <div className={styles.interactiveTool}>
-            <h3>Practice Network Calculations</h3>
-            <NetworkCalculator />
-          </div>
-        )}
       </div>
     </div>
+  )
+}
+
+// Helper function to render formatted text
+function renderFormattedText(text) {
+  // Replace **text** with bold
+  const parts = text.split(/\*\*/)
+  return parts.map((part, index) => 
+    index % 2 === 1 ? <strong key={index}>{part}</strong> : part
   )
 }
 

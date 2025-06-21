@@ -8,6 +8,7 @@ import ModuleContent from '../components/Module/ModuleContent'
 import ModuleObjectives from '../components/Module/ModuleObjectives'
 import ModuleActivities from '../components/Module/ModuleActivities'
 import ModuleAssessment from '../components/Module/ModuleAssessment'
+import ModulePractice from '../components/Module/ModulePractice'
 import styles from './Module.module.css'
 
 function Module() {
@@ -138,14 +139,7 @@ function Module() {
         )}
         
         {activeTab === 'practice' && (
-          <div className={styles.practice}>
-            <h2>Practice Exercises</h2>
-            {moduleExercises ? (
-              <p>Practice exercises for {currentModule.title}</p>
-            ) : (
-              <p>No practice exercises available for this module yet.</p>
-            )}
-          </div>
+          <ModulePractice exercises={moduleExercises} moduleId={moduleId} />
         )}
         
         {activeTab === 'quiz' && (
