@@ -1,0 +1,281 @@
+.assessment {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.assessment h2 {
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+}
+
+.assessmentInfo {
+  background-color: var(--bg-secondary);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  margin-bottom: 2rem;
+}
+
+.assessmentInfo p {
+  margin: 0.5rem 0;
+}
+
+.assessmentInfo strong {
+  color: var(--primary-color);
+}
+
+.noQuiz {
+  text-align: center;
+  color: var(--text-secondary);
+  font-style: italic;
+  padding: 2rem;
+}
+
+.quizInfo {
+  text-align: center;
+  padding: 2rem;
+}
+
+.quizInfo h3 {
+  margin-bottom: 1rem;
+}
+
+.quizHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.progress {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.question {
+  background-color: var(--bg-secondary);
+  padding: 2rem;
+  border-radius: var(--radius);
+  margin-bottom: 2rem;
+}
+
+.question h3 {
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--bg-primary);
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.option:hover {
+  border-color: var(--primary-color);
+}
+
+.option input[type="radio"] {
+  margin-right: 0.75rem;
+}
+
+.textInput {
+  margin-top: 1rem;
+}
+
+.textInput input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.textInput input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.primaryButton,
+.secondaryButton {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: var(--radius);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primaryButton {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.primaryButton:hover:not(:disabled) {
+  background-color: #1976D2;
+  transform: translateY(-2px);
+}
+
+.primaryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.secondaryButton {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.secondaryButton:hover:not(:disabled) {
+  background-color: var(--border-color);
+}
+
+.secondaryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.results {
+  text-align: center;
+}
+
+.scoreCard {
+  display: inline-block;
+  padding: 3rem;
+  border-radius: var(--radius);
+  margin-bottom: 2rem;
+}
+
+.scoreCard.passed {
+  background-color: #d4edda;
+  border: 2px solid var(--success-color);
+}
+
+.scoreCard.failed {
+  background-color: #f8d7da;
+  border: 2px solid var(--error-color);
+}
+
+.score {
+  font-size: 4rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.scoreCard.passed .score {
+  color: var(--success-color);
+}
+
+.scoreCard.failed .score {
+  color: var(--error-color);
+}
+
+.scoreLabel {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.summary {
+  background-color: var(--bg-secondary);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  margin-bottom: 2rem;
+}
+
+.summary h3 {
+  margin-bottom: 1rem;
+}
+
+.summary p {
+  margin: 0.5rem 0;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.review {
+  background-color: var(--bg-secondary);
+  padding: 2rem;
+  border-radius: var(--radius);
+  margin-top: 2rem;
+}
+
+.review h3 {
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+}
+
+.reviewItem {
+  background-color: var(--bg-primary);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+  border: 2px solid transparent;
+}
+
+.reviewItem.correct {
+  border-color: var(--success-color);
+}
+
+.reviewItem.incorrect {
+  border-color: var(--error-color);
+}
+
+.reviewItem h4 {
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.reviewAnswer p {
+  margin: 0.5rem 0;
+}
+
+.explanation {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius);
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .quizHeader {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+  
+  .navigation {
+    flex-direction: column;
+  }
+  
+  .actions {
+    flex-direction: column;
+  }
+  
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "Subnet Master",
+  "short_name": "SubnetPWA",
+  "description": "Learn IPv4/IPv6 subnetting with interactive lessons and exercises",
+  "theme_color": "#2196F3",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "scope": "/subnets/",
+  "start_url": "/subnets/",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

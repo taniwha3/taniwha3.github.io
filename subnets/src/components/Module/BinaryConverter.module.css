@@ -1,0 +1,193 @@
+.converter {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius);
+}
+
+.converter h3 {
+  text-align: center;
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+}
+
+.inputs {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inputGroup label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.input {
+  padding: 0.75rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius);
+  font-size: 1.125rem;
+  font-family: monospace;
+  width: 150px;
+  text-align: center;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.equals {
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+  padding-bottom: 0.75rem;
+}
+
+.error {
+  text-align: center;
+  color: var(--error-color);
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.visual {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  margin-bottom: 1.5rem;
+}
+
+.visual h4 {
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.bitsContainer {
+  margin-bottom: 1rem;
+}
+
+.powers {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.power {
+  width: 40px;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.bits {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.bit {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius);
+  font-size: 1.25rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: white;
+}
+
+.bitOn {
+  background-color: var(--success-color);
+  color: white;
+  border-color: var(--success-color);
+}
+
+.bitOff {
+  background-color: white;
+  color: var(--text-secondary);
+}
+
+.bit:hover {
+  transform: scale(1.1);
+}
+
+.formatted {
+  text-align: center;
+  font-family: monospace;
+  color: var(--text-secondary);
+}
+
+.breakdown {
+  background-color: #e3f2fd;
+  padding: 1rem;
+  border-radius: var(--radius);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.breakdown h4 {
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+.breakdown p {
+  font-family: monospace;
+  font-size: 1.125rem;
+  margin: 0;
+}
+
+.tips {
+  background-color: white;
+  padding: 1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+}
+
+.tips h4 {
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+}
+
+.tips ul {
+  margin: 0;
+  padding-left: 1.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 600px) {
+  .inputs {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .equals {
+    transform: rotate(90deg);
+  }
+  
+  .powers,
+  .bits {
+    gap: 0.25rem;
+  }
+  
+  .power,
+  .bit {
+    width: 35px;
+    height: 35px;
+  }
+}

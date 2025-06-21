@@ -1,0 +1,256 @@
+.visualizer {
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius);
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.visualizer h3 {
+  text-align: center;
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+}
+
+.inputs {
+  margin-bottom: 2rem;
+}
+
+.inputGroup {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.inputGroup label {
+  font-weight: 500;
+  color: var(--text-primary);
+  min-width: 150px;
+}
+
+.binaryInput {
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  font-family: 'Courier New', monospace;
+  font-size: 1.125rem;
+  letter-spacing: 0.2em;
+  width: 150px;
+  text-align: center;
+}
+
+.binaryInput:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.decimal {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.operation {
+  background-color: var(--bg-primary);
+  padding: 2rem;
+  border-radius: var(--radius);
+  margin-bottom: 1.5rem;
+}
+
+.calculation {
+  font-family: 'Courier New', monospace;
+  font-size: 1.25rem;
+  display: table;
+  margin: 0 auto;
+}
+
+.row {
+  display: table-row;
+  height: 2rem;
+}
+
+.label {
+  display: table-cell;
+  width: 50px;
+  text-align: right;
+  padding-right: 1rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.bit {
+  display: table-cell;
+  width: 30px;
+  text-align: center;
+  padding: 0.25rem;
+}
+
+.bitOne {
+  color: var(--success-color);
+  font-weight: 700;
+}
+
+.bitZero {
+  color: var(--text-secondary);
+}
+
+.separator {
+  display: table-row;
+  height: 1rem;
+}
+
+.dash {
+  display: table-cell;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.resultDecimal {
+  text-align: center;
+  margin-top: 1rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.toggleButton {
+  display: block;
+  margin: 0 auto 1.5rem;
+  padding: 0.5rem 1.5rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.toggleButton:hover {
+  background-color: #1976D2;
+}
+
+.steps {
+  background-color: #e3f2fd;
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  margin-bottom: 1.5rem;
+}
+
+.steps h4 {
+  margin: 0 0 1rem 0;
+  color: var(--primary-color);
+}
+
+.stepGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.step {
+  background-color: white;
+  padding: 0.75rem;
+  border-radius: var(--radius);
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.stepCalc {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.stepExplain {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.examples {
+  margin-top: 2rem;
+}
+
+.examples h4 {
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.exampleButtons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.exampleButtons button {
+  padding: 0.75rem;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+}
+
+.exampleButtons button:hover {
+  background-color: var(--primary-color);
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .visualizer {
+    padding: 1.5rem;
+  }
+  
+  .inputGroup {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .inputGroup label {
+    min-width: auto;
+  }
+  
+  .binaryInput {
+    width: 100%;
+  }
+  
+  .calculation {
+    font-size: 1rem;
+  }
+  
+  .bit {
+    width: 25px;
+  }
+  
+  .stepGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .exampleButtons {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .visualizer {
+    padding: 1rem;
+  }
+  
+  .operation {
+    padding: 1rem;
+    overflow-x: auto;
+  }
+  
+  .calculation {
+    font-size: 0.875rem;
+  }
+  
+  .bit {
+    width: 20px;
+    padding: 0.125rem;
+  }
+}

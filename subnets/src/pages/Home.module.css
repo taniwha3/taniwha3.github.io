@@ -1,0 +1,148 @@
+.home {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.hero {
+  text-align: center;
+  padding: 3rem 1rem;
+  background-color: var(--bg-primary);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 3rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ctaButton {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 1.125rem;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.ctaButton:hover {
+  background-color: #1976D2;
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.features {
+  margin-bottom: 3rem;
+}
+
+.features h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.featureCard {
+  background-color: var(--bg-primary);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.featureCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.featureIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.featureCard h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+.featureCard p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.curriculum {
+  background-color: var(--bg-primary);
+  padding: 2rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.curriculum h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.curriculum > p {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.moduleList {
+  margin: 0 0 2rem 1rem;
+  padding-left: 1rem;
+  line-height: 2;
+  color: var(--text-primary);
+}
+
+.startButton {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--success-color);
+  color: white;
+  border-radius: var(--radius);
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.startButton:hover {
+  background-color: #388E3C;
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 2rem;
+  }
+  
+  .subtitle {
+    font-size: 1.125rem;
+  }
+  
+  .hero {
+    padding: 2rem 1rem;
+  }
+  
+  .featureGrid {
+    grid-template-columns: 1fr;
+  }
+}
