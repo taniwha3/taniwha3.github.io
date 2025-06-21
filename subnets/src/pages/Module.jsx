@@ -1,25 +1,22 @@
 import { useParams, Link } from 'react-router-dom'
+import { useState } from 'react'
+import { modules, getModuleById } from '../data/curriculum'
+import { getModuleQuiz } from '../data/quizQuestions'
+import { exercises } from '../data/exercises'
+import ModuleContent from '../components/Module/ModuleContent'
+import ModuleObjectives from '../components/Module/ModuleObjectives'
+import ModuleActivities from '../components/Module/ModuleActivities'
+import ModuleAssessment from '../components/Module/ModuleAssessment'
 import styles from './Module.module.css'
 
 function Module() {
   const { id } = useParams()
   const moduleId = parseInt(id)
+  const [activeTab, setActiveTab] = useState('overview')
   
-  // Placeholder module data - will be replaced with real curriculum data later
-  const modules = [
-    { id: 0, title: 'Orientation & Pre-Assessment' },
-    { id: 1, title: 'Positional Number Systems & Powers of Two' },
-    { id: 2, title: 'Bitwise Logic Without Programming' },
-    { id: 3, title: 'IPv4 Address Anatomy' },
-    { id: 4, title: 'Subnet Masks & CIDR Notation' },
-    { id: 5, title: 'Fixed-Length Subnet Calculations' },
-    { id: 6, title: 'Variable Length Subnet Masking (VLSM) & Address Planning' },
-    { id: 7, title: 'Subnetting in Practice: Routing & ACL Implications' },
-    { id: 8, title: 'IPv6 Subnet Fundamentals' },
-    { id: 9, title: 'Verification & Troubleshooting Tools' },
-  ]
-  
-  const currentModule = modules[moduleId]
+  const currentModule = getModuleById(moduleId)
+  const moduleQuiz = getModuleQuiz(moduleId)
+  const moduleExercises = exercises[moduleId]
   const prevModule = moduleId > 0 ? modules[moduleId - 1] : null
   const nextModule = moduleId < modules.length - 1 ? modules[moduleId + 1] : null
   
@@ -45,17 +42,96 @@ function Module() {
         <h1>Module {moduleId}: {currentModule.title}</h1>
       </header>
       
+      <div className={styles.tabs}>
+        <button
+          className={`${styles.tab} ${activeTab === 'overview' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('overview')}
+        >
+          Overview
+        </button>
+        <button
+          className={`${styles.tab} ${activeTab === 'content' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('content')}
+        >
+          Lesson
+        </button>
+        <button
+          className={`${styles.tab} ${activeTab === 'practice' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('practice')}
+        >
+          Practice
+        </button>
+        <button
+          className={`${styles.tab} ${activeTab === 'quiz' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('quiz')}
+        >
+          Quiz
+        </button>
+      </div>
+      
       <div className={styles.content}>
-        <div className={styles.placeholder}>
-          <p>Module content will be loaded here once curriculum data is integrated.</p>
-          <p>This will include:</p>
-          <ul>
-            <li>Learning objectives</li>
-            <li>Key concepts and activities</li>
-            <li>Interactive exercises</li>
-            <li>Assessment questions</li>
-          </ul>
-        </div>
+        {activeTab === 'overview' && (
+          <div className={styles.overview}>
+            <section className={styles.section}>
+              <h2>Module Goal</h2>
+              <p className={styles.goal}>{currentModule.goal}</p>
+            </section>
+            
+            <ModuleObjectives objectives={currentModule.objectives} />
+            
+            <section className={styles.section}>
+              <h2>What You'll Do</h2>
+              <ModuleActivities activities={currentModule.activities} />
+            </section>
+            
+            <section className={styles.section}>
+              <h2>Prerequisites</h2>
+              {currentModule.prerequisites.length > 0 ? (
+                <ul className={styles.prerequisites}>
+                  {currentModule.prerequisites.map(prereqId => {
+                    const prereq = modules.find(m => m.id === prereqId)
+                    return (
+                      <li key={prereqId}>
+                        <Link to={`/module/${prereqId}`}>
+                          Module {prereqId}: {prereq?.title}
+                        </Link>
+                      </li>
+                    )
+                  })}
+                </ul>
+              ) : (
+                <p>None - this is a foundational module!</p>
+              )}
+            </section>
+            
+            <section className={styles.section}>
+              <h2>Time Estimate</h2>
+              <p>{currentModule.estimatedTime} minutes</p>
+            </section>
+          </div>
+        )}
+        
+        {activeTab === 'content' && (
+          <ModuleContent module={currentModule} />
+        )}
+        
+        {activeTab === 'practice' && (
+          <div className={styles.practice}>
+            <h2>Practice Exercises</h2>
+            {moduleExercises ? (
+              <p>Practice exercises for {currentModule.title}</p>
+            ) : (
+              <p>No practice exercises available for this module yet.</p>
+            )}
+          </div>
+        )}
+        
+        {activeTab === 'quiz' && (
+          <ModuleAssessment 
+            assessment={currentModule.assessment} 
+            quiz={moduleQuiz}
+          />
+        )}
       </div>
       
       <nav className={styles.navigation}>

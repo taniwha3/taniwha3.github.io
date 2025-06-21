@@ -1,0 +1,72 @@
+.moduleContent {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.placeholder {
+  text-align: center;
+  padding: 2rem;
+}
+
+.placeholder h2 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.placeholder p {
+  color: var(--text-secondary);
+  font-size: 1.125rem;
+  margin-bottom: 2rem;
+}
+
+.contentPreview {
+  background-color: var(--bg-secondary);
+  padding: 2rem;
+  border-radius: var(--radius);
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.contentPreview h3 {
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.contentPreview ul {
+  list-style: none;
+  padding: 0;
+}
+
+.contentPreview li {
+  padding: 0.5rem 0;
+  color: var(--text-primary);
+}
+
+.stickingPoints {
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  text-align: left;
+}
+
+.stickingPoints h3 {
+  color: #856404;
+  margin-bottom: 1rem;
+}
+
+.stickingPoint {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: white;
+  border-radius: var(--radius);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.stickingPoint:last-child {
+  margin-bottom: 0;
+}
+
+.stickingPoint strong {
+  color: #856404;
+}
