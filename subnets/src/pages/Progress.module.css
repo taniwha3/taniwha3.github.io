@@ -93,6 +93,12 @@
   font-size: 0.875rem;
 }
 
+.notStarted {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  opacity: 0.7;
+}
+
 .progressBar {
   height: 8px;
   background-color: var(--bg-secondary);
@@ -105,6 +111,12 @@
   height: 100%;
   background-color: var(--success-color);
   transition: width 0.3s ease;
+}
+
+.moduleFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .moduleLink {
@@ -120,6 +132,11 @@
   transform: translateX(4px);
 }
 
+.quizScore {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
 .actions {
   display: flex;
   gap: 1rem;
@@ -131,13 +148,16 @@
 }
 
 .resetButton,
-.exportButton {
+.exportButton,
+.importButton {
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: var(--radius);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-size: 1rem;
+  font-family: inherit;
 }
 
 .resetButton {
@@ -157,6 +177,17 @@
 
 .exportButton:hover {
   background-color: #1976D2;
+  transform: translateY(-2px);
+}
+
+.importButton {
+  background-color: var(--success-color);
+  color: white;
+  display: inline-block;
+}
+
+.importButton:hover {
+  background-color: #388E3C;
   transform: translateY(-2px);
 }
 

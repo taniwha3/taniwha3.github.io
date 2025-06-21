@@ -1,8 +1,9 @@
 import { useParams, Link } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { modules, getModuleById } from '../data/curriculum'
 import { getModuleQuiz } from '../data/quizQuestions'
 import { exercises } from '../data/exercises'
+import { useProgressContext } from '../contexts/ProgressContext'
 import ModuleContent from '../components/Module/ModuleContent'
 import ModuleObjectives from '../components/Module/ModuleObjectives'
 import ModuleActivities from '../components/Module/ModuleActivities'
@@ -13,12 +14,33 @@ function Module() {
   const { id } = useParams()
   const moduleId = parseInt(id)
   const [activeTab, setActiveTab] = useState('overview')
+  const { startModule, getModuleProgress, updateModuleProgress } = useProgressContext()
   
   const currentModule = getModuleById(moduleId)
   const moduleQuiz = getModuleQuiz(moduleId)
   const moduleExercises = exercises[moduleId]
+  const moduleProgress = getModuleProgress(moduleId)
   const prevModule = moduleId > 0 ? modules[moduleId - 1] : null
   const nextModule = moduleId < modules.length - 1 ? modules[moduleId + 1] : null
+  
+  // Track module start
+  useEffect(() => {
+    if (currentModule && !moduleProgress.started) {
+      startModule(moduleId)
+    }
+  }, [moduleId, currentModule, moduleProgress.started, startModule])
+  
+  // Update progress when changing tabs
+  useEffect(() => {
+    if (currentModule && moduleProgress.started) {
+      let progress = 25 // Started
+      if (activeTab === 'content') progress = 50
+      if (activeTab === 'practice') progress = 75
+      if (activeTab === 'quiz') progress = 90
+      
+      updateModuleProgress(moduleId, { progress })
+    }
+  }, [activeTab, moduleId, currentModule, moduleProgress.started, updateModuleProgress])
   
   if (!currentModule) {
     return (

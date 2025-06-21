@@ -1,11 +1,17 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useProgressContext } from '../../contexts/ProgressContext'
+import { useParams } from 'react-router-dom'
 import styles from './ModuleAssessment.module.css'
 
 function ModuleAssessment({ assessment, quiz }) {
+  const { id } = useParams()
+  const moduleId = parseInt(id)
+  const { updateQuizScore, completeModule } = useProgressContext()
   const [showQuiz, setShowQuiz] = useState(false)
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState({})
   const [showResults, setShowResults] = useState(false)
+  const [scoreSaved, setScoreSaved] = useState(false)
   
   const handleAnswer = (questionId, answer) => {
     setAnswers({ ...answers, [questionId]: answer })
@@ -41,6 +47,7 @@ function ModuleAssessment({ assessment, quiz }) {
     setAnswers({})
     setShowResults(false)
     setShowQuiz(false)
+    setScoreSaved(false)
   }
   
   if (!quiz || quiz.length === 0) {
@@ -59,6 +66,24 @@ function ModuleAssessment({ assessment, quiz }) {
       </div>
     )
   }
+  
+  // Save quiz results when showing results for the first time
+  useEffect(() => {
+    if (showResults && !scoreSaved) {
+      const score = calculateScore()
+      const passed = assessment.passingScore ? score >= assessment.passingScore : true
+      
+      // Save quiz score to progress tracking
+      updateQuizScore(moduleId, score, quiz.length)
+      
+      // Mark module as complete if passed
+      if (passed) {
+        completeModule(moduleId)
+      }
+      
+      setScoreSaved(true)
+    }
+  }, [showResults, scoreSaved, moduleId, assessment.passingScore, updateQuizScore, completeModule, quiz])
   
   if (showResults) {
     const score = calculateScore()

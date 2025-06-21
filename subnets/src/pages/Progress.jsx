@@ -1,23 +1,48 @@
 import { Link } from 'react-router-dom'
+import { useProgressContext } from '../contexts/ProgressContext'
+import { modules as curriculumModules } from '../data/curriculum'
 import styles from './Progress.module.css'
 
 function Progress() {
-  // Placeholder progress data - will be connected to localStorage later
-  const modules = [
-    { id: 0, title: 'Orientation & Pre-Assessment', completed: false, progress: 0 },
-    { id: 1, title: 'Binary & Powers of Two', completed: false, progress: 0 },
-    { id: 2, title: 'Bitwise Logic', completed: false, progress: 0 },
-    { id: 3, title: 'IPv4 Address Anatomy', completed: false, progress: 0 },
-    { id: 4, title: 'Subnet Masks & CIDR', completed: false, progress: 0 },
-    { id: 5, title: 'Fixed-Length Subnets', completed: false, progress: 0 },
-    { id: 6, title: 'VLSM & Address Planning', completed: false, progress: 0 },
-    { id: 7, title: 'Routing & ACL', completed: false, progress: 0 },
-    { id: 8, title: 'IPv6 Fundamentals', completed: false, progress: 0 },
-    { id: 9, title: 'Troubleshooting Tools', completed: false, progress: 0 },
-  ]
+  const { 
+    getModuleProgress, 
+    getQuizScore, 
+    overallProgress, 
+    resetProgress,
+    exportProgress,
+    importProgress 
+  } = useProgressContext()
   
-  const totalProgress = modules.reduce((sum, m) => sum + m.progress, 0) / modules.length
-  const completedCount = modules.filter(m => m.completed).length
+  const modules = curriculumModules.map(module => {
+    const progress = getModuleProgress(module.id)
+    const quizScore = getQuizScore(module.id)
+    return {
+      ...module,
+      ...progress,
+      quizScore
+    }
+  })
+  
+  const handleImportProgress = (event) => {
+    const file = event.target.files[0]
+    if (file) {
+      importProgress(file)
+        .then(() => {
+          alert('Progress imported successfully!')
+          window.location.reload() // Refresh to show new progress
+        })
+        .catch(error => {
+          alert('Failed to import progress: ' + error.message)
+        })
+    }
+  }
+  
+  const handleResetProgress = () => {
+    if (window.confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
+      resetProgress()
+      window.location.reload() // Refresh to show reset progress
+    }
+  }
   
   return (
     <div className={styles.progress}>
@@ -25,16 +50,18 @@ function Progress() {
       
       <div className={styles.overview}>
         <div className={styles.stat}>
-          <div className={styles.statValue}>{Math.round(totalProgress)}%</div>
+          <div className={styles.statValue}>{overallProgress.percentage}%</div>
           <div className={styles.statLabel}>Overall Progress</div>
         </div>
         <div className={styles.stat}>
-          <div className={styles.statValue}>{completedCount}/{modules.length}</div>
+          <div className={styles.statValue}>{overallProgress.completedModules}/{overallProgress.totalModules}</div>
           <div className={styles.statLabel}>Modules Completed</div>
         </div>
         <div className={styles.stat}>
-          <div className={styles.statValue}>0</div>
-          <div className={styles.statLabel}>Practice Problems</div>
+          <div className={styles.statValue}>
+            {modules.filter(m => m.quizScore && m.quizScore.percentage >= 80).length}
+          </div>
+          <div className={styles.statLabel}>Quizzes Passed</div>
         </div>
       </div>
       
@@ -50,31 +77,56 @@ function Progress() {
               <div className={styles.moduleStatus}>
                 {module.completed ? (
                   <span className={styles.completed}>✓ Completed</span>
+                ) : module.started ? (
+                  <span className={styles.incomplete}>{module.progress || 0}% Complete</span>
                 ) : (
-                  <span className={styles.incomplete}>{module.progress}% Complete</span>
+                  <span className={styles.notStarted}>Not Started</span>
                 )}
               </div>
             </div>
             <div className={styles.progressBar}>
               <div 
                 className={styles.progressFill} 
-                style={{ width: `${module.progress}%` }}
+                style={{ width: `${module.progress || 0}%` }}
               />
             </div>
-            <Link to={`/module/${module.id}`} className={styles.moduleLink}>
-              {module.completed ? 'Review' : 'Continue'} →
-            </Link>
+            <div className={styles.moduleFooter}>
+              <Link to={`/module/${module.id}`} className={styles.moduleLink}>
+                {module.completed ? 'Review' : module.started ? 'Continue' : 'Start'} →
+              </Link>
+              {module.quizScore && (
+                <span className={styles.quizScore}>
+                  Quiz: {module.quizScore.percentage}% 
+                  {module.quizScore.attempts > 1 && ` (${module.quizScore.attempts} attempts)`}
+                </span>
+              )}
+            </div>
           </div>
         ))}
       </div>
       
       <div className={styles.actions}>
-        <button className={styles.resetButton}>
+        <button 
+          className={styles.resetButton}
+          onClick={handleResetProgress}
+        >
           Reset All Progress
         </button>
-        <button className={styles.exportButton}>
+        <button 
+          className={styles.exportButton}
+          onClick={exportProgress}
+        >
           Export Progress
         </button>
+        <label className={styles.importButton}>
+          Import Progress
+          <input
+            type="file"
+            accept=".json"
+            onChange={handleImportProgress}
+            style={{ display: 'none' }}
+          />
+        </label>
       </div>
     </div>
   )
