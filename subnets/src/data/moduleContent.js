@@ -623,6 +623,616 @@ Next up: Module 3 - IPv4 Address Anatomy, where we'll explore how IP addresses a
       "Common masks (/8, /16, /24) make mental math easy",
       "The AND operation is the foundation of all subnet calculations"
     ]
+  },
+  
+  3: {
+    title: "IPv4 Address Anatomy",
+    sections: [
+      {
+        type: "introduction",
+        title: "Understanding IP Address Structure",
+        content: `
+Every device on a network needs a unique address - like a house needs a street address. IPv4 addresses are the most common addressing system, and understanding their structure is crucial for subnetting.
+
+An IPv4 address isn't just a random number - it's carefully structured with two parts: the **network portion** (like a street name) and the **host portion** (like a house number). The subnet mask determines where one ends and the other begins.
+        `
+      },
+      {
+        type: "anatomy",
+        title: "The Four Octets",
+        content: `
+An IPv4 address consists of 32 bits, divided into four octets (8-bit groups):
+
+**Example: 192.168.1.100**
+\`\`\`
+Octet 1  |  Octet 2  |  Octet 3  |  Octet 4
+   192   .    168    .     1     .    100
+11000000 . 10101000  . 00000001  . 01100100
+\`\`\`
+
+**Why "Octet"?**
+- Octet = 8 bits (octo = eight)
+- Each octet can represent 0-255 (2^8 = 256 values)
+- Separated by dots (dotted decimal notation)
+
+**Key Facts:**
+- Total address space: 2^32 = 4,294,967,296 addresses
+- Format: X.X.X.X where X is 0-255
+- All zeros (0.0.0.0) and all ones (255.255.255.255) are reserved
+        `
+      },
+      {
+        type: "network-vs-host",
+        title: "Network vs Host Portions",
+        content: `
+Every IP address has two parts - but where's the dividing line?
+
+**The Street Address Analogy:**
+Think of an IP address like a street address:
+- Network portion = Street name (shared by all houses)
+- Host portion = House number (unique on that street)
+
+**Example with /24 network (255.255.255.0):**
+\`\`\`
+192.168.1.100/24
+│───────┘ └─┘
+Network   Host
+(Street) (House)
+\`\`\`
+
+**Different Subnet Masks = Different Divisions:**
+
+**/8 (Class A):**
+\`\`\`
+10.1.2.3
+│┘ └───┘
+N    H
+\`\`\`
+
+**/16 (Class B):**
+\`\`\`
+172.16.5.10
+│────┘ └──┘
+  N      H
+\`\`\`
+
+**/24 (Class C):**
+\`\`\`
+192.168.1.50
+│───────┘ └┘
+    N      H
+\`\`\`
+
+The subnet mask determines this boundary!
+        `
+      },
+      {
+        type: "special-addresses",
+        title: "Special IP Addresses",
+        content: `
+Not all IP addresses are created equal. Some have special meanings:
+
+**Network Address (First Address):**
+- All host bits are 0
+- Identifies the network itself
+- Cannot be assigned to a device
+- Example: 192.168.1.0/24
+
+**Broadcast Address (Last Address):**
+- All host bits are 1
+- Sends to all devices on the network
+- Cannot be assigned to a device
+- Example: 192.168.1.255/24
+
+**Example for 192.168.1.0/24:**
+\`\`\`
+Network:     192.168.1.0    (00000000 host bits)
+First Host:  192.168.1.1    (00000001)
+...
+Last Host:   192.168.1.254  (11111110)
+Broadcast:   192.168.1.255  (11111111 host bits)
+\`\`\`
+
+**Other Special Addresses:**
+- **127.0.0.0/8**: Loopback (localhost)
+- **169.254.0.0/16**: Link-local (APIPA)
+- **0.0.0.0/0**: Default route (all networks)
+- **255.255.255.255**: Limited broadcast
+        `
+      },
+      {
+        type: "private-vs-public",
+        title: "Private vs Public Addresses",
+        content: `
+IPv4 addresses are divided into public (internet-routable) and private (internal only) ranges.
+
+**Private Address Ranges (RFC 1918):**
+- **10.0.0.0/8** (10.0.0.0 - 10.255.255.255)
+  - 16,777,216 addresses
+  - Often used by large organizations
+  
+- **172.16.0.0/12** (172.16.0.0 - 172.31.255.255)
+  - 1,048,576 addresses
+  - Common in medium businesses
+  
+- **192.168.0.0/16** (192.168.0.0 - 192.168.255.255)
+  - 65,536 addresses
+  - Home routers use 192.168.1.0/24 or 192.168.0.0/24
+
+**Why Private Addresses?**
+- Not routable on the internet
+- Can be reused in different networks
+- Conserves public IP addresses
+- NAT translates to public IPs
+
+**Real-World Example:**
+Your home network:
+- Internal: Your PC has 192.168.1.100
+- External: Your ISP assigns 74.125.224.72
+- NAT handles the translation
+        `
+      },
+      {
+        type: "classful-legacy",
+        title: "The Legacy of Classful Addressing",
+        content: `
+Before CIDR (1993), IP addresses were divided into rigid classes:
+
+**Class A: /8 (255.0.0.0)**
+- First octet: 1-126
+- 126 networks, 16,777,214 hosts each
+- Example: 10.0.0.0/8
+- Problem: Way too many hosts!
+
+**Class B: /16 (255.255.0.0)**
+- First octet: 128-191
+- 16,384 networks, 65,534 hosts each
+- Example: 172.16.0.0/16
+- Problem: Still too many hosts for most
+
+**Class C: /24 (255.255.255.0)**
+- First octet: 192-223
+- 2,097,152 networks, 254 hosts each
+- Example: 192.168.1.0/24
+- Problem: Often too few hosts
+
+**Why Classful Failed:**
+- Rigid boundaries wasted addresses
+- No flexibility for different sized networks
+- Led to rapid IPv4 exhaustion
+
+**CIDR to the Rescue:**
+- Variable Length Subnet Masks (VLSM)
+- Any mask length (/1 through /32)
+- Right-sized networks
+- Efficient address usage
+
+Today, classful addressing is obsolete, but you'll still see its influence in default masks and private ranges!
+        `
+      },
+      {
+        type: "visual-breakdown",
+        title: "Visual IP Breakdown",
+        content: `
+Let's visualize how different masks divide an IP address:
+
+**192.168.10.50 with different masks:**
+
+**/24 Mask (255.255.255.0):**
+\`\`\`
+IP: 192.168.10.50
+Network: 192.168.10.0/24
+Range: 192.168.10.0 - 192.168.10.255
+50 falls in the single /24 network
+\`\`\`
+
+**/25 Mask (255.255.255.128):**
+\`\`\`
+IP: 192.168.10.50
+Networks: 192.168.10.0/25 (0-127)
+          192.168.10.128/25 (128-255)
+50 falls in first network: 192.168.10.0/25
+\`\`\`
+
+**/26 Mask (255.255.255.192):**
+\`\`\`
+IP: 192.168.10.50
+Networks: 192.168.10.0/26 (0-63)
+          192.168.10.64/26 (64-127)
+          192.168.10.128/26 (128-191)
+          192.168.10.192/26 (192-255)
+50 falls in first network: 192.168.10.0/26
+\`\`\`
+
+**/27 Mask (255.255.255.224):**
+\`\`\`
+IP: 192.168.10.50
+Networks: 192.168.10.0/27 (0-31)
+          192.168.10.32/27 (32-63)
+          192.168.10.64/27 (64-95)
+          ... and 5 more
+50 falls in second network: 192.168.10.32/27
+\`\`\`
+
+**The Pattern:**
+- Same IP, different mask = Different network membership
+- Smaller masks = Larger networks (fewer divisions)
+- Larger masks = Smaller networks (more divisions)
+- The IP's network changes based on the mask boundaries
+        `
+      },
+      {
+        type: "interactive-tool",
+        title: "Explore IP Structure",
+        component: "NetworkCalculator"
+      },
+      {
+        type: "summary",
+        title: "IPv4 Mastery Unlocked!",
+        content: `
+You now understand:
+- IPv4 addresses have 32 bits in 4 octets
+- Network and host portions are divided by the subnet mask
+- Special addresses (network, broadcast) can't be assigned
+- Private ranges allow address reuse internally
+- Classful addressing evolved into flexible CIDR
+
+With this foundation, you're ready to start calculating subnets like a pro!
+
+Next: Module 4 - CIDR Notation, where we'll master the modern way to write subnet masks.
+        `
+      }
+    ],
+    practice: {
+      title: "IPv4 Structure Practice",
+      questions: [
+        {
+          question: "In the address 172.16.5.100/16, which octets represent the network portion?",
+          hint: "/16 means the first 16 bits (2 octets)",
+          answer: "The first two octets: 172.16"
+        },
+        {
+          question: "What's the broadcast address for 192.168.1.0/24?",
+          hint: "All host bits set to 1",
+          answer: "192.168.1.255"
+        },
+        {
+          question: "How many usable host addresses in a /24 network?",
+          hint: "Total addresses minus network and broadcast",
+          answer: "254 (256 total - 2 reserved = 254 usable)"
+        },
+        {
+          question: "Is 172.20.0.0 a private or public address?",
+          hint: "Check if it falls within RFC 1918 ranges",
+          answer: "Private (falls within 172.16.0.0/12 range)"
+        },
+        {
+          question: "Why can't you assign 10.1.1.0/24 to a computer?",
+          hint: "What type of address has all host bits as 0?",
+          answer: "It's the network address (all host bits are 0)"
+        }
+      ],
+      exercises: [
+        {
+          title: "Identify Address Components",
+          instructions: "For each address, identify the network and host portions",
+          problems: [
+            "Break down 10.20.30.40/8 into network and host portions",
+            "Break down 172.31.100.200/16 into network and host portions", 
+            "Break down 192.168.50.75/24 into network and host portions",
+            "What changes in 192.168.1.100 when the mask changes from /24 to /25?"
+          ]
+        }
+      ]
+    },
+    keyTakeaways: [
+      "IPv4 addresses have 32 bits arranged in 4 octets (X.X.X.X)",
+      "Each address has a network portion (street) and host portion (house number)",
+      "The subnet mask determines where the network/host boundary is",
+      "Network (first) and broadcast (last) addresses cannot be assigned to hosts",
+      "Private addresses (10/8, 172.16/12, 192.168/16) are for internal use only"
+    ]
+  },
+  
+  4: {
+    title: "CIDR Notation and the Mask Ladder",
+    sections: [
+      {
+        type: "introduction",
+        title: "The Evolution to CIDR",
+        content: `
+Remember the rigid classful system from Module 3? It was like having only three sizes of pizza - too small, too big, or way too big. CIDR (Classless Inter-Domain Routing) changed everything by letting us slice networks to any size we need.
+
+CIDR notation is the modern, elegant way to write subnet masks. Instead of writing 255.255.255.0, we simply write /24. It's cleaner, faster, and universally understood.
+
+**The Big Idea**: The number after the slash tells you how many bits are used for the network portion. The rest are for hosts.
+        `
+      },
+      {
+        type: "concept",
+        title: "Understanding CIDR Notation",
+        content: `
+**What Does /24 Mean?**
+
+The slash notation (/) indicates the number of network bits:
+- /24 = 24 network bits, 8 host bits
+- /16 = 16 network bits, 16 host bits
+- /30 = 30 network bits, 2 host bits
+
+**Quick Conversion Examples:**
+\`\`\`
+/8  = 255.0.0.0       = 11111111.00000000.00000000.00000000
+/16 = 255.255.0.0     = 11111111.11111111.00000000.00000000
+/24 = 255.255.255.0   = 11111111.11111111.11111111.00000000
+/25 = 255.255.255.128 = 11111111.11111111.11111111.10000000
+/32 = 255.255.255.255 = 11111111.11111111.11111111.11111111
+\`\`\`
+
+**The Pattern**: Each octet can have 0-8 bits set, giving us masks from /0 to /32.
+        `
+      },
+      {
+        type: "mask-ladder",
+        title: "The Subnet Mask Ladder",
+        content: `
+**The Complete CIDR Mask Reference**
+
+Here's the famous "mask ladder" - memorize the patterns and you'll subnet like a pro!
+
+\`\`\`
+CIDR | Decimal Mask      | Binary (Last Octet) | Hosts  | Networks
+-----|-------------------|--------------------|---------|---------
+/8   | 255.0.0.0        | 00000000           | 16.7M   | 1
+/9   | 255.128.0.0      | 10000000           | 8.4M    | 2
+/10  | 255.192.0.0      | 11000000           | 4.2M    | 4
+/11  | 255.224.0.0      | 11100000           | 2.1M    | 8
+/12  | 255.240.0.0      | 11110000           | 1M      | 16
+/13  | 255.248.0.0      | 11111000           | 524K    | 32
+/14  | 255.252.0.0      | 11111100           | 262K    | 64
+/15  | 255.254.0.0      | 11111110           | 131K    | 128
+/16  | 255.255.0.0      | 00000000           | 65,534  | 256
+/17  | 255.255.128.0    | 10000000           | 32,766  | 512
+/18  | 255.255.192.0    | 11000000           | 16,382  | 1K
+/19  | 255.255.224.0    | 11100000           | 8,190   | 2K
+/20  | 255.255.240.0    | 11110000           | 4,094   | 4K
+/21  | 255.255.248.0    | 11111000           | 2,046   | 8K
+/22  | 255.255.252.0    | 11111100           | 1,022   | 16K
+/23  | 255.255.254.0    | 11111110           | 510     | 32K
+/24  | 255.255.255.0    | 00000000           | 254     | 65K
+/25  | 255.255.255.128  | 10000000           | 126     | 131K
+/26  | 255.255.255.192  | 11000000           | 62      | 262K
+/27  | 255.255.255.224  | 11100000           | 30      | 524K
+/28  | 255.255.255.240  | 11110000           | 14      | 1M
+/29  | 255.255.255.248  | 11111000           | 6       | 2M
+/30  | 255.255.255.252  | 11111100           | 2       | 4M
+/31  | 255.255.255.254  | 11111110           | 0*      | 8M
+/32  | 255.255.255.255  | 11111111           | 0       | 16M
+\`\`\`
+
+**/31 is special**: Used for point-to-point links (RFC 3021)
+        `
+      },
+      {
+        type: "patterns",
+        title: "Patterns in the Mask Ladder",
+        content: `
+**Key Patterns to Remember:**
+
+**1. The Block Size Pattern**
+Each mask creates subnets of a specific size:
+- /24 = blocks of 256 addresses
+- /25 = blocks of 128 addresses  
+- /26 = blocks of 64 addresses
+- /27 = blocks of 32 addresses
+- /28 = blocks of 16 addresses
+- /29 = blocks of 8 addresses
+- /30 = blocks of 4 addresses
+
+**2. The Doubling Pattern**
+- Each bit you borrow doubles the number of subnets
+- Each bit you borrow halves the number of hosts
+- It's always a trade-off!
+
+**3. The Octet Boundaries**
+- /8, /16, /24 are "clean" boundaries (full octets)
+- These are easiest to work with mentally
+- Other masks require bit-level thinking
+
+**4. Common Real-World Masks**
+- /24: Standard LAN (254 hosts)
+- /25-/26: Department-sized networks
+- /27-/28: Small offices
+- /29: Small segments (6 hosts)
+- /30: Point-to-point links (2 hosts)
+- /32: Single host (host route)
+        `
+      },
+      {
+        type: "quick-math",
+        title: "Quick CIDR Math Tricks",
+        content: `
+**Finding Network Boundaries**
+
+For any /n mask, networks start at multiples of the block size:
+
+**/25 (block size 128):**
+- Networks: .0, .128
+
+**/26 (block size 64):**
+- Networks: .0, .64, .128, .192
+
+**/27 (block size 32):**
+- Networks: .0, .32, .64, .96, .128, .160, .192, .224
+
+**The Magic Formula:**
+\`\`\`
+Block Size = 2^(32 - mask_length)
+Usable Hosts = Block Size - 2
+\`\`\`
+
+**Examples:**
+- /28: Block = 2^(32-28) = 2^4 = 16
+- /28: Hosts = 16 - 2 = 14
+
+**Quick Host Counting:**
+- /24 = 2^8 - 2 = 254 hosts
+- /25 = 2^7 - 2 = 126 hosts
+- /26 = 2^6 - 2 = 62 hosts
+- /27 = 2^5 - 2 = 30 hosts
+- /28 = 2^4 - 2 = 14 hosts
+- /29 = 2^3 - 2 = 6 hosts
+- /30 = 2^2 - 2 = 2 hosts
+        `
+      },
+      {
+        type: "real-world",
+        title: "CIDR in Practice",
+        content: `
+**Scenario 1: Office Network Design**
+You have 192.168.1.0/24 and need:
+- Main office: 100 devices
+- Branch office: 50 devices  
+- Guest WiFi: 25 devices
+- Servers: 10 devices
+
+**Solution using CIDR:**
+- Main: 192.168.1.0/25 (126 hosts) ✓
+- Branch: 192.168.1.128/26 (62 hosts) ✓
+- Guest: 192.168.1.192/27 (30 hosts) ✓
+- Servers: 192.168.1.224/28 (14 hosts) ✓
+
+**Scenario 2: ISP Address Allocation**
+ISP has 10.0.0.0/8 and needs to allocate:
+- Large customer: 65,000 addresses → /16
+- Medium customer: 1,000 addresses → /22
+- Small customer: 250 addresses → /24
+
+**Allocation:**
+- Large: 10.1.0.0/16 (65,534 hosts)
+- Medium: 10.2.0.0/22 (1,022 hosts)
+- Small: 10.2.4.0/24 (254 hosts)
+
+**Scenario 3: Point-to-Point Links**
+Connecting routers needs only 2 addresses:
+- Old way: Waste a /24 (254 addresses)
+- CIDR way: Use /30 (2 usable addresses)
+- Modern way: Use /31 (both addresses usable)
+        `
+      },
+      {
+        type: "interactive-tool",
+        title: "CIDR Calculator",
+        component: "NetworkCalculator"
+      },
+      {
+        type: "common-mistakes",
+        title: "CIDR Pitfalls to Avoid",
+        content: `
+**Mistake 1: Forgetting the -2**
+- /24 has 256 addresses, but only 254 usable
+- Always subtract network and broadcast addresses
+- Exception: /31 and /32 have special rules
+
+**Mistake 2: Overlapping Subnets**
+\`\`\`
+Wrong:
+10.0.0.0/25 (10.0.0.0 - 10.0.0.127)
+10.0.0.64/26 (10.0.0.64 - 10.0.0.127) ← Overlaps!
+
+Right:
+10.0.0.0/25 (10.0.0.0 - 10.0.0.127)
+10.0.0.128/26 (10.0.0.128 - 10.0.0.191)
+\`\`\`
+
+**Mistake 3: Wrong Block Boundaries**
+- 192.168.1.50/27 is INVALID
+- /27 blocks start at 0, 32, 64, 96, 128, 160, 192, 224
+- Must use 192.168.1.32/27 or 192.168.1.64/27
+
+**Mistake 4: Mixing Notation**
+- Don't write "192.168.1.0/255.255.255.0"
+- Use either CIDR (/24) or dotted decimal
+- CIDR is preferred in modern networking
+        `
+      },
+      {
+        type: "summary",
+        title: "CIDR Mastery Achieved!",
+        content: `
+You now understand:
+- CIDR notation represents network bits with /n
+- The mask ladder shows all possible subnet masks
+- Each mask creates specific block sizes
+- Networks must align on block boundaries
+- Quick math tricks for finding hosts and networks
+
+CIDR gave us the flexibility to right-size every network. No more waste, no more rigid classes - just efficient, scalable networking.
+
+**Pro tip**: Print the mask ladder and keep it handy. With practice, you'll memorize the common masks (/24, /25, /26, /27, /28, /29, /30) and their properties.
+
+Next: Module 5 - Subnet Calculations, where we'll put CIDR to work solving real subnet problems!
+        `
+      }
+    ],
+    practice: {
+      title: "CIDR Notation Practice",
+      questions: [
+        {
+          question: "What subnet mask does /26 represent?",
+          hint: "26 bits set to 1, starting from the left",
+          answer: "255.255.255.192 (11111111.11111111.11111111.11000000)"
+        },
+        {
+          question: "How many usable host addresses in a /28 network?",
+          hint: "32 - 28 = 4 bits for hosts. Remember to subtract 2!",
+          answer: "14 hosts (2^4 - 2 = 16 - 2 = 14)"
+        },
+        {
+          question: "What CIDR notation represents subnet mask 255.255.248.0?",
+          hint: "Count the consecutive 1s from the left",
+          answer: "/21 (8 + 8 + 5 = 21 bits)"
+        },
+        {
+          question: "What are the valid network addresses for /26 subnets in 172.16.1.0/24?",
+          hint: "/26 has block size of 64",
+          answer: "172.16.1.0, 172.16.1.64, 172.16.1.128, 172.16.1.192"
+        },
+        {
+          question: "Why would you choose /30 for a point-to-point link?",
+          hint: "How many hosts do you need between two routers?",
+          answer: "It provides exactly 2 usable addresses, perfect for connecting two routers without waste"
+        }
+      ],
+      exercises: [
+        {
+          title: "CIDR Conversion Practice",
+          instructions: "Convert between CIDR and decimal notation",
+          problems: [
+            "Convert to CIDR: 255.255.255.128, 255.255.224.0, 255.252.0.0",
+            "Convert to decimal: /27, /20, /14, /30",
+            "List all /27 networks in 10.1.1.0/24",
+            "Calculate hosts per subnet for: /23, /25, /28, /29"
+          ]
+        },
+        {
+          title: "Network Planning with CIDR",
+          instructions: "Use CIDR to solve these network design problems",
+          problems: [
+            "You have 172.16.0.0/16. Divide it into 4 equal subnets. What mask?",
+            "Need 500 hosts per subnet. What's the smallest mask you can use?",
+            "Design: 192.168.10.0/24 for 3 departments (120, 60, 25 hosts)",
+            "How many /29 subnets fit in a /24? How many hosts total?"
+          ]
+        }
+      ]
+    },
+    keyTakeaways: [
+      "CIDR notation (/n) indicates the number of network bits",
+      "Each CIDR mask creates subnets of a specific block size",
+      "Networks must start on block boundaries (multiples of block size)",
+      "The mask ladder is your reference for all CIDR calculations",
+      "Common masks: /24 (254 hosts), /25 (126), /26 (62), /27 (30), /28 (14), /29 (6), /30 (2)"
+    ]
   }
 }
 
