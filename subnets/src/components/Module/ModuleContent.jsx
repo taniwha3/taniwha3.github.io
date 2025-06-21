@@ -24,61 +24,95 @@ function ModuleContent({ module }) {
               <AndVisualizer />
             ) : (
               <div className={styles.sectionContent}>
-                {section.content.split('\n\n').map((paragraph, pIndex) => {
-                  // Handle code blocks with triple backticks
-                  if (paragraph.includes('```')) {
-                    const parts = paragraph.split('```')
-                    return (
-                      <div key={pIndex}>
-                        {parts.map((part, partIndex) => {
-                          if (partIndex % 2 === 1) {
-                            // This is code
-                            return (
-                              <pre key={partIndex} className={styles.codeBlock}>
-                                <code>{part.trim()}</code>
-                              </pre>
-                            )
-                          } else if (part.trim()) {
-                            // This is regular text
-                            return <p key={partIndex}>{renderFormattedText(part.trim())}</p>
+                {(() => {
+                  // First, handle code blocks properly by not splitting them
+                  const content = section.content
+                  const codeBlockRegex = /```[\s\S]*?```/g
+                  const codeBlocks = []
+                  let lastIndex = 0
+                  let match
+                  
+                  // Extract code blocks and replace with placeholders
+                  while ((match = codeBlockRegex.exec(content)) !== null) {
+                    codeBlocks.push(match[0])
+                  }
+                  
+                  // Split content preserving code blocks
+                  const parts = []
+                  let tempContent = content
+                  let blockIndex = 0
+                  
+                  while (tempContent.includes('```')) {
+                    const startIdx = tempContent.indexOf('```')
+                    const endIdx = tempContent.indexOf('```', startIdx + 3) + 3
+                    
+                    if (startIdx > 0) {
+                      // Add text before code block
+                      parts.push({ type: 'text', content: tempContent.slice(0, startIdx) })
+                    }
+                    
+                    // Add code block
+                    parts.push({ 
+                      type: 'code', 
+                      content: tempContent.slice(startIdx + 3, endIdx - 3).trim() 
+                    })
+                    
+                    tempContent = tempContent.slice(endIdx)
+                  }
+                  
+                  // Add remaining text
+                  if (tempContent) {
+                    parts.push({ type: 'text', content: tempContent })
+                  }
+                  
+                  // Render parts
+                  return parts.map((part, index) => {
+                    if (part.type === 'code') {
+                      return (
+                        <pre key={index} className={styles.codeBlock}>
+                          <code>{part.content}</code>
+                        </pre>
+                      )
+                    } else {
+                      // Split text into paragraphs
+                      return part.content.split('\n\n').map((paragraph, pIndex) => {
+                        if (paragraph.trim()) {
+                          // Handle markdown-style formatting
+                          if (paragraph.trim().startsWith('**') && paragraph.trim().endsWith('**')) {
+                            return <h3 key={`${index}-${pIndex}`} className={styles.subheading}>{paragraph.slice(2, -2)}</h3>
                           }
-                          return null
-                        })}
-                      </div>
-                    )
-                  }
-                  
-                  // Handle markdown-style formatting
-                  if (paragraph.trim().startsWith('**') && paragraph.trim().endsWith('**')) {
-                    return <h3 key={pIndex} className={styles.subheading}>{paragraph.slice(2, -2)}</h3>
-                  }
-                  
-                  // Handle lists
-                  if (paragraph.includes('\n-')) {
-                    const items = paragraph.split('\n-').filter(item => item.trim())
-                    return (
-                      <ul key={pIndex} className={styles.list}>
-                        {items.map((item, iIndex) => (
-                          <li key={iIndex}>{renderFormattedText(iIndex === 0 ? item : '-' + item)}</li>
-                        ))}
-                      </ul>
-                    )
-                  }
-                  
-                  // Handle numbered lists
-                  if (paragraph.match(/^\d+\./)) {
-                    const items = paragraph.split(/\n(?=\d+\.)/)
-                    return (
-                      <ol key={pIndex} className={styles.numberedList}>
-                        {items.map((item, iIndex) => (
-                          <li key={iIndex}>{renderFormattedText(item.replace(/^\d+\.\s*/, ''))}</li>
-                        ))}
-                      </ol>
-                    )
-                  }
-                  
-                  return <p key={pIndex}>{renderFormattedText(paragraph)}</p>
-                })}
+                          
+                          // Handle lists
+                          if (paragraph.includes('\n-')) {
+                            const items = paragraph.split('\n-').filter(item => item.trim())
+                            return (
+                              <ul key={`${index}-${pIndex}`} className={styles.list}>
+                                {items.map((item, iIndex) => (
+                                  <li key={iIndex}>{renderFormattedText(iIndex === 0 ? item : '-' + item)}</li>
+                                ))}
+                              </ul>
+                            )
+                          }
+                          
+                          // Handle numbered lists
+                          if (paragraph.match(/^\d+\./)) {
+                            const items = paragraph.split(/\n(?=\d+\.)/)
+                            return (
+                              <ol key={`${index}-${pIndex}`} className={styles.numberedList}>
+                                {items.map((item, iIndex) => (
+                                  <li key={iIndex}>{renderFormattedText(item.replace(/^\d+\.\s*/, ''))}</li>
+                                ))}
+                              </ol>
+                            )
+                          }
+                          
+                          return <p key={`${index}-${pIndex}`}>{renderFormattedText(paragraph)}</p>
+                        }
+                        return null
+                      }).filter(Boolean)
+                    }
+                  })
+                })()}
               </div>
             )}
           </div>

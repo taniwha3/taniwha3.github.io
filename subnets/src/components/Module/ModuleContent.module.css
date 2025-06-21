@@ -251,7 +251,7 @@
 }
 
 .codeBlock code {
-  font-family: 'Courier New', Consolas, monospace;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
   font-size: 0.875rem;
   line-height: 1.5;
   color: #333;
@@ -259,6 +259,7 @@
   display: block;
   tab-size: 4;
   -moz-tab-size: 4;
+  unicode-bidi: plaintext;
 }
 
 @media (max-width: 768px) {

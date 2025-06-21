@@ -1233,6 +1233,2204 @@ Next: Module 5 - Subnet Calculations, where we'll put CIDR to work solving real 
       "The mask ladder is your reference for all CIDR calculations",
       "Common masks: /24 (254 hosts), /25 (126), /26 (62), /27 (30), /28 (14), /29 (6), /30 (2)"
     ]
+  },
+  
+  5: {
+    title: "Subnet Calculations",
+    sections: [
+      {
+        type: "introduction",
+        title: "Putting It All Together",
+        content: `
+You've learned binary, the AND operation, IP structure, and CIDR notation. Now it's time to combine these skills and become a subnet calculation master!
+
+Subnet calculations are the bread and butter of network engineering. Whether you're troubleshooting connectivity, designing a network, or taking a certification exam, these calculations are essential.
+
+**The Core Questions We'll Answer:**
+- What's the network address?
+- What's the broadcast address?
+- What's the usable host range?
+- How many hosts can this subnet support?
+- Is this IP in the same subnet as that IP?
+        `
+      },
+      {
+        type: "method",
+        title: "The Universal Subnet Formula",
+        content: `
+**The 5-Step Process for Any Subnet Calculation:**
+
+**Step 1: Convert CIDR to Binary Mask**
+- /24 → 11111111.11111111.11111111.00000000
+- Count the 1s to verify
+
+**Step 2: Find the Block Size**
+- Look at the last octet with both 1s and 0s
+- Block size = 256 - decimal value of that octet
+- Or use: Block size = 2^(host bits)
+
+**Step 3: Find Network Address**
+- IP AND Mask = Network
+- Or find the block boundary below the IP
+
+**Step 4: Find Broadcast Address**
+- Network + Block Size - 1 = Broadcast
+- All host bits set to 1
+
+**Step 5: Find Usable Range**
+- First Host = Network + 1
+- Last Host = Broadcast - 1
+- Total Hosts = Block Size - 2
+        `
+      },
+      {
+        type: "example-walkthrough",
+        title: "Complete Example: 192.168.50.130/26",
+        content: `
+Let's work through a complete example step by step:
+
+**Given:** 192.168.50.130/26
+
+**Step 1: Convert /26 to Binary**
+\`\`\`
+/26 = 26 ones, 6 zeros
+11111111.11111111.11111111.11000000
+= 255.255.255.192
+\`\`\`
+
+**Step 2: Find Block Size**
+\`\`\`
+Last octet: 11000000 = 192
+Block size = 256 - 192 = 64
+Or: 2^6 = 64 (6 host bits)
+\`\`\`
+
+**Step 3: Find Network Address**
+\`\`\`
+/26 networks start at: 0, 64, 128, 192...
+130 is between 128 and 192
+Network: 192.168.50.128
+\`\`\`
+
+**Step 4: Find Broadcast**
+\`\`\`
+Network + Block Size - 1
+128 + 64 - 1 = 191
+Broadcast: 192.168.50.191
+\`\`\`
+
+**Step 5: Usable Range**
+\`\`\`
+First Host: 192.168.50.129
+Last Host: 192.168.50.190
+Total Hosts: 64 - 2 = 62
+\`\`\`
+
+**Summary for 192.168.50.130/26:**
+- Network: 192.168.50.128
+- Broadcast: 192.168.50.191
+- Usable: 192.168.50.129 - 192.168.50.190
+- Hosts: 62
+        `
+      },
+      {
+        type: "quick-methods",
+        title: "Speed Tricks for Common Masks",
+        content: `
+**For /24, /16, /8 (Clean Boundaries):**
+- Super easy - just zero out the host octets
+- 172.16.50.100/16 → Network: 172.16.0.0
+- Broadcast: Set host octets to 255
+- 172.16.50.100/16 → Broadcast: 172.16.255.255
+
+**For /25 (Half Networks):**
+- Two networks: .0 and .128
+- If IP < 128: Network = .0, Broadcast = .127
+- If IP ≥ 128: Network = .128, Broadcast = .255
+
+**For /26 (Quarter Networks):**
+- Four networks: .0, .64, .128, .192
+- Find which quarter your IP is in
+- Add 63 for broadcast
+
+**For /27 (Eighth Networks):**
+- Eight networks: .0, .32, .64, .96, .128, .160, .192, .224
+- Find which eighth, add 31 for broadcast
+
+**The Pattern:**
+- /25: Count by 128 (2 subnets)
+- /26: Count by 64 (4 subnets)
+- /27: Count by 32 (8 subnets)
+- /28: Count by 16 (16 subnets)
+- /29: Count by 8 (32 subnets)
+- /30: Count by 4 (64 subnets)
+        `
+      },
+      {
+        type: "interactive-tool",
+        title: "Subnet Calculator",
+        component: "NetworkCalculator"
+      },
+      {
+        type: "same-network",
+        title: "Are These IPs in the Same Network?",
+        content: `
+**The Same-Network Test:**
+
+To check if two IPs are in the same subnet:
+1. Calculate the network address for each
+2. If they match, they're in the same subnet
+3. If different, they need a router to communicate
+
+**Example 1: Can they talk directly?**
+- Host A: 192.168.1.50/24
+- Host B: 192.168.1.200/24
+
+\`\`\`
+Host A network: 192.168.1.0
+Host B network: 192.168.1.0
+Same network? YES ✓
+\`\`\`
+
+**Example 2: Can they talk directly?**
+- Host A: 10.0.5.100/25
+- Host B: 10.0.5.200/25
+
+\`\`\`
+Host A: 10.0.5.100 → Network: 10.0.5.0 (0-127)
+Host B: 10.0.5.200 → Network: 10.0.5.128 (128-255)
+Same network? NO ✗ (need router)
+\`\`\`
+
+**Example 3: Tricky one!**
+- Host A: 172.16.100.50/22
+- Host B: 172.16.99.200/22
+
+\`\`\`
+/22 = 255.255.252.0 (block size in 3rd octet = 4)
+Host A: 172.16.100.x → Network: 172.16.100.0
+Host B: 172.16.99.x → Network: 172.16.96.0
+Same network? NO ✗
+\`\`\`
+
+**Remember:** The subnet mask determines the network boundary, not our human assumptions!
+        `
+      },
+      {
+        type: "variable-masks",
+        title: "Working with Non-Octet Boundaries",
+        content: `
+When the mask doesn't fall on an octet boundary (/8, /16, /24), calculations get trickier:
+
+**Example: 10.50.100.200/20**
+
+**Step 1: Identify the "Interesting Octet"**
+\`\`\`
+/20 = 255.255.240.0
+Third octet (240) is interesting
+\`\`\`
+
+**Step 2: Calculate Block Size**
+\`\`\`
+256 - 240 = 16
+Networks increment by 16 in 3rd octet
+\`\`\`
+
+**Step 3: Find Network**
+\`\`\`
+3rd octet = 100
+100 ÷ 16 = 6 remainder 4
+Network starts at: 6 × 16 = 96
+Network: 10.50.96.0/20
+\`\`\`
+
+**Step 4: Find Broadcast**
+\`\`\`
+Next network: 10.50.112.0
+Broadcast: 10.50.111.255
+\`\`\`
+
+**Step 5: Summary**
+\`\`\`
+Network: 10.50.96.0
+First Host: 10.50.96.1
+Last Host: 10.50.111.254
+Broadcast: 10.50.111.255
+Hosts: 4094 (16 × 256 - 2)
+\`\`\`
+
+**Pro Tip:** The "interesting octet" is where the binary mask changes from 1s to 0s!
+        `
+      },
+      {
+        type: "practice-problems",
+        title: "Guided Practice Problems",
+        content: `
+**Problem 1: 192.168.200.139/28**
+
+Try it yourself first, then check the solution below.
+
+**Solution:**
+\`\`\`
+/28 = 255.255.255.240
+Block size = 16
+139 ÷ 16 = 8 remainder 11
+Network: 192.168.200.128
+Broadcast: 192.168.200.143
+Usable: .129 - .142 (14 hosts)
+\`\`\`
+
+**Problem 2: 172.31.80.201/21**
+
+**Solution:**
+\`\`\`
+/21 = 255.255.248.0
+Block size in 3rd octet = 8
+80 ÷ 8 = 10 remainder 0
+Network: 172.31.80.0
+Broadcast: 172.31.87.255
+Usable: 172.31.80.1 - 172.31.87.254 (2046 hosts)
+\`\`\`
+
+**Problem 3: Are 10.1.100.50/23 and 10.1.101.200/23 in the same subnet?**
+
+**Solution:**
+\`\`\`
+/23 = 255.255.254.0
+Block size in 3rd octet = 2
+100 ÷ 2 = 50 (even) → Network: 10.1.100.0
+101 ÷ 2 = 50 remainder 1 → Network: 10.1.100.0
+Same network? YES ✓
+\`\`\`
+        `
+      },
+      {
+        type: "common-exam-questions",
+        title: "Exam-Style Questions",
+        content: `
+**Question Types You'll See:**
+
+**1. "What is the valid host range?"**
+- Calculate network and broadcast
+- First host = Network + 1
+- Last host = Broadcast - 1
+
+**2. "Which subnet does this IP belong to?"**
+- Find the network address using block size
+- That's your answer!
+
+**3. "How many subnets and hosts?"**
+- Subnets = 2^(borrowed bits)
+- Hosts per subnet = 2^(host bits) - 2
+
+**4. "What is the next subnet?"**
+- Current network + block size = Next network
+
+**5. "Is this a valid host address?"**
+- Cannot be network address (all host bits = 0)
+- Cannot be broadcast (all host bits = 1)
+- Must be within valid range
+
+**Time-Saving Tip:** Memorize powers of 2 up to 2^10 (1024) for quick calculations!
+        `
+      },
+      {
+        type: "troubleshooting",
+        title: "Real-World Troubleshooting",
+        content: `
+**Scenario: "I can't ping the server!"**
+
+Your IP: 192.168.1.100/25
+Server: 192.168.1.200/24
+
+**Investigation:**
+\`\`\`
+Your network: 192.168.1.0/25 (0-127)
+Your view: Server is in different subnet!
+
+Server network: 192.168.1.0/24 (0-255)
+Server view: You're in the same subnet!
+\`\`\`
+
+**Problem:** Mismatched subnet masks!
+- You think server is in different network
+- Server thinks you're in same network
+- Result: Asymmetric routing issues
+
+**Solution:** Fix subnet masks to match
+
+**Lesson:** Always verify subnet masks match on all devices in the same network segment!
+        `
+      },
+      {
+        type: "summary",
+        title: "Subnet Calculation Mastery!",
+        content: `
+You can now:
+- Calculate any network and broadcast address
+- Find usable host ranges quickly
+- Determine if IPs are in the same subnet
+- Work with any subnet mask (/8 to /30)
+- Troubleshoot subnet mask mismatches
+
+**Your Calculation Toolkit:**
+1. Block size method for quick math
+2. Binary AND for verification
+3. Powers of 2 for host counting
+4. Boundary checking for network membership
+
+**Remember:** Practice makes perfect. The more calculations you do, the faster you'll become. Soon, you'll be doing /24 and /25 calculations in your head!
+
+Next: Module 6 - VLSM Design, where we'll create efficient, scalable networks!
+        `
+      }
+    ],
+    practice: {
+      title: "Subnet Calculation Practice",
+      questions: [
+        {
+          question: "What is the network address for 192.168.75.150/27?",
+          hint: "/27 has block size 32. Which multiple of 32 is 150 closest to?",
+          answer: "192.168.75.128 (150 falls in the range 128-159)"
+        },
+        {
+          question: "What is the broadcast address for 10.10.10.100/28?",
+          hint: "Find the network first, then add block size minus 1",
+          answer: "10.10.10.111 (Network is 10.10.10.96, block size 16, so 96+15=111)"
+        },
+        {
+          question: "How many usable hosts in 172.16.0.0/22?",
+          hint: "/22 means 10 host bits. Remember to subtract 2!",
+          answer: "1022 hosts (2^10 - 2 = 1024 - 2 = 1022)"
+        },
+        {
+          question: "Are 192.168.1.50/26 and 192.168.1.100/26 in the same subnet?",
+          hint: "/26 divides the last octet into 4 parts",
+          answer: "No. 50 is in 192.168.1.0/26 (0-63), 100 is in 192.168.1.64/26 (64-127)"
+        },
+        {
+          question: "What's the last usable host in 10.20.30.0/29?",
+          hint: "Find broadcast, then subtract 1",
+          answer: "10.20.30.6 (Broadcast is .7, last host is .6)"
+        }
+      ],
+      exercises: [
+        {
+          title: "Complete Subnet Analysis",
+          instructions: "For each IP/mask, find network, broadcast, first host, last host, and total hosts",
+          problems: [
+            "Calculate all values for: 192.168.100.100/25",
+            "Calculate all values for: 10.50.75.200/20",
+            "Calculate all values for: 172.20.150.45/30",
+            "Calculate all values for: 192.168.1.1/32"
+          ]
+        },
+        {
+          title: "Same Network Challenge",
+          instructions: "Determine if these IP pairs can communicate without a router",
+          problems: [
+            "10.0.0.50/24 and 10.0.0.200/24",
+            "172.16.50.100/23 and 172.16.51.200/23",
+            "192.168.1.126/25 and 192.168.1.130/25",
+            "10.10.10.10/30 and 10.10.10.11/30"
+          ]
+        }
+      ]
+    },
+    keyTakeaways: [
+      "The 5-step process works for any subnet calculation",
+      "Block size is key - it determines network boundaries",
+      "Network address = IP AND Mask (or find the block boundary)",
+      "Broadcast = Network + Block Size - 1",
+      "Usable hosts = First Host (.1) to Last Host (broadcast - 1)",
+      "Same subnet mask ≠ same network - check the boundaries!"
+    ]
+  },
+  
+  6: {
+    title: "VLSM Design and Implementation",
+    sections: [
+      {
+        type: "introduction",
+        title: "The Art of Efficient Network Design",
+        content: `
+Remember the old classful days? You'd get a Class C (/24) network with 254 hosts, even if you only needed 10. That's like buying a bus when you need a car!
+
+VLSM (Variable Length Subnet Masking) lets you create different-sized subnets from a single network block. It's the key to efficient, scalable network design.
+
+**Why VLSM Matters:**
+- Prevents IP address waste
+- Allows right-sized subnets
+- Enables hierarchical network design
+- Required for modern routing protocols (OSPF, EIGRP)
+- Essential for IPv4 conservation
+        `
+      },
+      {
+        type: "concept",
+        title: "VLSM Fundamentals",
+        content: `
+**The Golden Rules of VLSM:**
+
+**Rule 1: Largest First**
+Always allocate subnets from largest to smallest. This prevents fragmentation and ensures all subnets fit.
+
+**Rule 2: Powers of 2**
+Subnet sizes must be powers of 2 (2, 4, 8, 16, 32, 64, 128, 256...).
+
+**Rule 3: Boundary Alignment**
+Subnets must start on their natural boundaries:
+- /25 subnets start at .0 or .128
+- /26 subnets start at .0, .64, .128, or .192
+- /27 subnets start at multiples of 32
+
+**Rule 4: No Overlaps**
+Once you allocate an address range, it's taken. No overlapping allowed!
+
+**Rule 5: Document Everything**
+Keep a subnet allocation table. Your future self will thank you.
+        `
+      },
+      {
+        type: "methodology",
+        title: "The VLSM Design Process",
+        content: `
+**Step-by-Step VLSM Design:**
+
+**Step 1: List Requirements**
+- Identify all subnets needed
+- Count hosts for each subnet
+- Add growth margin (usually 20-50%)
+
+**Step 2: Calculate Subnet Sizes**
+- Round up to nearest power of 2
+- Add 2 for network/broadcast
+- Determine required mask
+
+**Step 3: Order by Size**
+- Sort subnets largest to smallest
+- This is critical for success!
+
+**Step 4: Allocate Sequentially**
+- Start with your given network
+- Assign largest subnet first
+- Continue with next largest
+- Track used/available space
+
+**Step 5: Verify and Document**
+- Check for overlaps
+- Verify all subnets fit
+- Create allocation table
+        `
+      },
+      {
+        type: "example-scenario",
+        title: "Complete VLSM Example: Small Business Network",
+        content: `
+**Scenario:** Design network for 192.168.1.0/24
+
+**Requirements:**
+- Sales: 50 hosts
+- Engineering: 25 hosts
+- Management: 10 hosts
+- Server Room: 10 hosts
+- Link to ISP: 2 hosts
+- Link to Branch: 2 hosts
+
+**Step 1: Calculate Sizes with Growth**
+\`\`\`
+Sales: 50 + growth → 60 hosts → 64 addresses (/26)
+Engineering: 25 + growth → 30 hosts → 32 addresses (/27)
+Management: 10 + growth → 14 hosts → 16 addresses (/28)
+Servers: 10 + growth → 14 hosts → 16 addresses (/28)
+ISP Link: 2 hosts → 4 addresses (/30)
+Branch Link: 2 hosts → 4 addresses (/30)
+\`\`\`
+
+**Step 2: Order by Size**
+1. Sales: /26 (64 addresses)
+2. Engineering: /27 (32 addresses)
+3. Management: /28 (16 addresses)
+4. Servers: /28 (16 addresses)
+5. ISP Link: /30 (4 addresses)
+6. Branch Link: /30 (4 addresses)
+
+**Step 3: Allocate Subnets**
+\`\`\`
+Sales: 192.168.1.0/26 (0-63)
+Engineering: 192.168.1.64/27 (64-95)
+Management: 192.168.1.96/28 (96-111)
+Servers: 192.168.1.112/28 (112-127)
+ISP Link: 192.168.1.128/30 (128-131)
+Branch Link: 192.168.1.132/30 (132-135)
+
+Unused: 192.168.1.136/29 (136-143)
+        192.168.1.144/28 (144-159)
+        192.168.1.160/27 (160-191)
+        192.168.1.192/26 (192-255)
+\`\`\`
+
+**Result:** Efficient use with room for 4 more subnets!
+        `
+      },
+      {
+        type: "visual-allocation",
+        title: "Visualizing VLSM Allocation",
+        content: `
+**Visual Block Diagram of Our Example:**
+
+\`\`\`
+192.168.1.0/24 (256 addresses)
+├── 0-63:    Sales (/26) ████████████████
+├── 64-95:   Engineering (/27) ████████
+├── 96-111:  Management (/28) ████
+├── 112-127: Servers (/28) ████
+├── 128-131: ISP Link (/30) █
+├── 132-135: Branch Link (/30) █
+└── 136-255: Available (120 addresses) ░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+\`\`\`
+
+**Key Observations:**
+- Largest subnets allocated first
+- No wasted space between allocations
+- Plenty of room for growth
+- Easy to visualize and understand
+        `
+      },
+      {
+        type: "complex-scenario",
+        title: "Enterprise VLSM Design",
+        content: `
+**Scenario:** Regional office with 10.10.0.0/16
+
+**Requirements:**
+- Headquarters: 2000 hosts
+- Manufacturing: 1000 hosts
+- Sales Floor: 500 hosts
+- R&D Lab: 250 hosts
+- Guest WiFi: 200 hosts
+- DMZ Servers: 50 hosts
+- Management: 25 hosts
+- 10 Point-to-point links
+
+**Solution Process:**
+
+**1. Calculate Masks:**
+\`\`\`
+HQ: 2000 → 2048 → /21 (2046 hosts)
+Mfg: 1000 → 1024 → /22 (1022 hosts)
+Sales: 500 → 512 → /23 (510 hosts)
+R&D: 250 → 256 → /24 (254 hosts)
+Guest: 200 → 256 → /24 (254 hosts)
+DMZ: 50 → 64 → /26 (62 hosts)
+Mgmt: 25 → 32 → /27 (30 hosts)
+Links: 10 × /30 (2 hosts each)
+\`\`\`
+
+**2. Allocation Table:**
+\`\`\`
+10.10.0.0/21   - Headquarters (0.0-7.255)
+10.10.8.0/22   - Manufacturing (8.0-11.255)
+10.10.12.0/23  - Sales Floor (12.0-13.255)
+10.10.14.0/24  - R&D Lab
+10.10.15.0/24  - Guest WiFi
+10.10.16.0/26  - DMZ Servers
+10.10.16.64/27 - Management
+10.10.16.96/30 - Link 1
+10.10.16.100/30 - Link 2
+... (continuing for all links)
+\`\`\`
+
+**Summary:** Used only 10.10.0.0 - 10.10.16.135, leaving 10.10.16.136 - 10.10.255.255 available!
+        `
+      },
+      {
+        type: "interactive-tool",
+        title: "VLSM Calculator",
+        component: "NetworkCalculator"
+      },
+      {
+        type: "common-mistakes",
+        title: "VLSM Pitfalls to Avoid",
+        content: `
+**Mistake 1: Not Sorting by Size**
+\`\`\`
+Wrong: Allocating randomly
+/24, /30, /26, /28... ❌ Creates gaps!
+
+Right: Largest to smallest
+/24, /26, /28, /30... ✓ Efficient packing
+\`\`\`
+
+**Mistake 2: Forgetting Growth**
+- Current need: 50 hosts
+- Allocate: /26 (62 hosts) ❌ No room!
+- Better: /25 (126 hosts) ✓ Room to grow
+
+**Mistake 3: Wrong Boundaries**
+\`\`\`
+Wrong: 192.168.1.50/27 ❌ Invalid start
+Right: 192.168.1.32/27 ✓ Correct boundary
+\`\`\`
+
+**Mistake 4: Overlapping Subnets**
+- Always check your math
+- Use a subnet calculator to verify
+- Keep detailed documentation
+
+**Mistake 5: Wasting Point-to-Point Links**
+- Don't use /24 for router links!
+- Use /30 (or /31 for modern equipment)
+- Save addresses for host subnets
+        `
+      },
+      {
+        type: "best-practices",
+        title: "VLSM Best Practices",
+        content: `
+**1. Planning Standards**
+- Always add 20-50% growth margin
+- Reserve space for future subnets
+- Group related subnets together
+- Use consistent naming schemes
+
+**2. Documentation Template**
+\`\`\`
+Subnet Name: [Department/Purpose]
+Network: [Network Address]/[Mask]
+Range: [First IP] - [Last IP]
+Gateway: [Usually first or last host]
+VLAN: [VLAN ID if applicable]
+Purpose: [Detailed description]
+Allocated: [Date]
+\`\`\`
+
+**3. Address Hierarchy**
+\`\`\`
+10.0.0.0/8 - Enterprise
+├── 10.1.0.0/16 - Region 1
+│   ├── 10.1.0.0/24 - Site A
+│   └── 10.1.1.0/24 - Site B
+└── 10.2.0.0/16 - Region 2
+    ├── 10.2.0.0/24 - Site C
+    └── 10.2.1.0/24 - Site D
+\`\`\`
+
+**4. Special Allocations**
+- Reserve .1 for gateways
+- Reserve last /24 for network infrastructure
+- Keep management subnets separate
+- Plan for summarization
+
+**5. Tools and Verification**
+- Use subnet calculators
+- Verify with 'show ip route'
+- Test with ping/traceroute
+- Monitor utilization
+        `
+      },
+      {
+        type: "real-world-tips",
+        title: "Tips from the Field",
+        content: `
+**Common Wisdom from the Field:**
+
+These are typical practices and advice you'll hear from experienced network engineers:
+
+**Always Leave Room**
+Best practice: Allocate only 50% of available space initially. Networks grow faster than expected, and you'll need room for new subnets.
+
+**Document Everything**
+A VLSM design without documentation is a time bomb. Future engineers (including yourself) need to understand the allocation logic.
+
+**Think in Blocks**
+Visualize subnets as blocks that must fit together like Tetris pieces. Always place largest blocks first to avoid fragmentation.
+
+**Plan for Summarization**
+Good VLSM design enables efficient route summarization. Keep geographic regions and departments in contiguous address blocks.
+
+**Test Before Production**
+Always validate your design in a lab or with subnet calculators. Check for overlaps, verify routing, and test growth scenarios.
+        `
+      },
+      {
+        type: "summary",
+        title: "VLSM Mastery Achieved!",
+        content: `
+You now have the skills to:
+- Design efficient multi-subnet networks
+- Allocate addresses without waste
+- Plan for growth and changes
+- Avoid common VLSM mistakes
+- Document designs professionally
+
+**Your VLSM Toolkit:**
+1. Requirements gathering template
+2. Largest-first allocation method
+3. Boundary alignment rules
+4. Documentation standards
+5. Verification procedures
+
+**Remember:** VLSM is about efficient resource use. Every saved address matters in our IPv4-constrained world!
+
+Next: Module 7 - Routing and Subnets, where we'll see how routers use our subnet designs!
+        `
+      }
+    ],
+    practice: {
+      title: "VLSM Design Practice",
+      questions: [
+        {
+          question: "You have 172.16.1.0/24. Which subnet should you allocate first: 30 hosts or 60 hosts?",
+          hint: "Remember the largest-first rule",
+          answer: "60 hosts first. Allocate 172.16.1.0/26 (64 addresses), then 172.16.1.64/27 (32 addresses) for the 30 hosts."
+        },
+        {
+          question: "How many /30 subnets can you create from a /27 network?",
+          hint: "/27 has 32 addresses, /30 has 4 addresses",
+          answer: "8 subnets (/27 = 32 addresses, /30 = 4 addresses, 32÷4 = 8)"
+        },
+        {
+          question: "What's wrong with this allocation: 10.1.1.0/26, then 10.1.1.32/27?",
+          hint: "Check the ranges for overlap",
+          answer: "Overlap! /26 uses 0-63, but the /27 starts at 32. The /27 should start at 64."
+        },
+        {
+          question: "You need subnets for 100, 50, and 25 hosts from 192.168.10.0/24. What masks?",
+          hint: "Round up to powers of 2, add 2 for network/broadcast",
+          answer: "/25 for 100 hosts (128 addresses), /26 for 50 hosts (64 addresses), /27 for 25 hosts (32 addresses)"
+        },
+        {
+          question: "Why is documentation critical in VLSM?",
+          hint: "Think about troubleshooting and future changes",
+          answer: "Without documentation, it's nearly impossible to know which addresses are allocated, available, or reserved. This leads to conflicts and inefficient use."
+        }
+      ],
+      exercises: [
+        {
+          title: "VLSM Design Challenge",
+          instructions: "Design a complete VLSM scheme for these scenarios",
+          problems: [
+            "Design for 192.168.100.0/24: Admin (25), Sales (50), Guest (15), 3 router links",
+            "Design for 10.50.0.0/22: Building A (200), Building B (150), Building C (100), DMZ (25)",
+            "Design for 172.20.0.0/23: Main Office (120), Branch 1 (60), Branch 2 (40), 5 WAN links",
+            "Create a growth plan: Current 192.168.1.0/24 with 3 subnets, expect to double in 2 years"
+          ]
+        },
+        {
+          title: "VLSM Troubleshooting",
+          instructions: "Find and fix the problems in these VLSM designs",
+          problems: [
+            "Overlapping subnets: 10.1.0.0/25 and 10.1.0.64/26 - what's wrong?",
+            "Inefficient design: /24 for 5 hosts, /30 for 100 hosts - how to fix?",
+            "Can't add new subnet: Used /24, /25, /26 randomly - why is space fragmented?",
+            "Route summarization broken: Sites at 10.1.1.0/24, 10.1.5.0/24, 10.1.3.0/24 - better design?"
+          ]
+        }
+      ]
+    },
+    keyTakeaways: [
+      "VLSM allows different-sized subnets from one network block",
+      "Always allocate from largest to smallest subnet",
+      "Subnets must align on proper boundaries (powers of 2)",
+      "Good documentation is essential for VLSM success",
+      "Plan for 20-50% growth to avoid future problems",
+      "Efficient VLSM design conserves precious IPv4 addresses"
+    ]
+  },
+  
+  7: {
+    title: "Routing and Subnets",
+    sections: [
+      {
+        type: "introduction",
+        title: "How Routers Use Your Subnet Design",
+        content: `
+You've mastered subnet calculations and VLSM design. But how do routers actually use this information? Understanding routing is the bridge between subnet theory and real-world networking.
+
+Routers are like smart postal workers - they look at destination addresses and decide the best path for delivery. Your subnet design directly impacts how efficiently they can do their job.
+
+**What You'll Learn:**
+- How routers make forwarding decisions
+- The relationship between subnets and routing tables
+- Route summarization for efficiency
+- How subnet design affects network performance
+- Common routing protocols and subnets
+        `
+      },
+      {
+        type: "concept",
+        title: "Routing Fundamentals",
+        content: `
+**How Routers Think:**
+
+**1. Destination-Based Forwarding**
+Routers don't care about source addresses for forwarding. They only look at where packets are going.
+
+**2. Longest Match Wins**
+When multiple routes match, the most specific (longest prefix) wins:
+\`\`\`
+10.1.1.0/24 (more specific) beats
+10.1.0.0/16 (less specific) beats  
+10.0.0.0/8  (least specific)
+\`\`\`
+
+**3. The Routing Table**
+A router's brain - contains:
+- Destination networks
+- Next-hop addresses
+- Exit interfaces
+- Metrics (distance/cost)
+
+**4. Connected vs Remote**
+- Connected: Subnets directly attached to router interfaces
+- Remote: Subnets learned via routing protocols or static routes
+
+**5. The Forwarding Process**
+1. Packet arrives
+2. Extract destination IP
+3. Search routing table for match
+4. Use longest match if multiple
+5. Forward to next-hop or drop
+        `
+      },
+      {
+        type: "routing-table",
+        title: "Understanding Routing Tables",
+        content: `
+**Sample Routing Table:**
+\`\`\`
+C    192.168.1.0/24  is directly connected, GigabitEthernet0/0
+C    192.168.2.0/24  is directly connected, GigabitEthernet0/1
+S    192.168.3.0/24  [1/0] via 192.168.2.2
+O    10.0.0.0/8      [110/10] via 192.168.1.254
+S    0.0.0.0/0       [1/0] via 203.0.113.1
+\`\`\`
+
+**Reading the Table:**
+- **C** = Connected (directly attached subnet)
+- **S** = Static (manually configured route)
+- **O** = OSPF (dynamically learned route)
+- **[110/10]** = [Administrative Distance/Metric]
+- **via** = Next-hop IP address
+
+**How Subnets Appear:**
+\`\`\`
+# Your subnet design becomes routing entries:
+Subnet Design:           Routing Table:
+192.168.1.0/26    →     C  192.168.1.0/26
+192.168.1.64/26   →     C  192.168.1.64/26
+192.168.1.128/25  →     C  192.168.1.128/25
+\`\`\`
+
+**The router knows exactly which interface serves each subnet!**
+        `
+      },
+      {
+        type: "route-summarization",
+        title: "Route Summarization Magic",
+        content: `
+**What is Route Summarization?**
+
+Combining multiple smaller routes into one larger route. It's like saying "all houses on Elm Street" instead of listing each house number.
+
+**Example: Summarizing Four Subnets**
+\`\`\`
+Detailed Routes:
+172.16.0.0/24
+172.16.1.0/24
+172.16.2.0/24
+172.16.3.0/24
+
+Summarized Route:
+172.16.0.0/22 (covers all four!)
+\`\`\`
+
+**How to Find the Summary:**
+1. Convert to binary
+2. Find common bits from left
+3. Count common bits for mask
+4. Set remaining bits to 0
+
+**Binary Analysis:**
+\`\`\`
+172.16.0.0  = 10101100.00010000.00000000.00000000
+172.16.1.0  = 10101100.00010000.00000001.00000000
+172.16.2.0  = 10101100.00010000.00000010.00000000
+172.16.3.0  = 10101100.00010000.00000011.00000000
+                                  ↑
+Common bits: 22 (stops here)
+Summary: 172.16.0.0/22
+\`\`\`
+
+**Benefits:**
+- Smaller routing tables
+- Faster lookups
+- Less memory usage
+- Reduced routing updates
+- Better scalability
+        `
+      },
+      {
+        type: "interactive-tool",
+        title: "Route Calculator",
+        component: "NetworkCalculator"
+      },
+      {
+        type: "subnet-routing-relationship",
+        title: "How Subnet Design Affects Routing",
+        content: `
+**Good Design = Efficient Routing**
+
+**Scenario 1: Hierarchical Design (Good)**
+
+\`\`\`
+Region 1: 10.1.0.0/16
+├── Site A: 10.1.0.0/24
+├── Site B: 10.1.1.0/24
+└── Site C: 10.1.2.0/24
+
+Region 2: 10.2.0.0/16
+├── Site D: 10.2.0.0/24
+├── Site E: 10.2.1.0/24
+└── Site F: 10.2.2.0/24
+\`\`\`
+
+**Result:** Can advertise just 10.1.0.0/16 and 10.2.0.0/16!
+
+**Scenario 2: Random Design (Bad)**
+\`\`\`
+Site A: 10.1.0.0/24
+Site B: 10.5.7.0/24
+Site C: 10.2.15.0/24
+Site D: 10.9.3.0/24
+Site E: 10.3.22.0/24
+Site F: 10.7.18.0/24
+\`\`\`
+
+**Result:** Must advertise all 6 routes individually!
+
+**Impact on Routing:**
+- Good design: 2 routes in core routing table
+- Bad design: 6 routes in core routing table
+- 3x more memory, processing, and updates!
+        `
+      },
+      {
+        type: "routing-decisions",
+        title: "Router Decision Examples",
+        content: `
+**Example 1: Where Does This Packet Go?**
+
+Packet destination: 192.168.1.100
+
+\`\`\`
+Routing Table:
+192.168.1.0/24   via 10.0.0.2
+192.168.1.0/25   via 10.0.0.3
+192.168.0.0/16   via 10.0.0.4
+0.0.0.0/0        via 10.0.0.1
+\`\`\`
+
+**Router's Decision Process:**
+1. Does 192.168.1.100 match 192.168.1.0/24? YES ✓
+2. Does 192.168.1.100 match 192.168.1.0/25? YES ✓
+3. Does 192.168.1.100 match 192.168.0.0/16? YES ✓
+4. Does 192.168.1.100 match 0.0.0.0/0? YES ✓
+
+**Winner: 192.168.1.0/25** (longest match - /25 beats /24 beats /16 beats /0)
+**Forward to: 10.0.0.3**
+
+**Example 2: No Specific Route**
+
+Packet destination: 8.8.8.8
+
+\`\`\`
+Routing Table:
+192.168.1.0/24   via 10.0.0.2
+10.0.0.0/8       via 10.0.0.3
+0.0.0.0/0        via 10.0.0.1
+\`\`\`
+
+**Decision:** Only 0.0.0.0/0 matches → Forward to 10.0.0.1 (default gateway)
+        `
+      },
+      {
+        type: "routing-protocols",
+        title: "Routing Protocols and Subnets",
+        content: `
+**How Different Protocols Handle Subnets:**
+
+**RIP (Routing Information Protocol)**
+- Classful by default (RIPv1)
+- RIPv2 supports VLSM
+- Advertises all known subnets
+- Limited to 15 hops
+
+**OSPF (Open Shortest Path First)**
+- Full VLSM support
+- Understands subnet masks
+- Can summarize at area boundaries
+- Scales to large networks
+
+**EIGRP (Enhanced Interior Gateway Routing Protocol)**
+- Full VLSM support
+- Automatic summarization (can be disabled)
+- Very efficient updates
+- Cisco proprietary
+
+**BGP (Border Gateway Protocol)**
+- Internet's routing protocol
+- Full CIDR support
+- Aggregates routes for efficiency
+- Policy-based routing
+
+**Static Routing**
+- Manual subnet configuration
+- No automatic updates
+- Perfect for small, stable networks
+- You control every route
+
+**Important:** Modern protocols (OSPF, EIGRP, BGP) understand VLSM. Old protocols (RIPv1) don't!
+        `
+      },
+      {
+        type: "troubleshooting-routing",
+        title: "Troubleshooting Subnet Routing Issues",
+        content: `
+**Common Problems and Solutions:**
+
+**Problem 1: Asymmetric Routing**
+\`\`\`
+Host A: 192.168.1.10/24
+Host B: 192.168.1.200/25
+
+A → B: Works (B is in A's subnet)
+B → A: Fails (A is not in B's subnet)
+\`\`\`
+**Fix:** Ensure matching subnet masks
+
+**Problem 2: Missing Routes**
+\`\`\`
+Can't reach 172.16.5.0/24
+Routing table missing entry
+\`\`\`
+**Fix:** Add static route or fix routing protocol
+
+**Problem 3: Overlapping Subnets**
+\`\`\`
+Router1: 10.1.0.0/24
+Router2: 10.1.0.0/25
+Conflict!
+\`\`\`
+**Fix:** Redesign to eliminate overlap
+
+**Problem 4: Summarization Gone Wrong**
+\`\`\`
+Summarizing:
+192.168.1.0/24
+192.168.2.0/24
+192.168.4.0/24 (missing .3!)
+
+Wrong: 192.168.0.0/22 (includes .3)
+Right: Advertise individually
+\`\`\`
+**Fix:** Only summarize contiguous blocks
+
+**Troubleshooting Commands:**
+- \`show ip route\` - View routing table
+- \`traceroute\` - Follow packet path
+- \`ping\` - Test connectivity
+- \`show ip interface brief\` - Check interfaces
+        `
+      },
+      {
+        type: "best-practices",
+        title: "Routing Best Practices",
+        content: `
+**Design for Routing Efficiency:**
+
+**1. Hierarchical Addressing**
+- Assign addresses geographically
+- Group related subnets
+- Plan for summarization
+
+**2. Document Routes**
+\`\`\`
+# Route Documentation Template
+Network: 10.1.0.0/16
+Purpose: Region 1 Summary
+Advertised by: Core-Router-1
+Received by: ISP, Region-2
+\`\`\`
+
+**3. Reserve Space**
+- Keep gaps for growth
+- Don't use every subnet
+- Plan for new sites
+
+**4. Consistent Masking**
+- Use same mask for similar purposes
+- /30 for all point-to-point
+- /24 for all user LANs
+
+**5. Monitor and Optimize**
+- Regular routing table audits
+- Remove outdated routes
+- Summarize where possible
+- Track table size growth
+
+**6. Security Considerations**
+- Filter private addresses at borders
+- Don't advertise internal structure
+- Use route authentication
+- Implement bogon filtering
+        `
+      },
+      {
+        type: "summary",
+        title: "Routing and Subnet Mastery!",
+        content: `
+You now understand:
+- How routers use subnet information for forwarding
+- The longest-match rule for route selection
+- Route summarization for efficiency
+- How subnet design impacts routing performance
+- Common routing protocols and their subnet handling
+- Troubleshooting subnet-related routing issues
+
+**Key Insights:**
+1. Good subnet design = efficient routing
+2. Hierarchical addressing enables summarization
+3. Longest match always wins
+4. Document your routing design
+5. Plan for growth and changes
+
+**Remember:** Subnets and routing are two sides of the same coin. Master both for network excellence!
+
+Next: Module 8 - IPv6 Subnetting, where we'll apply these concepts to the future of networking!
+        `
+      }
+    ],
+    practice: {
+      title: "Routing and Subnets Practice",
+      questions: [
+        {
+          question: "A packet to 10.1.5.100 arrives. Which route wins: 10.0.0.0/8, 10.1.0.0/16, or 10.1.5.0/24?",
+          hint: "Remember the longest match rule",
+          answer: "10.1.5.0/24 wins (longest match - /24 is more specific than /16 or /8)"
+        },
+        {
+          question: "Can you summarize 192.168.0.0/24, 192.168.1.0/24, 192.168.2.0/24, 192.168.3.0/24?",
+          hint: "Check if they're contiguous and share common bits",
+          answer: "Yes! 192.168.0.0/22 covers all four networks (they share the first 22 bits)"
+        },
+        {
+          question: "Why might 172.16.1.0/24 and 172.16.1.0/25 in the same routing table cause problems?",
+          hint: "Think about overlapping address space",
+          answer: "They overlap! The /25 is a subset of the /24. This causes ambiguous routing - which path should packets take?"
+        },
+        {
+          question: "What happens if a router has no route to 8.8.8.8?",
+          hint: "What's the last resort route?",
+          answer: "It uses the default route (0.0.0.0/0) if one exists, otherwise drops the packet"
+        },
+        {
+          question: "Why is hierarchical addressing important for large networks?",
+          hint: "Think about routing table size and updates",
+          answer: "It enables route summarization, reducing routing table size, memory usage, and update traffic"
+        }
+      ],
+      exercises: [
+        {
+          title: "Route Selection Challenge",
+          instructions: "Determine which route the router will choose for each destination",
+          problems: [
+            "Destination: 192.168.1.50, Routes: 192.168.0.0/16, 192.168.1.0/24, 192.168.1.0/28",
+            "Destination: 10.5.5.5, Routes: 10.0.0.0/8, 10.5.0.0/16, 0.0.0.0/0",
+            "Destination: 172.16.50.100, Routes: 172.16.0.0/12, 172.16.48.0/22, 172.16.50.0/24",
+            "Build a routing table that efficiently handles 8 /24 subnets in the 10.1.x.x range"
+          ]
+        },
+        {
+          title: "Summarization Practice",
+          instructions: "Find the best summary route for these subnet groups",
+          problems: [
+            "Summarize: 10.1.0.0/24 through 10.1.7.0/24",
+            "Summarize: 192.168.16.0/24, 192.168.17.0/24, 192.168.18.0/24, 192.168.19.0/24",
+            "Can you summarize: 172.16.0.0/24, 172.16.2.0/24, 172.16.4.0/24? Why or why not?",
+            "Design a hierarchical scheme for a company with 3 regions, 4 sites per region, using 10.0.0.0/8"
+          ]
+        }
+      ]
+    },
+    keyTakeaways: [
+      "Routers forward based on destination IP and longest match wins",
+      "Routing tables contain destination networks, next-hops, and metrics",
+      "Route summarization reduces table size and improves efficiency",
+      "Hierarchical subnet design enables better route aggregation",
+      "Different routing protocols handle subnets differently (classful vs classless)",
+      "Good subnet design directly impacts routing performance and scalability"
+    ]
+  },
+  
+  8: {
+    title: "IPv6 Subnetting",
+    sections: [
+      {
+        type: "introduction",
+        title: "Welcome to the Future of Networking",
+        content: `
+IPv4 is running out. With only 4.3 billion addresses and a global population of 8 billion (plus billions of devices), we need a bigger solution. Enter IPv6 - with 340 undecillion addresses, that's enough to assign 100 addresses to every atom on Earth!
+
+But IPv6 isn't just about more addresses. It's a complete reimagining of how IP addressing works, with built-in security, simplified headers, and no more NAT.
+
+**Key Differences from IPv4:**
+- 128-bit addresses (vs 32-bit)
+- Hexadecimal notation (vs decimal)
+- No broadcast addresses
+- Simplified subnetting
+- Built-in IPsec support
+- Automatic address configuration
+        `
+      },
+      {
+        type: "concept",
+        title: "IPv6 Address Structure",
+        content: `
+**IPv6 Address Format:**
+
+An IPv6 address is 128 bits long, written as 8 groups of 4 hexadecimal digits:
+
+\`\`\`
+2001:0db8:85a3:0000:0000:8a2e:0370:7334
+│    │    │    │    │    │    │    │
+└────┴────┴────┴────┴────┴────┴────┘
+        8 groups of 16 bits each
+\`\`\`
+
+**Each hexadecimal digit represents 4 bits:**
+- 0-9: Values 0-9
+- A-F: Values 10-15
+- Case insensitive (A = a)
+
+**Address Parts:**
+\`\`\`
+Global Routing Prefix | Subnet ID | Interface ID
+      (48 bits)       | (16 bits) |  (64 bits)
+\`\`\`
+
+**Common Prefixes:**
+- 2000::/3 - Global Unicast (Internet routable)
+- FE80::/10 - Link-Local (like 169.254.x.x)
+- FC00::/7 - Unique Local (like RFC 1918)
+- FF00::/8 - Multicast
+- ::1/128 - Loopback (like 127.0.0.1)
+        `
+      },
+      {
+        type: "compression",
+        title: "IPv6 Address Compression Rules",
+        content: `
+**Making IPv6 Addresses Human-Friendly**
+
+IPv6 addresses are long! Fortunately, we have two compression rules:
+
+**Rule 1: Leading Zeros**
+Remove leading zeros from each group:
+\`\`\`
+2001:0db8:0000:0042:0000:8a2e:0370:7334
+                ↓
+2001:db8:0:42:0:8a2e:370:7334
+\`\`\`
+
+**Rule 2: Consecutive Zeros (::)**
+Replace the longest run of all-zero groups with ::
+\`\`\`
+2001:db8:0:0:0:0:0:1
+         ↓
+2001:db8::1
+\`\`\`
+
+**Important:** You can only use :: once per address!
+
+**Compression Examples:**
+\`\`\`
+Full:       2001:0db8:0000:0000:0000:0000:0000:0001
+Rule 1:     2001:db8:0:0:0:0:0:1
+Rule 2:     2001:db8::1
+
+Full:       fe80:0000:0000:0000:0204:61ff:fe9d:f156
+Rule 1:     fe80:0:0:0:204:61ff:fe9d:f156
+Rule 2:     fe80::204:61ff:fe9d:f156
+
+Full:       0000:0000:0000:0000:0000:0000:0000:0001
+Compressed: ::1 (loopback)
+
+Full:       0000:0000:0000:0000:0000:0000:0000:0000
+Compressed: :: (all zeros)
+\`\`\`
+
+**Decompression:**
+To expand ::, count existing groups and fill to 8 total:
+\`\`\`
+2001:db8::1
+= 2001:db8:(missing groups):1
+= 2001:db8:0:0:0:0:0:1 (6 groups of zeros)
+\`\`\`
+        `
+      },
+      {
+        type: "subnetting",
+        title: "IPv6 Subnetting Simplified",
+        content: `
+**The Beauty of IPv6 Subnetting**
+
+IPv6 subnetting is actually easier than IPv4! Here's why:
+
+**Standard Allocation:**
+- ISP gives you a /48 prefix
+- You create /64 subnets
+- That's 65,536 possible subnets!
+- Each subnet has 2^64 addresses
+
+**No More Host Calculation:**
+- Always use /64 for LANs
+- Interface ID is always 64 bits
+- No subnet/broadcast addresses
+- All addresses are usable
+
+**Example: Subnetting 2001:db8:1234::/48**
+
+\`\`\`
+Your allocation: 2001:db8:1234::/48
+                               ││└─ 16 bits for subnets
+                               │└── Subnet boundary
+                               └─── Your prefix
+
+Possible subnets:
+2001:db8:1234:0::/64    (Subnet 0)
+2001:db8:1234:1::/64    (Subnet 1)
+2001:db8:1234:2::/64    (Subnet 2)
+...
+2001:db8:1234:ffff::/64 (Subnet 65535)
+\`\`\`
+
+**Subnet Planning Example:**
+\`\`\`
+2001:db8:1234:1::/64   - Building 1
+2001:db8:1234:2::/64   - Building 2
+2001:db8:1234:10::/64  - Servers
+2001:db8:1234:20::/64  - Guest WiFi
+2001:db8:1234:30::/64  - IoT Devices
+2001:db8:1234:99::/64  - Management
+\`\`\`
+
+**Pro Tip:** Use hex patterns for easy identification:
+- :10xx: for servers
+- :20xx: for users
+- :30xx: for IoT
+- :99xx: for management
+        `
+      },
+      {
+        type: "address-types",
+        title: "IPv6 Address Types",
+        content: `
+**Understanding IPv6 Address Types**
+
+**1. Link-Local (FE80::/10)**
+\`\`\`
+fe80::1234:5678:9abc:def0
+│└─┘
+│ └── Always fe80 for link-local
+└──── Automatically configured
+\`\`\`
+- Always present on every interface
+- Not routable beyond local link
+- Used for neighbor discovery
+- Like 169.254.x.x in IPv4
+
+**2. Unique Local (FC00::/7)**
+\`\`\`
+fd12:3456:789a:1::/64
+│└──┘
+│ └── Random 40-bit global ID
+└──── fd = locally assigned
+\`\`\`
+- Private addresses (like RFC 1918)
+- Not internet routable
+- Globally unique (with high probability)
+
+**3. Global Unicast (2000::/3)**
+\`\`\`
+2001:db8:1234:5678::1
+│    │   │    │
+│    │   │    └── Interface ID
+│    │   └────── Subnet ID
+│    └────────── ISP allocation
+└─────────────── Global routing
+\`\`\`
+- Internet routable addresses
+- Assigned by ISPs
+- Globally unique
+
+**4. Multicast (FF00::/8)**
+\`\`\`
+ff02::1     - All nodes on link
+ff02::2     - All routers on link
+ff02::1:2   - All DHCP servers
+\`\`\`
+- Replaces broadcast
+- Scoped delivery
+- More efficient than broadcast
+        `
+      },
+      {
+        type: "practical-examples",
+        title: "Real-World IPv6 Deployment",
+        content: `
+**Scenario: Small Business IPv6 Migration**
+
+ISP Assignment: 2001:db8:cafe::/48
+
+**Step 1: Plan Your Subnets**
+\`\`\`
+Departments:
+2001:db8:cafe:1::/64   - Sales (VLAN 10)
+2001:db8:cafe:2::/64   - Engineering (VLAN 20)
+2001:db8:cafe:3::/64   - Management (VLAN 30)
+
+Infrastructure:
+2001:db8:cafe:10::/64  - Servers
+2001:db8:cafe:20::/64  - Network Equipment
+2001:db8:cafe:99::/64  - Point-to-Point Links
+
+Guest/DMZ:
+2001:db8:cafe:100::/64 - Guest WiFi
+2001:db8:cafe:200::/64 - DMZ Services
+\`\`\`
+
+**Step 2: Address Assignment Examples**
+\`\`\`
+Router Interface:
+2001:db8:cafe:1::1/64  (Sales gateway)
+
+DHCPv6 Range:
+2001:db8:cafe:1::1000 to
+2001:db8:cafe:1::9999
+
+Static Server:
+2001:db8:cafe:10::53   (DNS)
+2001:db8:cafe:10::80   (Web)
+2001:db8:cafe:10::25   (Mail)
+\`\`\`
+
+**Step 3: Dual-Stack Configuration**
+\`\`\`
+Interface GigabitEthernet0/1
+ Description Sales Network
+ IPv4: 192.168.1.1/24
+ IPv6: 2001:db8:cafe:1::1/64
+\`\`\`
+        `
+      },
+      {
+        type: "common-patterns",
+        title: "IPv6 Addressing Patterns",
+        content: `
+**Smart IPv6 Address Planning**
+
+**Pattern 1: Memorable Addresses**
+\`\`\`
+2001:db8:cafe:1::d:e:a:d    (Memorable)
+2001:db8:cafe:2::bad:c0de   (Hexspeak)
+2001:db8:cafe:10::80        (Port-based)
+2001:db8:cafe:53::53        (Service-based)
+\`\`\`
+
+**Pattern 2: Sequential Numbering**
+\`\`\`
+Routers:    ::1
+Switches:   ::2-::9
+Servers:    ::10-::99
+Printers:   ::100-::199
+DHCP Start: ::1000
+\`\`\`
+
+**Pattern 3: Embed IPv4**
+\`\`\`
+IPv4: 192.168.1.10
+IPv6: 2001:db8:cafe:1::192:168:1:10
+      (Easy to remember!)
+\`\`\`
+
+**Pattern 4: VLAN Matching**
+\`\`\`
+VLAN 10: 2001:db8:cafe:10::/64
+VLAN 20: 2001:db8:cafe:20::/64
+VLAN 30: 2001:db8:cafe:30::/64
+\`\`\`
+
+**Pattern 5: Geographic/Building**
+\`\`\`
+Building A: 2001:db8:cafe:a00::/56
+  Floor 1:  2001:db8:cafe:a01::/64
+  Floor 2:  2001:db8:cafe:a02::/64
+  
+Building B: 2001:db8:cafe:b00::/56
+  Floor 1:  2001:db8:cafe:b01::/64
+  Floor 2:  2001:db8:cafe:b02::/64
+\`\`\`
+        `
+      },
+      {
+        type: "transition",
+        title: "IPv4 to IPv6 Transition",
+        content: `
+**Transition Strategies**
+
+**1. Dual Stack (Recommended)**
+\`\`\`
+Interface Configuration:
+  IPv4: 192.168.1.1/24
+  IPv6: 2001:db8:cafe:1::1/64
+  
+Both protocols run simultaneously
+\`\`\`
+
+**2. Tunneling (6in4, 6to4)**
+\`\`\`
+IPv6 packets encapsulated in IPv4
+Useful for crossing IPv4-only networks
+\`\`\`
+
+**3. Translation (NAT64/DNS64)**
+\`\`\`
+Allows IPv6-only clients to reach IPv4 services
+2001:db8:cafe:64::192.168.1.10
+\`\`\`
+
+**Migration Checklist:**
+- [ ] Get IPv6 allocation from ISP
+- [ ] Plan addressing scheme
+- [ ] Update firewall rules
+- [ ] Configure routing protocols
+- [ ] Enable on internal networks
+- [ ] Test thoroughly
+- [ ] Monitor dual-stack traffic
+- [ ] Phase out IPv4 (eventually)
+
+**Common Mistakes:**
+- Forgetting to update firewall rules
+- Not planning address scheme
+- Ignoring IPv6 security
+- Using transitional addresses permanently
+- Not monitoring IPv6 traffic
+        `
+      },
+      {
+        type: "summary",
+        title: "IPv6 Mastery Achieved!",
+        content: `
+You now understand:
+- IPv6 address structure and notation
+- Address compression and expansion rules
+- Simplified /64 subnetting model
+- Different IPv6 address types and their uses
+- Real-world deployment strategies
+- Transition mechanisms from IPv4
+
+**Key Takeaways:**
+1. IPv6 addresses are 128 bits in hexadecimal
+2. Use :: to compress consecutive zeros (once only)
+3. Standard practice: /64 for all LAN subnets
+4. No broadcast, no subnet/network addresses
+5. Plan your addressing scheme thoughtfully
+6. Dual-stack is the preferred transition method
+
+**Your IPv6 Toolkit:**
+- Compression rules for readable addresses
+- Standard /48 allocation, /64 subnets
+- Address patterns for easy management
+- Transition strategies for migration
+
+IPv6 isn't the future - it's the present. Major providers report 40%+ IPv6 traffic. Time to join the revolution!
+
+Next: Module 9 - Network Troubleshooting, where we'll apply everything you've learned!
+        `
+      }
+    ],
+    practice: {
+      title: "IPv6 Practice",
+      questions: [
+        {
+          question: "Compress this IPv6 address: 2001:0db8:0000:0000:0008:0800:200c:417a",
+          hint: "Apply both compression rules: remove leading zeros and use :: for consecutive zero groups",
+          answer: "2001:db8::8:800:200c:417a"
+        },
+        {
+          question: "How many /64 subnets can you create from a /48 prefix?",
+          hint: "48 to 64 is how many bits?",
+          answer: "65,536 subnets (2^16 = 65,536, because 64-48=16 bits for subnetting)"
+        },
+        {
+          question: "What type of address is fe80::1234:5678:9abc:def0?",
+          hint: "Look at the first few hex digits",
+          answer: "Link-local address (fe80::/10 prefix)"
+        },
+        {
+          question: "Expand this compressed address: 2001:db8::1",
+          hint: "Count the groups and fill in zeros to make 8 groups total",
+          answer: "2001:0db8:0000:0000:0000:0000:0000:0001"
+        },
+        {
+          question: "If you have 2001:db8:cafe::/48, what would be the 5th /64 subnet?",
+          hint: "Subnets start at 0, so the 5th is index 4",
+          answer: "2001:db8:cafe:4::/64"
+        }
+      ],
+      exercises: [
+        {
+          title: "IPv6 Compression Practice",
+          instructions: "Compress these IPv6 addresses to their shortest form",
+          problems: [
+            "Compress: 2001:0db8:0000:0042:0000:0000:0000:0001",
+            "Compress: fe80:0000:0000:0000:0202:b3ff:fe1e:8329",
+            "Compress: 0000:0000:0000:0000:0000:0000:0000:0001",
+            "Compress: 2001:0db8:0000:0001:0002:0003:0004:0005"
+          ]
+        },
+        {
+          title: "IPv6 Subnet Planning",
+          instructions: "Design an IPv6 addressing scheme",
+          problems: [
+            "You have 2001:db8:abcd::/48. Plan subnets for: HQ (3 VLANs), Branch1 (2 VLANs), Branch2 (2 VLANs)",
+            "Create memorable addresses for: DNS server, Web server, Mail server in subnet 2001:db8:1234:10::/64",
+            "Design a hierarchical scheme for a campus with 4 buildings, 5 floors each, using 2001:db8:campus::/48",
+            "Plan dual-stack addressing: IPv4 192.168.0.0/16 and IPv6 2001:db8::/48 for 10 departments"
+          ]
+        }
+      ]
+    },
+    keyTakeaways: [
+      "IPv6 uses 128-bit addresses written in hexadecimal",
+      "Compress addresses by removing leading zeros and using :: for consecutive zero groups",
+      "Standard practice is to use /64 for all LAN subnets",
+      "IPv6 has no broadcast addresses - multicast is used instead",
+      "Link-local addresses (fe80::/10) are automatically configured",
+      "Dual-stack (running IPv4 and IPv6 together) is the recommended transition approach"
+    ]
+  },
+  
+  9: {
+    title: "Network Troubleshooting",
+    sections: [
+      {
+        type: "introduction",
+        title: "Putting It All Together",
+        content: `
+You've mastered binary, subnetting, VLSM, routing, and IPv6. Now let's apply these skills to real-world network troubleshooting. This module teaches you to think like a network engineer when problems arise.
+
+Most network issues come down to one of these:
+- IP addressing conflicts or errors
+- Subnet mask mismatches
+- Routing problems
+- VLAN misconfigurations
+- Firewall rules
+
+With your subnet knowledge, you can quickly identify and fix these issues!
+        `
+      },
+      {
+        type: "methodology",
+        title: "The Troubleshooting Method",
+        content: `
+**The 7-Layer Troubleshooting Approach**
+
+Always start at Layer 1 and work up:
+
+**1. Physical (Layer 1)**
+- Is the cable plugged in?
+- Link lights green?
+- Cable damaged?
+
+**2. Data Link (Layer 2)**
+- VLAN configured correctly?
+- Switch port enabled?
+- Spanning tree blocking?
+
+**3. Network (Layer 3) - Our Focus!**
+- IP address correct?
+- Subnet mask correct?
+- In the same subnet?
+- Gateway configured?
+- Routes exist?
+
+**4. Transport (Layer 4)**
+- Port open?
+- Service running?
+
+**5-7. Application Layers**
+- Application-specific issues
+
+**The Subnet Checklist:**
+□ IP address valid for subnet?
+□ Subnet mask matches other devices?
+□ Default gateway in same subnet?
+□ No duplicate IPs?
+□ Routing table has path?
+        `
+      },
+      {
+        type: "common-problems",
+        title: "Common Subnet-Related Problems",
+        content: `
+**Problem 1: Can't Communicate on Same Network**
+
+**Symptom:** Two devices on same switch can't ping
+
+**Check:**
+
+\`\`\`
+Device A: 192.168.1.50/24
+Device B: 192.168.1.200/25
+
+Analysis:
+A thinks network is: 192.168.1.0-255
+B thinks network is: 192.168.1.128-255
+A thinks B is local, B thinks A is remote!
+\`\`\`
+
+**Fix:** Ensure matching subnet masks
+
+**Problem 2: Asymmetric Routing**
+
+**Symptom:** Traffic works one way only
+
+**Check:**
+
+\`\`\`
+PC: 10.1.1.100/24, GW: 10.1.1.1
+Server: 10.1.1.200/25, GW: 10.1.1.129
+
+PC→Server: Goes to 10.1.1.1 (thinks remote)
+Server→PC: Direct (thinks local)
+Return path different = Firewall drops!
+\`\`\`
+
+**Problem 3: Wrong Gateway**
+
+**Symptom:** Can't reach internet/other subnets
+
+**Check:**
+
+\`\`\`
+IP: 172.16.50.100/24
+Gateway: 172.16.51.1  ← Wrong subnet!
+\`\`\`
+
+**Fix:** Gateway must be in same subnet
+
+**Problem 4: IP Conflict**
+
+**Symptom:** Intermittent connectivity
+
+**Check:**
+
+\`\`\`
+ARP cache shows:
+192.168.1.100 = MAC-1 (sometimes)
+192.168.1.100 = MAC-2 (sometimes)
+\`\`\`
+
+**Fix:** Find duplicate, change one IP
+        `
+      },
+      {
+        type: "diagnostic-commands",
+        title: "Essential Diagnostic Commands",
+        content: `
+**Windows Commands:**
+
+\`\`\`
+ipconfig /all              # Show all network config
+arp -a                     # Show ARP cache
+route print               # Show routing table
+nslookup                  # Test DNS
+ping -t                   # Continuous ping
+tracert                   # Trace route to destination
+pathping                  # Combination ping/tracert
+netstat -an               # Show connections
+\`\`\`
+
+**Linux/Mac Commands:**
+
+\`\`\`
+ip addr show              # Show interfaces (Linux)
+ifconfig                  # Show interfaces (older/Mac)
+ip route show            # Show routes (Linux)
+netstat -rn              # Show routes (Mac)
+arp -n                   # Show ARP cache
+dig                      # DNS lookup
+mtr                      # Better traceroute
+ss -an                   # Socket statistics
+\`\`\`
+
+**Cisco IOS Commands:**
+
+\`\`\`
+show ip interface brief   # Quick interface status
+show ip route            # Routing table
+show ip arp              # ARP table
+show vlan                # VLAN assignments
+show running-config      # Current configuration
+show mac address-table   # Switch MAC table
+ping                     # Test connectivity
+traceroute              # Trace path
+\`\`\`
+
+**Quick Subnet Verification:**
+
+\`\`\`
+# Is .100 in same subnet as .200 with /25?
+ping 192.168.1.200
+
+# Check your IP and mask
+ipconfig (Windows) or ip addr (Linux)
+
+# Verify gateway is reachable
+ping <gateway-ip>
+
+# Check routing table for destination
+route -n (Linux) or route print (Windows)
+\`\`\`
+        `
+      },
+      {
+        type: "interactive-tool",
+        title: "Practice Network Calculations",
+        component: "NetworkCalculator"
+      },
+      {
+        type: "troubleshooting-scenarios",
+        title: "Real-World Troubleshooting Scenarios",
+        content: `
+**Scenario 1: The New Printer**
+
+"The new printer (192.168.1.250) can't be reached from accounting!"
+
+**Investigation:**
+
+\`\`\`
+Accounting PC: 192.168.1.50/25
+Printer: 192.168.1.250/24
+Gateway: 192.168.1.1
+
+Analysis:
+PC subnet: 192.168.1.0-127 (/25)
+Printer: 192.168.1.250 (outside PC's subnet)
+PC will send to gateway, but printer thinks PC is local!
+\`\`\`
+
+**Solution:** Change printer to /25 or PC to /24
+
+**Scenario 2: The Slow Application**
+
+"Application is slow between offices!"
+
+**Investigation:**
+
+\`\`\`
+Office A: 10.1.0.0/16
+Office B: 10.2.0.0/16
+
+Traceroute shows:
+10.1.0.100 → 10.1.0.1 → 172.16.0.1 → 
+8.8.8.8 → 4.4.4.4 → 172.16.0.2 → 10.2.0.100
+
+Going through internet instead of private WAN!
+\`\`\`
+
+**Solution:** Add static routes for private networks
+
+**Scenario 3: The Monday Morning Mystery**
+
+"Nobody can connect after the weekend!"
+
+**Investigation:**
+
+\`\`\`
+DHCP scope exhausted
+Scope: 192.168.1.100-200 (/24)
+Leases: 101 active (scope full)
+
+Weekend: IoT devices auto-updated, grabbed IPs
+\`\`\`
+
+**Solution:** 
+- Expand DHCP scope
+- Shorten lease time
+- Create IoT VLAN
+        `
+      },
+      {
+        type: "subnet-design-review",
+        title: "Subnet Design Problems",
+        content: `
+**Common Design Mistakes to Spot:**
+
+**1. Wasted Address Space**
+
+\`\`\`
+Bad:
+/24 for 2 servers
+/24 for point-to-point link
+
+Good:
+/29 for 2 servers (6 hosts)
+/30 for point-to-point (2 hosts)
+\`\`\`
+
+**2. No Growth Room**
+
+\`\`\`
+Bad:
+50 users → /26 (62 hosts) ← No growth!
+
+Good:
+50 users → /25 (126 hosts) ← Room to grow
+\`\`\`
+
+**3. Poor Summarization**
+
+\`\`\`
+Bad:
+Site A: 10.1.1.0/24
+Site B: 10.1.3.0/24  ← Can't summarize!
+Site C: 10.1.5.0/24
+
+Good:
+Site A: 10.1.0.0/24
+Site B: 10.1.1.0/24  ← Summarizes to
+Site C: 10.1.2.0/24  ← 10.1.0.0/22
+\`\`\`
+
+**4. Overlapping Subnets**
+
+\`\`\`
+VLAN 10: 192.168.1.0/24
+VLAN 20: 192.168.1.128/25  ← Overlap!
+
+Always check for overlaps when adding subnets
+\`\`\`
+
+**5. Wrong Mask for Purpose**
+
+\`\`\`
+Bad:
+User LAN: /30 (too small)
+P2P Link: /24 (too large)
+
+Good:
+User LAN: /24 (254 hosts)
+P2P Link: /30 (2 hosts)
+\`\`\`
+        `
+      },
+      {
+        type: "documentation",
+        title: "Network Documentation",
+        content: `
+**Essential Documentation for Troubleshooting**
+
+**1. IP Address Spreadsheet**
+
+\`\`\`
+Network     | Purpose      | VLAN | Gateway      | DHCP Range
+------------|-------------|------|--------------|-------------
+10.1.1.0/24 | Sales       | 10   | 10.1.1.1     | .100-.199
+10.1.2.0/24 | Engineering | 20   | 10.1.2.1     | .100-.199
+10.1.3.0/24 | Guest       | 30   | 10.1.3.1     | .50-.250
+\`\`\`
+
+**2. Network Diagram**
+- Show all subnets
+- Label IP ranges
+- Mark VLANs
+- Include routing paths
+
+**3. Change Log**
+
+\`\`\`
+Date       | Change              | By    | Reason
+-----------|--------------------|---------|---------
+2024-01-15 | Added 10.1.4.0/24  | John  | New dept
+2024-01-20 | Changed DHCP scope | Sarah | Full
+\`\`\`
+
+**4. Standard Configurations**
+
+\`\`\`
+# Standard User VLAN Config
+interface vlan X
+ ip address 10.1.X.1 255.255.255.0
+ ip helper-address 10.1.10.10
+ description User_VLAN_X
+\`\`\`
+
+**5. Emergency Contacts**
+- ISP support: 1-800-XXX-XXXX
+- Account #: 12345
+- Circuit ID: XXXXX
+
+**Documentation Saves Time!**
+        `
+      },
+      {
+        type: "best-practices",
+        title: "Troubleshooting Best Practices",
+        content: `
+**Professional Troubleshooting Approach**
+
+**1. Gather Information First**
+- When did it start?
+- What changed?
+- Who is affected?
+- Error messages?
+- Intermittent or constant?
+
+**2. Document Everything**
+- What you checked
+- Results of tests
+- Configuration changes
+- Create tickets
+
+**3. Use Systematic Approach**
+- Don't randomly change things
+- Test one change at a time
+- Have rollback plan
+- Verify fix works
+
+**4. Common Quick Checks**
+- Ping gateway
+- Check subnet mask
+- Verify VLAN
+- Check routing table
+- Review recent changes
+
+**5. Communication**
+- Keep users informed
+- Set realistic expectations
+- Document root cause
+- Plan prevention
+
+**Remember:**
+"It's always DNS... except when it's the subnet mask!"
+        `
+      },
+      {
+        type: "summary",
+        title: "Troubleshooting Mastery!",
+        content: `
+Congratulations! You've completed the Subnet Master course!
+
+**You've Learned:**
+- Binary and decimal conversion
+- How subnet masks work
+- IP address structure
+- CIDR notation
+- Subnet calculations
+- VLSM design
+- Routing concepts
+- IPv6 addressing
+- Troubleshooting methodology
+
+**Your Subnet Toolkit:**
+1. Binary/decimal conversion skills
+2. Subnet calculation formulas
+3. VLSM design principles
+4. Diagnostic commands
+5. Troubleshooting methodology
+6. Documentation templates
+
+**Key Troubleshooting Wisdom:**
+- Most problems are simple (check the mask!)
+- Document everything
+- Verify changes work
+- Learn from every issue
+- Build better designs
+
+**Next Steps:**
+- Practice with real networks
+- Get hands-on experience
+- Study for certifications (CCNA, Network+)
+- Keep learning and growing
+
+Remember: Every expert was once a beginner. You've built a solid foundation - now go apply it!
+        `
+      }
+    ],
+    practice: {
+      title: "Troubleshooting Practice",
+      questions: [
+        {
+          question: "PC (192.168.1.100/25) can't ping Server (192.168.1.200/24). Why?",
+          hint: "Compare their subnet ranges",
+          answer: "Different subnet views. PC thinks server is in different subnet (128-255), but server thinks PC is local (0-255). Asymmetric routing issue."
+        },
+        {
+          question: "Users report 'Destination Host Unreachable' when pinging 8.8.8.8. Local pings work. What's wrong?",
+          hint: "What device provides access to external networks?",
+          answer: "Missing or incorrect default gateway. Check if gateway is configured and in the same subnet as the host."
+        },
+        {
+          question: "DHCP clients getting 169.254.x.x addresses. What's happening?",
+          hint: "What does this address range indicate?",
+          answer: "APIPA/link-local addresses. DHCP server unreachable - check DHCP server, VLAN config, or ip helper-address."
+        },
+        {
+          question: "Traceroute shows: 10.1.1.1 → 10.1.1.1 → 10.1.1.1 (repeating). What's wrong?",
+          hint: "What would cause a packet to loop?",
+          answer: "Routing loop. Two routers pointing to each other for the destination network."
+        },
+        {
+          question: "New subnet 172.16.5.0/24 added but unreachable from 172.16.1.0/24. Same router. What's missing?",
+          hint: "How do other networks know about the new subnet?",
+          answer: "Missing route advertisement or static routes on other routers. The subnet exists but isn't in the routing tables."
+        }
+      ],
+      exercises: [
+        {
+          title: "Troubleshooting Scenarios",
+          instructions: "Diagnose and solve these network issues",
+          problems: [
+            "Printer (10.1.50.200/24) unreachable from PC (10.1.50.100/23). Find the issue and solution.",
+            "Website loads slowly. Traceroute shows 15 hops through internet for internal server. What's wrong?",
+            "After power outage, some devices connect, others don't. DHCP scope shows 90% utilization. Diagnose.",
+            "New VLAN can't reach internet. Can ping local gateway but not remote networks. What to check?"
+          ]
+        },
+        {
+          title: "Design Review",
+          instructions: "Find the problems in these subnet designs",
+          problems: [
+            "Branch 1: 10.1.1.0/24, Branch 2: 10.1.100.0/24, Branch 3: 10.1.2.0/24 - What's wrong?",
+            "DHCP: 192.168.1.50-250, Servers: 192.168.1.10-20, Gateway: 192.168.1.1 - Potential issue?",
+            "P2P Links: All using /24 masks. 50 links total. Calculate address waste.",
+            "Growth plan: Current 100 users in /25. Expecting 50% growth. Will it fit?"
+          ]
+        }
+      ]
+    },
+    keyTakeaways: [
+      "Most network issues involve IP addressing, subnet masks, or routing",
+      "Always verify subnet masks match between communicating devices",
+      "Use systematic troubleshooting: Physical → Data Link → Network → Transport → Application",
+      "Document everything: configurations, changes, and solutions",
+      "Common issues: wrong mask, wrong gateway, IP conflicts, routing loops",
+      "Good subnet design prevents many problems before they occur"
+    ]
   }
 }
 
