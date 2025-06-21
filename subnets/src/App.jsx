@@ -9,7 +9,7 @@ import './App.css'
 function App() {
   return (
     <ProgressProvider>
-      <Router>
+      <Router basename="/subnets">
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />

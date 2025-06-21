@@ -67,3 +67,12 @@ pull-metronome:
 	fi
 	# Run the update after pulling
 	$(MAKE) update-metronome
+
+# Update subnets app
+update-subnets:
+	@echo "Building subnets app..."
+	cd subnets && npm install && npm run build
+	@echo "Copying built files to docs/subnets..."
+	mkdir -p docs/subnets
+	cp -r subnets/dist/* docs/subnets/
+	@echo "Subnets deployment complete!"

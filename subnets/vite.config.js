@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  base: '/subnets/',
   plugins: [
     react(),
     VitePWA({
@@ -15,8 +16,8 @@ export default defineConfig({
         theme_color: '#2196F3',
         background_color: '#ffffff',
         display: 'standalone',
-        scope: '/',
-        start_url: '/',
+        scope: '/subnets/',
+        start_url: '/subnets/',
         icons: [
           {
             src: 'icon-192.png',
