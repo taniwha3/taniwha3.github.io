@@ -109,16 +109,16 @@ Outputs include:
 | T-03 | Create base components | T-01 | Layout, Header, Navigation | ✅ Complete |
 | T-04 | Implement routing | T-03 | React Router, basic pages | ✅ Complete |
 | T-05 | Convert curriculum to JSON | - | `curriculum.js` with all modules | ✅ Complete |
-| T-06 | Module viewer component | T-04, T-05 | Display lesson content | 🔲 Pending |
-| T-07 | Binary math utilities | T-05 | Functions for conversions | 🔲 Pending |
-| T-08 | Subnet calc utilities | T-07 | CIDR calculations, validation | 🔲 Pending |
-| T-09 | Quiz component | T-06 | Interactive questions, scoring | 🔲 Pending |
-| T-10 | Progress tracking | T-09 | localStorage hooks, progress UI | 🔲 Pending |
+| T-06 | Module viewer component | T-04, T-05 | Display lesson content | ✅ Complete |
+| T-07 | Binary math utilities | T-05 | Functions for conversions | ✅ Complete |
+| T-08 | Subnet calc utilities | T-07 | CIDR calculations, validation | ✅ Complete |
+| T-09 | Quiz component | T-06 | Interactive questions, scoring | ✅ Complete |
+| T-10 | Progress tracking | T-09 | localStorage hooks, progress UI | ✅ Complete |
 | T-11 | PWA manifest | T-01 | `manifest.json`, icons | ✅ Complete |
 | T-12 | Service worker | T-11 | Offline caching with Workbox | ✅ Complete |
-| T-13 | Unit tests | T-07, T-08 | >95% coverage for utils | 🔲 Pending |
+| T-13 | Unit tests | T-07, T-08 | >95% coverage for utils | ✅ Complete |
 | T-14 | Component tests | T-09 | Test interactive components | 🔲 Pending |
-| T-15 | Responsive design | T-03 | Mobile-friendly layouts | 🔲 Pending |
+| T-15 | Responsive design | T-03 | Mobile-friendly layouts | ✅ Complete |
 | T-16 | Deploy to GitHub Pages | All | CI/CD workflow | 🔲 Pending |
 | T-17 | Module 0 Content | T-05 | Full lesson: intro, examples, diagrams | 🔲 Pending |
 | T-18 | Module 1 Content | T-05 | Binary lesson with conversion examples | 🔲 Pending |
