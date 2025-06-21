@@ -70,3 +70,15 @@
 .stickingPoint strong {
   color: #856404;
 }
+
+.interactiveTool {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.interactiveTool h3 {
+  text-align: center;
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+}

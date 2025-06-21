@@ -1,8 +1,11 @@
+import BinaryConverter from './BinaryConverter'
+import NetworkCalculator from './NetworkCalculator'
 import styles from './ModuleContent.module.css'
 
 function ModuleContent({ module }) {
-  // For now, display a placeholder since we haven't written actual content yet
-  // This will be replaced when we implement T-17 through T-26
+  // Show interactive tools for certain modules
+  const showBinaryConverter = [1, 2].includes(module.id)
+  const showNetworkCalculator = [2, 3, 4, 5].includes(module.id)
   
   return (
     <div className={styles.moduleContent}>
@@ -34,6 +37,20 @@ function ModuleContent({ module }) {
             </div>
           ))}
         </div>
+        
+        {showBinaryConverter && (
+          <div className={styles.interactiveTool}>
+            <h3>Try It Yourself</h3>
+            <BinaryConverter />
+          </div>
+        )}
+        
+        {showNetworkCalculator && (
+          <div className={styles.interactiveTool}>
+            <h3>Practice Network Calculations</h3>
+            <NetworkCalculator />
+          </div>
+        )}
       </div>
     </div>
   )
