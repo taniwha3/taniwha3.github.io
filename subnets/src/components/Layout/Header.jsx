@@ -16,7 +16,7 @@ function Header({ onMenuClick }) {
         </button>
         
         <Link to="/" className={styles.logo}>
-          <h1>Subnet Master</h1>
+          <h1>Subnet Pro</h1>
         </Link>
         
         <nav className={styles.desktopNav}>

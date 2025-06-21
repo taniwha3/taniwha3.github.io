@@ -10,7 +10,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
-        name: 'Subnet Master',
+        name: 'Subnet Pro',
         short_name: 'SubnetPWA',
         description: 'Learn IPv4/IPv6 subnetting with interactive lessons and exercises',
         theme_color: '#2196F3',

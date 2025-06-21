@@ -20,7 +20,7 @@ function Layout({ children }) {
       </main>
       <footer className={styles.footer}>
         <div className="container">
-          <p>&copy; 2024 Subnet Master. Built with React & Vite.</p>
+          <p>&copy; 2024 Subnet Pro. Built with React & Vite.</p>
         </div>
       </footer>
     </div>

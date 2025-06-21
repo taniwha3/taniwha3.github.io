@@ -3333,7 +3333,7 @@ interface vlan X
         type: "summary",
         title: "Troubleshooting Mastery!",
         content: `
-Congratulations! You've completed the Subnet Master course!
+Congratulations! You've completed the Subnet Pro course!
 
 **You've Learned:**
 - Binary and decimal conversion
