@@ -1,0 +1,99 @@
+.polyrhythm-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.polyrhythm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #2a3439;
+}
+
+.polyrhythm-header h3 {
+  margin: 0;
+  color: #ffd700;
+  font-family: 'Space Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.polyrhythm-info {
+  color: #999;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.875rem;
+}
+
+.add-layer-button {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #2a3439 0%, #3a4449 100%);
+  border: 2px solid #3a4449;
+  color: #ffd700;
+  font-family: 'Space Mono', monospace;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.875rem;
+}
+
+.add-layer-button:hover {
+  border-color: #ff6666;
+  box-shadow: 0 0 10px rgba(255, 102, 102, 0.3);
+}
+
+.layers-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 250px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+.layers-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.layers-container::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 4px;
+}
+
+.layers-container::-webkit-scrollbar-thumb {
+  background: #3a4449;
+  border-radius: 4px;
+}
+
+.layers-container::-webkit-scrollbar-thumb:hover {
+  background: #4a5459;
+}
+
+.polyrhythm-visualization-container {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #2a3439;
+  border-radius: 8px;
+  padding: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: 300px;
+}
+
+.polyrhythm-visualization-container h4 {
+  margin: 0 0 1rem 0;
+  color: #ff6666;
+  font-family: 'Space Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.875rem;
+}

@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+  font-family: 'Space Mono', system-ui, monospace;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: #ffffff;
+  background-color: #0a0a0a;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Synthwave colors */
+  --neon-pink: #ff6ec7;
+  --neon-cyan: #00fcd8;
+  --dark-purple: #330066;
+  --darker-purple: #1a0033;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  font-weight: 500;
+  color: var(--neon-cyan);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+a:hover {
+  color: var(--neon-pink);
+  text-shadow: 0 0 10px currentColor;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 4px;
+  border: 2px solid var(--neon-pink);
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: rgba(255, 110, 199, 0.1);
+  color: var(--neon-pink);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+button:hover {
+  background-color: var(--neon-pink);
+  color: #000;
+  box-shadow:
+    0 0 20px var(--neon-pink),
+    inset 0 0 20px rgba(0, 0, 0, 0.2);
+}
+button:focus,
+button:focus-visible {
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: 2px;
+}
+button:active {
+  transform: scale(0.98);
+}
+
+input[type='number'] {
+  font-family: inherit;
+}

@@ -1,0 +1,24 @@
+.polyrhythm-visualization {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.visualization-canvas {
+  width: 100%;
+  flex: 1;
+  min-height: 100px;
+  max-height: 200px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid #2a3439;
+  border-radius: 4px;
+}
+
+.visualization-legend {
+  text-align: center;
+  color: #666;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+}

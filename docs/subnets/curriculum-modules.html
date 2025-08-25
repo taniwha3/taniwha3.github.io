@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>curriculum-modules</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+    <div class="sun"></div>
+    
+    <div class="navbar">
+        <div class="logo">
+            <div class="sun-logo"></div>
+            TANI'S NOTEBOOK
+        </div>
+        <div class="nav-links">
+            <a href="/index.html">Home</a>
+            <a href="/music/index.html">Music</a>
+            <a href="/tech/">Tech</a>
+            <a href="/music/tools/metronome/">Metronome</a>
+        </div>
+    </div>
+    
+    <div class="container">
+<h1 id="subnetting-curriculum-modules-complete-specification">Subnetting Curriculum Modules - Complete Specification</h1>
+
+<p>Below is a self-contained, step-by-step curriculum that takes a complete beginner from &ldquo;What is an IP address?&rdquo; to confidently designing and verifying subnet schemes. Everything is organized as modules; each module contains:
+- <strong>Objectives</strong> – what the learner must be able to do before moving on.
+- <strong>Key ideas &amp; activities</strong> – core content and suggested learning tasks.
+- <strong>Assessment (gate)</strong> – an explicit check-point the learner must pass.
+- <strong>Likely sticking points &amp; remedies</strong> – issues a first-time learner almost always meets and how to address them early.</p>
+
+<p>No prior programming is expected and only the arithmetic normally covered by high-school algebra is assumed. You may teach the program in 30–45 minute sessions or bundle two modules into a single 90-minute class depending on pace and schedule.</p>
+
+<hr>
+
+<h2 id="module-0-orientation-pre-assessment-optional-but-recommended">Module 0: Orientation &amp; Pre-Assessment (optional but recommended)</h2>
+
+<p><strong>Goal</strong>: Make the student emotionally comfortable and capture a baseline</p>
+
+<p><strong>Objectives</strong>:
+- Describe, in plain language, what &ldquo;subnetting&rdquo; achieves (divide a network, control broadcast domains, conserve addresses).
+- Explain why even a home user benefits (e.g., IoT isolation).</p>
+
+<p><strong>Activities</strong>:
+- Five-minute &ldquo;tour&rdquo; of an IP packet.
+- Ask learner to write two things they hope to be able to do by the end.</p>
+
+<p><strong>Assessment</strong>: Short reflective paragraph: &ldquo;Subnetting matters because…&rdquo;</p>
+
+<p><strong>Sticking points</strong>: Intimidation. Emphasize: &ldquo;We&rsquo;ll use only addition, subtraction, powers of 2, and some logical AND.&rdquo;</p>
+
+<hr>
+
+<h2 id="module-1-positional-number-systems-powers-of-two">Module 1: Positional Number Systems &amp; Powers of Two</h2>
+
+<p><em>Math foundation #1</em></p>
+
+<p><strong>Objectives</strong>:
+- Convert numbers 0 – 255 between decimal and binary without a calculator.
+- List the values of 2⁰ through 2⁷ from memory.</p>
+
+<p><strong>Key ideas &amp; activities</strong>:
+1. Positional review – identical to decimal but base 2.
+2. Eight-bit chart – learner fills a row of boxes labelled 128 64 32 16 8 4 2 1.
+3. Mental game: &ldquo;What is the highest power of two less than ___?&rdquo;</p>
+
+<p><strong>Assessment (gate)</strong>: Worksheet: 10 random decimals → binary and 10 random binaries → decimal in &lt; 10 min; ≥ 90% correct.</p>
+
+<p><strong>Likely sticking points &amp; remedies</strong>:
+- Dropping leading zeros – remind that each IP octet must keep all eight bits for clarity.
+- Memorizing powers of two – create flash-cards; include 2⁸ (256) and 2¹⁶ (65,536) for later.</p>
+
+<hr>
+
+<h2 id="module-2-bitwise-logic-without-programming">Module 2: Bitwise Logic Without Programming</h2>
+
+<p><em>Math foundation #2</em></p>
+
+<p><strong>Objectives</strong>:
+- Perform manual AND and OR operations on two eight-bit binary numbers.
+- Explain why AND is used to discover &ldquo;network portion&rdquo;.</p>
+
+<p><strong>Key ideas &amp; activities</strong>:
+- Truth table drill (1 &amp; 1 = 1, everything else = 0).
+- Colored-pen exercise: overlay mask and address, highlight.</p>
+
+<p><strong>Assessment</strong>: Given IP = 11000000 10101000 00000001 00100011 (192.168.1.35) and mask = 11111111 11111111 11111111 00000000 (255.255.255.0), hand-calculate the network address; must answer 192.168.1.0.</p>
+
+<p><strong>Sticking points</strong>:
+- Writing long strings of 1s/0s incorrectly – teach grouping into nibbles (4 bits).
+- Mixing AND vs OR – mnemonic: &ldquo;AND narrows&rdquo;.</p>
+
+<hr>
+
+<h2 id="module-3-ipv4-address-anatomy">Module 3: IPv4 Address Anatomy</h2>
+
+<p><strong>Objectives</strong>:
+- Break an address into four octets, show each in binary and decimal.
+- Describe historical class A/B/C only for context, not as current design rule.</p>
+
+<p><strong>Key ideas &amp; activities</strong>:
+- &ldquo;32-bit string-to-dotted-quad&rdquo; mini-lab.
+- Visual analogy: street (network) vs house (host).</p>
+
+<p><strong>Assessment</strong>: Label each part of 10.15.7.<sup>23</sup>&frasl;<sub>16</sub> as network vs host.</p>
+
+<p><strong>Sticking points</strong>: Thinking classes still matter – stress that CIDR replaced them in 1993.</p>
+
+<hr>
+
+<h2 id="module-4-subnet-masks-cidr-notation">Module 4: Subnet Masks &amp; CIDR Notation</h2>
+
+<p><strong>Objectives</strong>:
+- Translate between dotted-decimal mask and slash notation up to /30.
+- Explain why /31 and /32 behave specially.</p>
+
+<p><strong>Key ideas &amp; activities</strong>:
+- Build a &ldquo;mask ladder&rdquo;:</p>
+
+<pre><code>  /8  = 255.0.0.0
+  /9  = 255.128.0.0
+  ...
+  /24 = 255.255.255.0
+</code></pre>
+
+<ul>
+<li>Paper exercise: slide the &ldquo;bar&rdquo; one bit at a time.</li>
+</ul>
+
+<p><strong>Assessment</strong>: Provide five masks in either form; learner must supply the other form and number of host bits.</p>
+
+<p><strong>Sticking points</strong>: /24 vs 255.255.255.0 confusion – repetitive drills; keep ladder sheet posted.</p>
+
+<hr>
+
+<h2 id="module-5-fixed-length-subnet-calculations">Module 5: Fixed-Length Subnet Calculations</h2>
+
+<p><strong>Objectives</strong>:
+- Given network &amp; new prefix, calculate: number of subnets, hosts per subnet, block size, first &amp; last usable, broadcast.
+- Recognize invalid host addresses.</p>
+
+<p><strong>Key ideas &amp; activities</strong>:
+1. Formula review – hosts = 2^(host bits) – 2, subnets = 2^(borrowed bits).
+2. Step-by-step worksheet for 192.168.0.0/24 subdivided into /26, /28, etc.
+3. Speed rounds: &ldquo;What subnet does 172.22.37.<sup>129</sup>&frasl;<sub>20</sub> belong to?&rdquo;</p>
+
+<p><strong>Assessment</strong>: Comprehensive problem set (5 networks, graded by instructor or answer key). Must score ≥ 80% and self-explain any error.</p>
+
+<p><strong>Sticking points</strong>:
+- Off-by-one: forgetting to reserve network &amp; broadcast.
+- Using decimal math on block size: always derive from binary boundary first.</p>
+
+<hr>
+
+<h2 id="module-6-variable-length-subnet-masking-vlsm-address-planning">Module 6: Variable Length Subnet Masking (VLSM) &amp; Address Planning</h2>
+
+<p><strong>Objectives</strong>:
+- Allocate subnets of different sizes from a single pool without overlap.
+- Prioritize largest to smallest when carving.
+- Produce a clean address plan table.</p>
+
+<p><strong>Key ideas &amp; activities</strong>:
+- Realistic scenario: HQ + 3 branches needing 250, 60, 30, 14 hosts.
+- Draw visual binary tree to show split points.
+- Spreadsheet lab so learner sees gaps.</p>
+
+<p><strong>Assessment</strong>: Design a VLSM plan for 10.10.0.0/22 given four department sizes; instructor checks for no overlap, correct ranges.</p>
+
+<p><strong>Sticking points</strong>:
+- Forgetting to sort by size – enforce rule: &ldquo;biggest networks first.&rdquo;
+- Address wastage – calculate utilization % as feedback.</p>
+
+<hr>
+
+<h2 id="module-7-subnetting-in-practice-routing-acl-implications">Module 7: Subnetting in Practice: Routing &amp; ACL Implications</h2>
+
+<p><strong>Objectives</strong>:
+- Explain how routers use the mask to make forwarding decisions (longest-prefix match).
+- Predict which subnets a summarized route covers.
+- Identify when two ACL entries overlap because of subnet math.</p>
+
+<p><strong>Key ideas &amp; activities</strong>:
+- Demo with a packet tracer / simulator (no coding).
+- ACL overlap puzzle: which rule wins?</p>
+
+<p><strong>Assessment</strong>: Given a routing table, determine next-hop for three sample destinations.</p>
+
+<p><strong>Sticking points</strong>: Misreading &ldquo;longest prefix&rdquo; – analogy: exact street address vs only ZIP code.</p>
+
+<hr>
+
+<h2 id="module-8-ipv6-subnet-fundamentals-optional-but-valuable">Module 8: IPv6 Subnet Fundamentals (Optional but Valuable)</h2>
+
+<p><strong>Objectives</strong>:
+- Recognize 128-bit address, hexadecimal quartet notation.
+- Explain the concept &ldquo;/64 is the normal host subnet.&rdquo;
+- Calculate simple IPv6 sub-prefixes (/56 → /60, /64, /126).</p>
+
+<p><strong>Key ideas &amp; activities</strong>:
+- Compression rules ::/ etc.
+- Compare IPv4 /30 to IPv6 /126 for point-to-point links.</p>
+
+<p><strong>Assessment</strong>: Convert 2001:0db8:0000:0000:0200:00ff:fe00:0042 to compressed form and list network vs interface ID for /64.</p>
+
+<p><strong>Sticking points</strong>: Hexadecimal unfamiliarity – quick refresher; show that hex-to-binary is 1:4 mapping.</p>
+
+<hr>
+
+<h2 id="module-9-verification-troubleshooting-tools">Module 9: Verification &amp; Troubleshooting Tools</h2>
+
+<p><strong>Objectives</strong>:
+- Use ipcalc (Linux/WSL or web), ping, traceroute, and whois to verify subnet plans.
+- Spot common misconfigurations (mask mismatch, overlapping ranges, wrong gateway).</p>
+
+<p><strong>Key ideas &amp; activities</strong>:
+- Live lab: mis-configured VM network adapter; student must fix.
+- Checklist template for real deployments.</p>
+
+<p><strong>Assessment</strong>: Instructor deliberately breaks one parameter; learner diagnoses and documents fix.</p>
+
+<p><strong>Sticking points</strong>: Assuming the math is wrong when the config is – teach to check both.</p>
+
+<hr>
+
+<h2 id="graduation-capstone">Graduation Capstone</h2>
+
+<p>Design a complete address plan for a fictitious 12-site company (HQ + 11 branches, VPN, guest Wi-Fi, management VLANs).</p>
+
+<p><strong>Deliverables</strong>: addressing spreadsheet, summarization map, and one-page rationale. Oral defense encouraged.</p>
+
+<p><strong>Pass mark</strong>: 100% routability, &lt; 10% wastage in any /24-sized block, and correct masking throughout.</p>
+
+<hr>
+
+<h2 id="general-study-tips">General Study Tips</h2>
+
+<ol>
+<li>Paper first, software second – manual work cements intuition.</li>
+<li>Flash cards for powers of two, masks, and slash equivalents.</li>
+<li>Teach-back – have learner explain today&rsquo;s topic to a rubber duck or peer.</li>
+</ol>
+
+<h2 id="typical-timeline">Typical Timeline</h2>
+
+<table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Modules</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>1</td>
+<td>0–2</td>
+</tr>
+
+<tr>
+<td>2</td>
+<td>3–4</td>
+</tr>
+
+<tr>
+<td>3</td>
+<td>5</td>
+</tr>
+
+<tr>
+<td>4</td>
+<td>6–7</td>
+</tr>
+
+<tr>
+<td>5</td>
+<td>8–9 + Capstone</td>
+</tr>
+</tbody>
+</table>
+<p>Learners can of course accelerate or decelerate; the assessment gates keep them from advancing with gaps.</p>
+
+<hr>
+
+<h2 id="anticipating-unsticking">Anticipating &amp; Unsticking</h2>
+
+<table>
+<thead>
+<tr>
+<th>Sticking Point</th>
+<th>Quick Intervention</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Mixing decimal &amp; binary columns</td>
+<td>Always write both under each octet until fluent.</td>
+</tr>
+
+<tr>
+<td>Forgetting network &amp; broadcast reservations</td>
+<td>&ldquo;N-B rule&rdquo; chant before every host-count calculation.</td>
+</tr>
+
+<tr>
+<td>Off-by-one in block sizes</td>
+<td>Draw boundaries on binary timeline; highlight first/last.</td>
+</tr>
+
+<tr>
+<td>Mask ↔ slash memory lapse</td>
+<td>Keep &ldquo;mask ladder&rdquo; card taped to monitor.</td>
+</tr>
+
+<tr>
+<td>VLSM overlap</td>
+<td>Print tree diagram; check that sibling ranges never mix.</td>
+</tr>
+</tbody>
+</table>
+<p>With these modules, clear gates, and targeted remedies, even a student with no prior programming experience will progress steadily from &ldquo;What is a subnet?&rdquo; to confidently building efficient, correct subnet designs in real networks.</p>
+
+    </div>
+    
+    <script src="/assets/script.js"></script>
+</body>
+</html>

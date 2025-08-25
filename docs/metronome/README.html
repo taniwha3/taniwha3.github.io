@@ -26,46 +26,130 @@
     </div>
     
     <div class="container">
-<h1 id="metronome">Metronome</h1>
+<h1 id="metronomicon">Metronomicon</h1>
 
-<p>A beautiful metronome app with polyrhythm support built with React and Tone.js.</p>
+<p>A progressive metal metronome for complex rhythmic structures. Features polyrhythms, polymeter, tempo maps, and sample-accurate timing via Web Audio API.</p>
 
 <h2 id="features">Features</h2>
 
 <ul>
-<li>Standard metronome functionality with adjustable BPM</li>
-<li>Polyrhythm support for practicing complex rhythmic patterns</li>
-<li>Visual beat indicator</li>
-<li>Clean, modern UI using styled-components</li>
+<li>🎵 <strong>Simple &amp; Advanced Modes</strong> - Basic metronome or full timeline editor</li>
+<li>🔊 <strong>Polyrhythm Support</strong> - Layer multiple rhythm patterns with visual alignment</li>
+<li>📊 <strong>Tempo Maps</strong> - Create complex tempo progressions bar by bar</li>
+<li>🎹 <strong>Multiple Click Sounds</strong> - Click, accent, woodblock, cowbell, hi-hat, rimshot</li>
+<li>🎨 <strong>Synthwave UI</strong> - Dark theme with neon accents</li>
+<li>💾 <strong>Project Persistence</strong> - Auto-save to localStorage, import/export JSON</li>
+<li>⌨️ <strong>Keyboard Shortcuts</strong> - Space to play/stop, Ctrl+D for debug mode</li>
 </ul>
 
-<h2 id="development">Development</h2>
+<h2 id="getting-started">Getting Started</h2>
 
-<pre><code class="language-bash"># Install dependencies
-npm install
+<h3 id="installation">Installation</h3>
 
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
+<pre><code class="language-bash">npm install
 </code></pre>
 
-<h2 id="technology-stack">Technology Stack</h2>
+<h3 id="development">Development</h3>
+
+<pre><code class="language-bash">npm run dev
+</code></pre>
+
+<p>Open <a href="http://localhost:5173" target="_blank">http://localhost:5173</a> in your browser.</p>
+
+<h3 id="build">Build</h3>
+
+<pre><code class="language-bash">npm run build
+</code></pre>
+
+<h3 id="deploy">Deploy</h3>
+
+<p>For GitHub Pages deployment, uncomment and set the base path in <code>vite.config.ts</code>:</p>
+
+<pre><code class="language-typescript">base: '/your-repo-name/',
+</code></pre>
+
+<h2 id="usage">Usage</h2>
+
+<h3 id="simple-mode">Simple Mode</h3>
 
 <ul>
-<li>React 19</li>
-<li>Vite</li>
-<li>Tone.js for audio processing</li>
-<li>styled-components for styling</li>
+<li>Adjust tempo with the dial (20-400 BPM)</li>
+<li>Select time signature</li>
+<li>Tap tempo for quick BPM detection</li>
+<li>Press Space or click Play to start</li>
 </ul>
+
+<h3 id="advanced-mode">Advanced Mode</h3>
+
+<ul>
+<li>Create tempo map with multiple bars</li>
+<li>Each bar can have unique tempo and time signature</li>
+<li>Drag to reorder bars</li>
+<li>Visual tempo curve display</li>
+</ul>
+
+<h3 id="polyrhythm-editor">Polyrhythm Editor</h3>
+
+<ul>
+<li>Add multiple rhythm layers</li>
+<li>Each layer has subdivision pattern</li>
+<li>Visual alignment display shows how rhythms interact</li>
+<li>Mute individual layers</li>
+<li>Adjust velocity per beat</li>
+</ul>
+
+<h2 id="browser-compatibility">Browser Compatibility</h2>
+
+<ul>
+<li>Chrome/Edge: Full support</li>
+<li>Firefox: Full support</li>
+<li>Safari: Full support (requires user interaction for audio unlock)</li>
+<li>iOS Safari: Tap play button to unlock audio context</li>
+</ul>
+
+<h2 id="known-limitations">Known Limitations</h2>
+
+<ul>
+<li>iOS/Safari requires user interaction to start audio</li>
+<li>Maximum polyrhythm complexity limited to prevent overflow</li>
+<li>Tempo range: 20-400 BPM</li>
+<li>Time signatures: numerator 1-16, denominator 2/4/8/16/32</li>
+</ul>
+
+<h2 id="architecture">Architecture</h2>
+
+<ul>
+<li><strong>React</strong> - UI framework with hooks</li>
+<li><strong>TypeScript</strong> - Type safety</li>
+<li><strong>Web Audio API</strong> - Sample-accurate timing</li>
+<li><strong>Vite</strong> - Build tool</li>
+<li><strong>CSS Variables</strong> - Theming</li>
+</ul>
+
+<h2 id="performance-optimizations">Performance Optimizations</h2>
+
+<ul>
+<li>React.memo for heavy components</li>
+<li>useCallback for event handlers</li>
+<li>Canvas rendering with device pixel ratio support</li>
+<li>Microsecond precision for polyrhythm calculations</li>
+<li>Debug mode for development (localStorage.setItem(&lsquo;DEBUG&rsquo;, &lsquo;true&rsquo;))</li>
+</ul>
+
+<h2 id="contributing">Contributing</h2>
+
+<ol>
+<li>Fork the repository</li>
+<li>Create your feature branch</li>
+<li>Run tests: <code>npm test</code></li>
+<li>Commit your changes</li>
+<li>Push to the branch</li>
+<li>Open a Pull Request</li>
+</ol>
 
 <h2 id="license">License</h2>
 
-<p>ISC</p>
+<p>Apache V2</p>
 
     </div>
     

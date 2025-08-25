@@ -1,0 +1,29 @@
+.tempo-curve-container {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #2a3439;
+  border-radius: 4px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 200px;
+  max-height: 300px;
+}
+
+.tempo-curve-container h4 {
+  margin: 0 0 1rem 0;
+  color: #e0e0e0;
+  font-family: 'Space Mono', monospace;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tempo-curve-canvas {
+  width: 100%;
+  flex: 1;
+  min-height: 150px;
+  background: #0a0a0a;
+  border-radius: 4px;
+  cursor: crosshair;
+}

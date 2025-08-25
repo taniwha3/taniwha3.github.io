@@ -36,6 +36,10 @@ func main() {
 	fs := http.FileServer(http.Dir("docs/assets"))
 	http.Handle("/assets/", http.StripPrefix("/assets/", fs))
 
+	// Set up static file server for music tools (like metronome)
+	toolsFs := http.FileServer(http.Dir("docs/music/tools"))
+	http.Handle("/music/tools/", http.StripPrefix("/music/tools/", toolsFs))
+
 	// Handle all other requests by serving markdown files
 	http.HandleFunc("/", handleMarkdown)
 

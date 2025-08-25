@@ -1,0 +1,86 @@
+.bar-editor {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.bar-editor h4 {
+  margin: 0 0 16px 0;
+  color: var(--primary);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.bar-editor-field {
+  margin-bottom: 16px;
+}
+
+.bar-editor-field:last-child {
+  margin-bottom: 0;
+}
+
+.bar-editor-field label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.bar-editor-field input[type='number'] {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.bar-editor-field input[type='number']:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--primary-glow);
+}
+
+.time-signature-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.time-signature-inputs input[type='number'] {
+  width: 60px;
+}
+
+.time-signature-inputs span {
+  color: var(--text-secondary);
+  font-size: 18px;
+}
+
+.time-signature-inputs select {
+  width: 60px;
+  padding: 8px;
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.time-signature-inputs select:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--primary-glow);
+}
+
+.time-signature-inputs select:hover {
+  border-color: var(--primary);
+}

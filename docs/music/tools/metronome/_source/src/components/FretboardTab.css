@@ -1,0 +1,274 @@
+.fretboard-tab {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 2rem;
+  overflow: auto;
+}
+
+.fretboard-container {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2a3439 100%);
+  border: 2px solid #2a3439;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.5),
+    0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.fretboard {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.string-labels {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  font-weight: bold;
+  color: #ffd700;
+  font-size: 1.2rem;
+  min-width: 2rem;
+  text-align: center;
+}
+
+.string-label {
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.fretboard-grid {
+  flex: 1;
+  position: relative;
+  background: linear-gradient(90deg, #4a3220 0%, #3a2515 50%, #4a3220 100%);
+  border-radius: 8px;
+  padding: 0.5rem;
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.8),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.fret-numbers {
+  display: flex;
+  margin-bottom: 0.5rem;
+  padding: 0 0.5rem;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.fret-number {
+  flex: 1;
+  text-align: center;
+  min-width: 4rem;
+}
+
+.fret-number:first-child {
+  min-width: 3rem;
+}
+
+.guitar-string {
+  display: flex;
+  position: relative;
+  height: 3rem;
+  align-items: center;
+  margin: 0.25rem 0;
+}
+
+.guitar-string::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #c0c0c0 0%, #808080 50%, #c0c0c0 100%);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.guitar-string:nth-child(2)::before {
+  height: 2px; /* High E - thinnest */
+}
+
+.guitar-string:nth-child(3)::before {
+  height: 2px; /* B */
+}
+
+.guitar-string:nth-child(4)::before {
+  height: 3px; /* G */
+}
+
+.guitar-string:nth-child(5)::before {
+  height: 3px; /* D */
+}
+
+.guitar-string:nth-child(6)::before {
+  height: 4px; /* A */
+}
+
+.guitar-string:nth-child(7)::before {
+  height: 5px; /* Low E - thickest */
+}
+
+.fret-position {
+  flex: 1;
+  min-width: 4rem;
+  height: 100%;
+  background: transparent;
+  border: none;
+  border-right: 2px solid #888;
+  position: relative;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  z-index: 2;
+}
+
+.fret-position.open {
+  min-width: 3rem;
+  border-right: 4px solid #ffd700;
+  background: linear-gradient(90deg, #2a2a2a 0%, transparent 100%);
+}
+
+.fret-position:hover {
+  background-color: rgba(255, 215, 0, 0.1);
+}
+
+.fret-position:last-child {
+  border-right: 4px solid #ffd700;
+}
+
+.note-dot {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: transparent;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.fret-position:hover .note-dot {
+  background: rgba(255, 215, 0, 0.3);
+  border-color: #ffd700;
+}
+
+.fret-position.active .note-dot {
+  background: radial-gradient(circle, #ff3333 0%, #ff6666 100%);
+  border-color: #ff3333;
+  box-shadow:
+    0 0 20px #ff3333,
+    0 0 40px rgba(255, 51, 51, 0.5);
+  animation: pulse-note 0.5s ease-out;
+}
+
+@keyframes pulse-note {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.fret-markers {
+  display: flex;
+  position: absolute;
+  bottom: -2rem;
+  left: 0;
+  right: 0;
+  height: 1.5rem;
+  pointer-events: none;
+}
+
+.marker-spacer {
+  min-width: 3rem;
+}
+
+.marker-container {
+  flex: 1;
+  min-width: 4rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fret-marker {
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, #e0e0e0 0%, #808080 100%);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.fret-marker.double-dot {
+  position: absolute;
+}
+
+.fret-marker.double-dot.top {
+  top: -0.5rem;
+}
+
+.fret-marker.double-dot.bottom {
+  bottom: -0.5rem;
+}
+
+.note-display {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+  border: 2px solid #ff3333;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(255, 51, 51, 0.2);
+}
+
+.note-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.note-name {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #ff3333;
+  text-shadow: 0 0 20px rgba(255, 51, 51, 0.5);
+}
+
+.note-details {
+  font-size: 1rem;
+  color: #e0e0e0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+@media (max-width: 768px) {
+  .fret-position {
+    min-width: 3rem;
+  }
+
+  .fret-position.open {
+    min-width: 2.5rem;
+  }
+
+  .note-dot {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+}
