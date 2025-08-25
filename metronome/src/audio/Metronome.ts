@@ -466,7 +466,7 @@ export class Metronome {
    */
   cleanup(): void {
     this.stop();
-    this.scheduler.cleanup();
+    this.scheduler.stop();
     document.removeEventListener('visibilitychange', this.visibilityHandler);
   }
 }

@@ -37,7 +37,6 @@ export class Scheduler {
   // Timing (all times are based on performance.now())
   private startTime = 0;        // performance.now() when scheduler started
   private pauseTime = 0;         // scheduler time when paused
-  private audioStartTime = 0;    // audioContext.currentTime when started (for reference)
 
   constructor(options: SchedulerOptions = {}) {
     this.audioContextProvider = AudioContextProvider.getInstance();
@@ -52,12 +51,11 @@ export class Scheduler {
   async start(): Promise<void> {
     if (this.isRunning) return;
 
+    // Ensure audio context is initialized if available
     try {
-      const audioContext = await this.audioContextProvider.getAudioContext();
-      this.audioStartTime = audioContext.currentTime || 0;
+      await this.audioContextProvider.getAudioContext();
     } catch {
-      // Fallback if audio context is not available
-      this.audioStartTime = 0;
+      // Continue even if audio context is not available
     }
 
     this.startTime = performance.now();
@@ -104,12 +102,11 @@ export class Scheduler {
   async resume(): Promise<void> {
     if (this.isRunning) return;
 
+    // Ensure audio context is initialized if available
     try {
-      const audioContext = await this.audioContextProvider.getAudioContext();
-      this.audioStartTime = audioContext.currentTime - this.pauseTime;
+      await this.audioContextProvider.getAudioContext();
     } catch {
-      // Fallback if audio context is not available
-      this.audioStartTime = 0;
+      // Continue even if audio context is not available
     }
 
     this.isRunning = true;

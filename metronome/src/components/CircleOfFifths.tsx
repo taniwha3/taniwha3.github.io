@@ -63,7 +63,7 @@ export function CircleOfFifths() {
   const [showMinor, setShowMinor] = useState(false);
   const [showChords, setShowChords] = useState(false);
 
-  const playChord = useCallback(async (notes: number[], isMinor: boolean = false) => {
+  const playChord = useCallback(async (notes: number[], _isMinor: boolean = false) => {
     const audioContextProvider = AudioContextProvider.getInstance();
     const audioContext = await audioContextProvider.getAudioContext();
     const now = audioContext.currentTime;

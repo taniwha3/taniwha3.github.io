@@ -5,9 +5,6 @@ import './Pentatonics.css';
 // All 12 chromatic notes
 const CHROMATIC_NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
-// C Major scale (Ionian mode) - the white keys on piano
-const C_MAJOR_SCALE = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-
 // Standard guitar tuning for visualization
 const GUITAR_TUNING = ['E', 'B', 'G', 'D', 'A', 'E']; // High to low
 const GUITAR_MIDI_BASE = [64, 59, 55, 50, 45, 40]; // E4, B3, G3, D3, A2, E2

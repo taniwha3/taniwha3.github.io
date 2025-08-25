@@ -11,7 +11,6 @@ export const DEFAULT_PROJECT: ProjectState = {
       barNumber: 1,
       tempo: 120,
       timeSignature: { numerator: 4, denominator: 4 },
-      accentPattern: [true, false, false, false],
     },
   ] as Bar[],
   polyrhythm: {

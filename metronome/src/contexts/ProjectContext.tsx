@@ -39,7 +39,7 @@ function validateProject(project: unknown): project is ProjectState {
   const p = project as Record<string, unknown>;
   const timeSig = p.timeSignature as Record<string, unknown>;
   
-  return (
+  return !!(
     p &&
     typeof p.name === 'string' &&
     typeof p.tempo === 'number' &&
