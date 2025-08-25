@@ -1,0 +1,328 @@
+.natural-harmonics {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 2rem;
+  overflow: auto;
+}
+
+.harmonics-container {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2a3439 100%);
+  border: 2px solid #2a3439;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.5),
+    0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.harmonics-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.harmonics-header h2 {
+  color: #ffd700;
+  font-size: 2rem;
+  margin: 0 0 0.5rem 0;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.harmonics-header p {
+  color: #e0e0e0;
+  font-size: 1.2rem;
+}
+
+.harmonics-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.string-visualization {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+  border-radius: 8px;
+  border: 1px solid #3a3a3a;
+}
+
+.string-container {
+  position: relative;
+  height: 100px;
+  display: flex;
+  align-items: center;
+}
+
+.string {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  height: 6px;
+  background: linear-gradient(90deg, #c0c0c0 0%, #808080 50%, #c0c0c0 100%);
+  border-radius: 3px;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.wave-visualization {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  top: 0;
+  bottom: 0;
+  width: 90%;
+  height: 100%;
+  z-index: 1;
+  opacity: 0.9;
+}
+
+.wave-path {
+  filter: drop-shadow(0 0 8px rgba(255, 51, 51, 0.6));
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 8px rgba(255, 51, 51, 0.6));
+  }
+  50% {
+    filter: drop-shadow(0 0 16px rgba(255, 51, 51, 0.9));
+  }
+}
+
+.string.harmonic-0 {
+  animation: vibrate-whole 0.1s infinite;
+}
+
+@keyframes vibrate-whole {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+.node-point {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  background: radial-gradient(circle, #ff3333 0%, #ff6666 100%);
+  border: 2px solid #ffd700;
+  border-radius: 50%;
+  box-shadow:
+    0 0 20px rgba(255, 51, 51, 0.8),
+    0 0 40px rgba(255, 215, 0, 0.4);
+  z-index: 3;
+  animation: pulse-node 1s infinite;
+}
+
+@keyframes pulse-node {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+}
+
+.string-end {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0.5rem;
+  background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
+  border: 2px solid #ffd700;
+  border-radius: 4px;
+  color: #ffd700;
+  font-weight: bold;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.string-end.nut {
+  left: 0;
+  transform: translate(-100%, -50%);
+  margin-left: -1rem;
+}
+
+.string-end.bridge {
+  right: 0;
+  transform: translate(100%, -50%);
+  margin-right: -1rem;
+}
+
+.fundamental-button {
+  padding: 1rem;
+  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+  border: 2px solid #ffd700;
+  border-radius: 8px;
+  color: #e0e0e0;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.fundamental-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.fundamental-button.active {
+  background: linear-gradient(135deg, #442222 0%, #331111 100%);
+  border-color: #ff3333;
+  color: #ff6666;
+  box-shadow: 0 0 30px rgba(255, 51, 51, 0.5);
+}
+
+.fundamental-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.harmonics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.harmonic-button {
+  padding: 1rem;
+  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+  border: 2px solid #3a3a3a;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.harmonic-button:hover:not(:disabled) {
+  border-color: #ffd700;
+  background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.harmonic-button.active {
+  background: linear-gradient(135deg, #442222 0%, #331111 100%);
+  border-color: #ff3333;
+  box-shadow:
+    0 0 20px rgba(255, 51, 51, 0.5),
+    inset 0 0 10px rgba(255, 51, 51, 0.2);
+}
+
+.harmonic-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.harmonic-number {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ff3333;
+  text-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+}
+
+.harmonic-frequency {
+  font-size: 1rem;
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.harmonic-label {
+  font-size: 0.9rem;
+  color: #e0e0e0;
+  text-align: center;
+}
+
+.harmonic-cents {
+  font-size: 0.85rem;
+  font-weight: bold;
+  min-height: 1.2em;
+}
+
+.cents-sharp {
+  color: #66ff66;
+  text-shadow: 0 0 5px rgba(102, 255, 102, 0.5);
+}
+
+.cents-flat {
+  color: #ff9966;
+  text-shadow: 0 0 5px rgba(255, 153, 102, 0.5);
+}
+
+.cents-perfect {
+  color: #ffd700;
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+  font-size: 0.75rem;
+}
+
+.harmonic-divisions {
+  font-size: 0.8rem;
+  color: #808080;
+  font-style: italic;
+}
+
+.harmonic-info {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+  border: 2px solid #ff3333;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(255, 51, 51, 0.2);
+}
+
+.harmonic-info h3 {
+  color: #ff3333;
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  text-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+}
+
+.harmonic-info p {
+  color: #e0e0e0;
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .harmonics-grid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  }
+
+  .harmonic-button {
+    padding: 0.75rem;
+  }
+
+  .harmonic-number {
+    font-size: 1.2rem;
+  }
+
+  .harmonic-frequency {
+    font-size: 0.9rem;
+  }
+
+  .harmonic-label {
+    font-size: 0.8rem;
+  }
+}
