@@ -1,0 +1,202 @@
+.circle-of-fifths-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  min-height: calc(100vh - 120px);
+  background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+}
+
+.circle-controls {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.mode-button {
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mode-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.mode-button.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.circle-main {
+  position: relative;
+  margin: 2rem 0;
+}
+
+.circle-svg {
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+}
+
+.key-circle {
+  fill: rgba(255, 255, 255, 0.1);
+  stroke: rgba(255, 255, 255, 0.3);
+  stroke-width: 2;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.key-circle:hover {
+  fill: rgba(102, 126, 234, 0.3);
+  stroke: #667eea;
+  stroke-width: 3;
+  filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.6));
+}
+
+.key-circle.selected {
+  fill: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  stroke: #667eea;
+  stroke-width: 3;
+  filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.8));
+}
+
+.key-circle.related {
+  fill: rgba(76, 175, 80, 0.2);
+  stroke: #4caf50;
+  stroke-width: 2;
+}
+
+.key-text {
+  fill: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 600;
+  user-select: none;
+}
+
+.key-text.major {
+  font-size: 14px;
+}
+
+.key-text.minor {
+  font-size: 11px;
+  fill: rgba(255, 255, 255, 0.6);
+}
+
+.accidentals-label {
+  fill: rgba(255, 255, 255, 0.4);
+  font-size: 12px;
+  font-weight: 300;
+}
+
+.key-info {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  min-width: 400px;
+  backdrop-filter: blur(10px);
+}
+
+.key-info h3 {
+  margin: 0 0 1rem 0;
+  color: #fff;
+  font-size: 1.5rem;
+  text-align: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.key-relationships {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.relationship {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.relationship .label {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 0.25rem;
+}
+
+.relationship .value {
+  font-size: 1.1rem;
+  color: #fff;
+  font-weight: 600;
+}
+
+.chord-progression {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chord-progression h4 {
+  margin: 0 0 1rem 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+}
+
+.progressions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.progressions div {
+  padding: 0.5rem 1rem;
+  background: rgba(102, 126, 234, 0.1);
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 6px;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  font-size: 0.95rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.progressions div:hover {
+  background: rgba(102, 126, 234, 0.2);
+  transform: translateX(4px);
+}
+
+@media (max-width: 768px) {
+  .circle-of-fifths-container {
+    padding: 1rem;
+  }
+
+  .circle-svg {
+    width: 320px;
+    height: 320px;
+  }
+
+  .key-info {
+    min-width: 320px;
+    padding: 1rem;
+  }
+
+  .key-relationships {
+    grid-template-columns: 1fr;
+  }
+
+  .progressions {
+    grid-template-columns: 1fr;
+  }
+}
