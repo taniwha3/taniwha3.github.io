@@ -86,9 +86,15 @@
 
       .controls {
         display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .control-row {
+        display: flex;
         flex-wrap: wrap;
         gap: 12px;
-        margin-top: 16px;
         align-items: center;
       }
 
@@ -170,7 +176,7 @@
   <body>
     <main class="scope">
       <div class="header">
-        <div class="title">Analog Scope • Sine Latch</div>
+        <div class="title">Analog Scope • Signal Lab</div>
         <div class="status" id="status">Idle</div>
       </div>
 
@@ -182,40 +188,46 @@
       </div>
 
       <div class="controls">
-        <button id="play" data-state="stopped">Play</button>
-        <label class="knob">
-          <span>Source</span>
-          <select id="source">
-            <option value="sine">Sine</option>
-            <option value="singlecoil">Bridge Single Coil</option>
-          </select>
-        </label>
-        <label class="knob">
-          <span>Drive</span>
-          <input id="drive" type="range" min="0" max="100" value="0" />
-        </label>
-        <label class="knob">
-          <span>TS Tone</span>
-          <input id="tsTone" type="range" min="0" max="100" value="50" />
-        </label>
-        <label class="knob">
-          <span>TS Level</span>
-          <input id="tsLevel" type="range" min="0" max="100" value="50" />
-        </label>
-        <label class="knob">
-          <span>Distortion</span>
-          <input id="distortion" type="range" min="0" max="100" value="0" />
-        </label>
-        <label class="knob">
-          <span>DS Tone</span>
-          <input id="dsTone" type="range" min="0" max="100" value="50" />
-        </label>
-        <label class="knob">
-          <span>DS Level</span>
-          <input id="dsLevel" type="range" min="0" max="100" value="50" />
-        </label>
-        <div class="meter" id="meter">Time base: 2.5 ms/div • Trigger: rising</div>
-        <div class="legend">Latched trace holds after playback.</div>
+        <div class="control-row">
+          <button id="play" data-state="stopped">Play</button>
+          <label class="knob">
+            <span>Source</span>
+            <select id="source">
+              <option value="sine">Sine</option>
+              <option value="singlecoil">Bridge Single Coil</option>
+            </select>
+          </label>
+          <div class="meter" id="meter">Time base: 2.5 ms/div • Trigger: rising</div>
+          <div class="legend">Latched trace holds after playback.</div>
+        </div>
+        <div class="control-row">
+          <label class="knob">
+            <span>Drive</span>
+            <input id="drive" type="range" min="0" max="100" value="0" />
+          </label>
+          <label class="knob">
+            <span>TS Tone</span>
+            <input id="tsTone" type="range" min="0" max="100" value="50" />
+          </label>
+          <label class="knob">
+            <span>TS Level</span>
+            <input id="tsLevel" type="range" min="0" max="100" value="50" />
+          </label>
+        </div>
+        <div class="control-row">
+          <label class="knob">
+            <span>Distortion</span>
+            <input id="distortion" type="range" min="0" max="100" value="0" />
+          </label>
+          <label class="knob">
+            <span>DS Tone</span>
+            <input id="dsTone" type="range" min="0" max="100" value="50" />
+          </label>
+          <label class="knob">
+            <span>DS Level</span>
+            <input id="dsLevel" type="range" min="0" max="100" value="50" />
+          </label>
+        </div>
       </div>
     </main>
 
