@@ -6,6 +6,7 @@ all: build
 # Build the static site
 build:
 	go run main.go build
+	cp ./site/tone.html ./docs/tone.html
 
 # Run the local server
 serve:
