@@ -1,0 +1,833 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Oscilloscope Sine Wave</title>
+    <style>
+      :root {
+        --bg: #0b0e14;
+        --grid: rgba(255, 255, 255, 0.08);
+        --trace: #78ffb2;
+        --trace-glow: rgba(120, 255, 178, 0.35);
+        --panel: #141a24;
+        --text: #d5e3ff;
+        --accent: #ffd166;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "IBM Plex Mono", "SF Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        background: radial-gradient(circle at 20% 20%, #1a2231 0%, #0b0e14 55%, #07090e 100%);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px;
+      }
+
+      .scope {
+        width: min(980px, 94vw);
+        background: linear-gradient(145deg, #111725, #0a0d14);
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .title {
+        font-size: 1.1rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .status {
+        font-size: 0.85rem;
+        color: var(--accent);
+      }
+
+      .canvas-wrap {
+        position: relative;
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: var(--bg);
+      }
+
+      canvas {
+        display: block;
+        width: 100%;
+        height: 320px;
+      }
+
+      .spectrogram {
+        margin-top: 16px;
+      }
+
+      .spectrogram canvas {
+        height: 170px;
+      }
+
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 16px;
+        align-items: center;
+      }
+
+      .knob {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.85rem;
+        color: rgba(213, 227, 255, 0.85);
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .knob input[type="range"] {
+        accent-color: var(--accent);
+        width: 160px;
+      }
+
+      button {
+        appearance: none;
+        background: var(--accent);
+        color: #1f1d16;
+        font-weight: 700;
+        border: none;
+        border-radius: 999px;
+        padding: 12px 22px;
+        cursor: pointer;
+        letter-spacing: 0.03em;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        box-shadow: 0 8px 20px rgba(255, 209, 102, 0.25);
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 26px rgba(255, 209, 102, 0.3);
+      }
+
+      button:active {
+        transform: translateY(1px);
+      }
+
+      .meter {
+        font-size: 0.85rem;
+        color: rgba(213, 227, 255, 0.75);
+      }
+
+      .legend {
+        margin-left: auto;
+        font-size: 0.8rem;
+        opacity: 0.7;
+      }
+
+      @media (max-width: 640px) {
+        .scope {
+          padding: 18px;
+        }
+
+        canvas {
+          height: 260px;
+        }
+
+        .legend {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="scope">
+      <div class="header">
+        <div class="title">Analog Scope • Sine Latch</div>
+        <div class="status" id="status">Idle</div>
+      </div>
+
+      <div class="canvas-wrap">
+        <canvas id="scope" width="960" height="320" aria-label="Oscilloscope display"></canvas>
+      </div>
+      <div class="canvas-wrap spectrogram">
+        <canvas id="spectrogram" width="960" height="170" aria-label="Spectrogram display"></canvas>
+      </div>
+
+      <div class="controls">
+        <button id="play" data-state="stopped">Play</button>
+        <label class="knob">
+          <span>Drive</span>
+          <input id="drive" type="range" min="0" max="100" value="0" />
+        </label>
+        <label class="knob">
+          <span>TS Tone</span>
+          <input id="tsTone" type="range" min="0" max="100" value="50" />
+        </label>
+        <label class="knob">
+          <span>TS Level</span>
+          <input id="tsLevel" type="range" min="0" max="100" value="50" />
+        </label>
+        <label class="knob">
+          <span>Distortion</span>
+          <input id="distortion" type="range" min="0" max="100" value="0" />
+        </label>
+        <label class="knob">
+          <span>DS Tone</span>
+          <input id="dsTone" type="range" min="0" max="100" value="50" />
+        </label>
+        <label class="knob">
+          <span>DS Level</span>
+          <input id="dsLevel" type="range" min="0" max="100" value="50" />
+        </label>
+        <div class="meter" id="meter">Time base: 2.5 ms/div • Trigger: rising</div>
+        <div class="legend">Latched trace holds after playback.</div>
+      </div>
+    </main>
+
+    <script>
+      const canvas = document.getElementById("scope");
+      const ctx = canvas.getContext("2d");
+      const spectrogramCanvas = document.getElementById("spectrogram");
+      const spectrogramCtx = spectrogramCanvas.getContext("2d");
+      const statusEl = document.getElementById("status");
+      const meterEl = document.getElementById("meter");
+      const playBtn = document.getElementById("play");
+      const driveSlider = document.getElementById("drive");
+      const tsToneSlider = document.getElementById("tsTone");
+      const tsLevelSlider = document.getElementById("tsLevel");
+      const distortionSlider = document.getElementById("distortion");
+      const dsToneSlider = document.getElementById("dsTone");
+      const dsLevelSlider = document.getElementById("dsLevel");
+
+      let audioContext;
+      let analyser;
+      let osc;
+      let gain;
+      let drive;
+      let driveIn;
+      let driveOut;
+      let distortion;
+      let tsLevel;
+      let dsIn;
+      let dsLevel;
+      let tsHighPass;
+      let tsLowPass;
+      let dsHighPass;
+      let dsLowPass;
+      let driveAmount = Number(driveSlider.value);
+      let tsToneAmount = Number(tsToneSlider.value);
+      let tsLevelAmount = Number(tsLevelSlider.value);
+      let distortionAmount = Number(distortionSlider.value);
+      let dsToneAmount = Number(dsToneSlider.value);
+      let dsLevelAmount = Number(dsLevelSlider.value);
+      let animationId;
+      let playMode = "clean";
+      let latchedData = null;
+      let isRunning = false;
+
+      const fftSize = 4096;
+      const dataBuffer = new Uint8Array(fftSize);
+      const timeBuffer = new Float32Array(fftSize);
+      const windowBuffer = new Float32Array(fftSize);
+      const fftReal = new Float32Array(fftSize);
+      const fftImag = new Float32Array(fftSize);
+      const magBuffer = new Float32Array(fftSize / 2);
+
+      const resizeCanvas = () => {
+        const { width, height } = canvas.getBoundingClientRect();
+        const scale = devicePixelRatio || 1;
+        canvas.width = Math.round(width * scale);
+        canvas.height = Math.round(height * scale);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(scale, scale);
+      };
+
+      const resizeSpectrogram = () => {
+        const { width, height } = spectrogramCanvas.getBoundingClientRect();
+        const scale = devicePixelRatio || 1;
+        spectrogramCanvas.width = Math.round(width * scale);
+        spectrogramCanvas.height = Math.round(height * scale);
+        spectrogramCtx.setTransform(1, 0, 0, 1, 0, 0);
+        spectrogramCtx.scale(scale, scale);
+        spectrogramCtx.fillStyle = "#0b0e14";
+        spectrogramCtx.fillRect(0, 0, width, height);
+      };
+
+      const initWindow = () => {
+        const n = windowBuffer.length;
+        for (let i = 0; i < n; i += 1) {
+          windowBuffer[i] = 0.5 * (1 - Math.cos((2 * Math.PI * i) / (n - 1)));
+        }
+      };
+
+      const fft = (real, imag) => {
+        const n = real.length;
+        let j = 0;
+        for (let i = 0; i < n; i += 1) {
+          if (i < j) {
+            [real[i], real[j]] = [real[j], real[i]];
+            [imag[i], imag[j]] = [imag[j], imag[i]];
+          }
+          let m = n >> 1;
+          while (m >= 1 && j >= m) {
+            j -= m;
+            m >>= 1;
+          }
+          j += m;
+        }
+
+        for (let len = 2; len <= n; len <<= 1) {
+          const ang = (-2 * Math.PI) / len;
+          const wlenCos = Math.cos(ang);
+          const wlenSin = Math.sin(ang);
+          for (let i = 0; i < n; i += len) {
+            let wCos = 1;
+            let wSin = 0;
+            for (let k = 0; k < len / 2; k += 1) {
+              const uRe = real[i + k];
+              const uIm = imag[i + k];
+              const vRe = real[i + k + len / 2] * wCos - imag[i + k + len / 2] * wSin;
+              const vIm = real[i + k + len / 2] * wSin + imag[i + k + len / 2] * wCos;
+              real[i + k] = uRe + vRe;
+              imag[i + k] = uIm + vIm;
+              real[i + k + len / 2] = uRe - vRe;
+              imag[i + k + len / 2] = uIm - vIm;
+              const nextCos = wCos * wlenCos - wSin * wlenSin;
+              const nextSin = wCos * wlenSin + wSin * wlenCos;
+              wCos = nextCos;
+              wSin = nextSin;
+            }
+          }
+        }
+      };
+
+      const computeSpectrum = () => {
+        if (!analyser) return;
+        analyser.getFloatTimeDomainData(timeBuffer);
+        const n = timeBuffer.length;
+        let windowSum = 0;
+        for (let i = 0; i < n; i += 1) {
+          const w = windowBuffer[i];
+          windowSum += w;
+          fftReal[i] = timeBuffer[i] * w;
+          fftImag[i] = 0;
+        }
+        fft(fftReal, fftImag);
+
+        const norm = windowSum / 2;
+        for (let i = 0; i < magBuffer.length; i += 1) {
+          const re = fftReal[i];
+          const im = fftImag[i];
+          const mag = Math.sqrt(re * re + im * im) / norm;
+          magBuffer[i] = 20 * Math.log10(mag + 1e-12);
+        }
+      };
+
+      const drawGrid = (width, height) => {
+        const divisions = 10;
+        ctx.save();
+        ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--grid");
+        ctx.lineWidth = 1;
+
+        for (let i = 0; i <= divisions; i += 1) {
+          const x = (width / divisions) * i;
+          const y = (height / divisions) * i;
+
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, height);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(width, y);
+          ctx.stroke();
+        }
+
+        ctx.restore();
+      };
+
+      const findRisingZeroCrossing = (buffer) => {
+        const midpoint = 128;
+        for (let i = 1; i < buffer.length; i += 1) {
+          if (buffer[i - 1] < midpoint && buffer[i] >= midpoint) {
+            return i;
+          }
+        }
+        return 0;
+      };
+
+      const drawWaveform = (buffer, { verticalScale = 0.7 } = {}) => {
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+        ctx.clearRect(0, 0, width, height);
+
+        drawGrid(width, height);
+
+        ctx.save();
+        ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--trace");
+        ctx.lineWidth = 2;
+        ctx.shadowColor = getComputedStyle(document.documentElement).getPropertyValue("--trace-glow");
+        ctx.shadowBlur = 10;
+
+        ctx.beginPath();
+
+        const start = findRisingZeroCrossing(buffer);
+        const step = buffer.length / width;
+        const extended = new Uint8Array(buffer.length * 2);
+        extended.set(buffer, 0);
+        extended.set(buffer, buffer.length);
+        for (let x = 0; x < width; x += 1) {
+          const index = Math.floor(start + x * step);
+          const value = extended[index] / 255;
+          const y = height * ((1 - verticalScale) / 2 + verticalScale * (1 - value));
+          if (x === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+
+        ctx.stroke();
+        ctx.restore();
+      };
+
+      const drawSpectrogram = (buffer, { useFloat = false, isClean = false } = {}) => {
+        const width = spectrogramCanvas.clientWidth;
+        const height = spectrogramCanvas.clientHeight;
+        spectrogramCtx.drawImage(spectrogramCanvas, -1, 0, width, height);
+        spectrogramCtx.fillStyle = "rgba(11, 14, 20, 0.08)";
+        spectrogramCtx.fillRect(width - 1, 0, 1, height);
+
+        const sampleRate = audioContext ? audioContext.sampleRate : 48000;
+        const nyquist = sampleRate / 2;
+        const fMin = 20;
+        const fMax = nyquist;
+        const logRatio = Math.log(fMax / fMin);
+
+        if (!useFloat) return;
+
+        let maxDb = -Infinity;
+        for (let i = 0; i < buffer.length; i += 1) {
+          if (buffer[i] > maxDb) maxDb = buffer[i];
+        }
+        const floorDb = maxDb - (isClean ? 10 : 60);
+        const peaks = [];
+        for (let i = 1; i < buffer.length - 1; i += 1) {
+          const db = buffer[i];
+          if (db < floorDb) continue;
+          if (db > buffer[i - 1] && db > buffer[i + 1]) {
+            peaks.push({ index: i, db });
+          }
+        }
+        peaks.sort((a, b) => b.db - a.db);
+        const topPeaks = isClean ? peaks.slice(0, 1) : peaks.slice(0, 24);
+
+        for (const peak of topPeaks) {
+          const freq = (peak.index / buffer.length) * nyquist;
+          if (freq < fMin) continue;
+          const t = Math.log(freq / fMin) / logRatio;
+          const y = Math.round(height - 1 - t * height);
+          if (y < 0 || y >= height) continue;
+          let value = (peak.db - floorDb) / (maxDb - floorDb || 1);
+          value = Math.pow(value, 1.8);
+          const color = getSpectrogramColor(value);
+          spectrogramCtx.fillStyle = color;
+          spectrogramCtx.fillRect(width - 1, y - 1, 1, 3);
+        }
+      };
+
+      const drawSpectrogramSilence = () => {
+        const width = spectrogramCanvas.clientWidth;
+        const height = spectrogramCanvas.clientHeight;
+        spectrogramCtx.drawImage(spectrogramCanvas, -1, 0, width, height);
+        spectrogramCtx.fillStyle = "#0b0e14";
+        spectrogramCtx.fillRect(width - 1, 0, 1, height);
+      };
+
+      const getSpectrogramColor = (value) => {
+        const stops = [
+          { at: 0.0, color: [10, 16, 35] },
+          { at: 0.25, color: [30, 80, 200] },
+          { at: 0.5, color: [20, 200, 170] },
+          { at: 0.75, color: [255, 210, 70] },
+          { at: 1.0, color: [255, 80, 60] },
+        ];
+
+        const clamped = Math.max(0, Math.min(1, value));
+        let lower = stops[0];
+        let upper = stops[stops.length - 1];
+        for (let i = 0; i < stops.length - 1; i += 1) {
+          if (clamped >= stops[i].at && clamped <= stops[i + 1].at) {
+            lower = stops[i];
+            upper = stops[i + 1];
+            break;
+          }
+        }
+
+        const span = upper.at - lower.at || 1;
+        const t = (clamped - lower.at) / span;
+        const r = Math.round(lower.color[0] + (upper.color[0] - lower.color[0]) * t);
+        const g = Math.round(lower.color[1] + (upper.color[1] - lower.color[1]) * t);
+        const b = Math.round(lower.color[2] + (upper.color[2] - lower.color[2]) * t);
+        return `rgb(${r}, ${g}, ${b})`;
+      };
+
+      const updateMeter = () => {
+        const sampleRate = audioContext ? audioContext.sampleRate : 48000;
+        const secondsPerDivision = 0.0025;
+        const frequency = 440;
+        meterEl.textContent = `Time base: ${(secondsPerDivision * 1000).toFixed(1)} ms/div • Trigger: rising • Sample rate: ${sampleRate} Hz • Frequency: ${frequency} Hz`;
+      };
+
+      const render = () => {
+        const verticalScale = isRunning && drive ? 0.9 : 0.7;
+        const isClean = driveAmount === 0 && distortionAmount === 0;
+        if (analyser && isRunning) {
+          computeSpectrum();
+          drawSpectrogram(magBuffer, { useFloat: true, isClean });
+        } else if (analyser) {
+          drawSpectrogramSilence();
+        }
+        if (analyser && isRunning) {
+          analyser.getByteTimeDomainData(dataBuffer);
+          latchedData = dataBuffer.slice(0);
+          drawWaveform(latchedData, { verticalScale });
+        } else if (latchedData) {
+          drawWaveform(latchedData, { verticalScale });
+        }
+        animationId = requestAnimationFrame(render);
+      };
+
+      const stopOscillator = () => {
+        if (!osc) return;
+        if (analyser) {
+          analyser.getByteTimeDomainData(dataBuffer);
+          latchedData = dataBuffer.slice(0);
+        }
+        try {
+          osc.stop();
+        } catch (error) {
+          // oscillator might already be stopped
+        }
+        osc.disconnect();
+        gain.disconnect();
+        if (driveIn) driveIn.disconnect();
+        if (drive) drive.disconnect();
+        if (driveOut) driveOut.disconnect();
+        if (distortion) distortion.disconnect();
+        if (tsLevel) tsLevel.disconnect();
+        if (dsIn) dsIn.disconnect();
+        if (dsLevel) dsLevel.disconnect();
+        if (tsHighPass) tsHighPass.disconnect();
+        if (tsLowPass) tsLowPass.disconnect();
+        if (dsHighPass) dsHighPass.disconnect();
+        if (dsLowPass) dsLowPass.disconnect();
+        isRunning = false;
+        statusEl.textContent = "Latched";
+        if (playMode === "clean") {
+          playBtn.textContent = "Play";
+          playBtn.dataset.state = "stopped";
+        }
+      };
+
+      const createLinearCurve = () => {
+        const samples = 44100;
+        const curve = new Float32Array(samples);
+        for (let i = 0; i < samples; i += 1) {
+          const x = (i * 2) / samples - 1;
+          curve[i] = x;
+        }
+        return curve;
+      };
+
+      const createOverdriveCurve = (amount) => {
+        const samples = 44100;
+        const curve = new Float32Array(samples);
+        const k = typeof amount === "number" ? amount : 6;
+        for (let i = 0; i < samples; i += 1) {
+          const x = (i * 2) / samples - 1;
+          const clean = Math.tanh(k * x);
+          const asym = Math.tanh(k * (x + 0.15)) * 0.9;
+          curve[i] = 0.7 * clean + 0.3 * asym;
+        }
+        return curve;
+      };
+
+      const createDistortionCurve = (amount) => {
+        const samples = 44100;
+        const curve = new Float32Array(samples);
+        const k = typeof amount === "number" ? amount : 15;
+        for (let i = 0; i < samples; i += 1) {
+          const x = (i * 2) / samples - 1;
+          const hard = Math.max(-1, Math.min(1, x * (1 + k)));
+          const edge = Math.atan((k + 4) * x) / Math.atan(k + 4);
+          curve[i] = 0.8 * hard + 0.2 * edge;
+        }
+        return curve;
+      };
+
+      const applyDriveAmount = (amount) => {
+        driveAmount = amount;
+        if (!drive) return;
+        if (amount === 0) {
+          drive.curve = createLinearCurve();
+          if (tsHighPass && tsLowPass) {
+            tsHighPass.frequency.value = 20;
+            tsLowPass.frequency.value = 20000;
+          }
+          if (tsLevel) {
+            tsLevel.gain.value = 1;
+          }
+        } else {
+          const driveIntensity = 1 + amount / 8;
+          drive.curve = createOverdriveCurve(driveIntensity);
+          applyTsTone(tsToneAmount);
+          applyTsLevel(tsLevelAmount);
+        }
+        if (driveIn && driveOut) {
+          driveIn.gain.value = 1 + amount / 10;
+          driveOut.gain.value = 1 / (1 + amount / 5);
+        }
+      };
+
+      const applyTsTone = (amount) => {
+        tsToneAmount = amount;
+        if (!tsHighPass || !tsLowPass) return;
+        if (driveAmount === 0) {
+          tsHighPass.frequency.value = 20;
+          tsLowPass.frequency.value = 20000;
+          return;
+        }
+        const lowPassMin = 2500;
+        const lowPassMax = 8000;
+        const highPassMin = 500;
+        const highPassMax = 900;
+        const t = amount / 100;
+        tsLowPass.frequency.value = lowPassMin + (lowPassMax - lowPassMin) * t;
+        tsHighPass.frequency.value = highPassMax - (highPassMax - highPassMin) * t;
+      };
+
+      const applyTsLevel = (amount) => {
+        tsLevelAmount = amount;
+        if (!tsLevel) return;
+        if (driveAmount === 0) {
+          tsLevel.gain.value = 1;
+          return;
+        }
+        tsLevel.gain.value = amount / 50;
+      };
+
+      const applyDistortionAmount = (amount) => {
+        distortionAmount = amount;
+        if (!distortion) return;
+        if (amount === 0) {
+          distortion.curve = createLinearCurve();
+          if (dsHighPass && dsLowPass) {
+            dsHighPass.frequency.value = 20;
+            dsLowPass.frequency.value = 20000;
+          }
+          if (dsIn) {
+            dsIn.gain.value = 1;
+          }
+          if (dsLevel) {
+            dsLevel.gain.value = 1;
+          }
+        } else {
+          const intensity = 1 + amount / 6;
+          distortion.curve = createDistortionCurve(intensity);
+          applyDsTone(dsToneAmount);
+          applyDsLevel(dsLevelAmount);
+        }
+        if (dsIn) {
+          dsIn.gain.value = 1 + amount / 8;
+        }
+      };
+
+      const applyDsTone = (amount) => {
+        dsToneAmount = amount;
+        if (!dsHighPass || !dsLowPass) return;
+        if (distortionAmount === 0) {
+          dsHighPass.frequency.value = 20;
+          dsLowPass.frequency.value = 20000;
+          return;
+        }
+        const lowPassMin = 3500;
+        const lowPassMax = 9000;
+        const highPassMin = 120;
+        const highPassMax = 420;
+        const t = amount / 100;
+        dsLowPass.frequency.value = lowPassMin + (lowPassMax - lowPassMin) * t;
+        dsHighPass.frequency.value = highPassMax - (highPassMax - highPassMin) * t;
+      };
+
+      const applyDsLevel = (amount) => {
+        dsLevelAmount = amount;
+        if (!dsLevel) return;
+        if (distortionAmount === 0) {
+          dsLevel.gain.value = 1;
+          return;
+        }
+        dsLevel.gain.value = amount / 50;
+      };
+
+      const playTone = async ({ continuous = false } = {}) => {
+        if (isRunning) return;
+
+        if (!audioContext) {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        if (audioContext.state === "suspended") {
+          await audioContext.resume();
+        }
+
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = fftSize;
+        analyser.smoothingTimeConstant = 0;
+        analyser.minDecibels = -110;
+        analyser.maxDecibels = -20;
+
+        gain = audioContext.createGain();
+        gain.gain.value = 0.3;
+
+        osc = audioContext.createOscillator();
+        osc.type = "sine";
+        osc.frequency.value = 440;
+
+        tsHighPass = audioContext.createBiquadFilter();
+        tsHighPass.type = "highpass";
+        tsHighPass.frequency.value = 720;
+
+        tsLowPass = audioContext.createBiquadFilter();
+        tsLowPass.type = "lowpass";
+        tsLowPass.frequency.value = 4500;
+
+        dsHighPass = audioContext.createBiquadFilter();
+        dsHighPass.type = "highpass";
+        dsHighPass.frequency.value = 160;
+
+        dsLowPass = audioContext.createBiquadFilter();
+        dsLowPass.type = "lowpass";
+        dsLowPass.frequency.value = 6000;
+
+        driveIn = audioContext.createGain();
+        driveOut = audioContext.createGain();
+        drive = audioContext.createWaveShaper();
+        drive.oversample = "4x";
+        driveIn.gain.value = 1 + driveAmount / 10;
+        driveOut.gain.value = 1 / (1 + driveAmount / 5);
+        drive.curve = driveAmount === 0 ? createLinearCurve() : createOverdriveCurve(1 + driveAmount / 8);
+
+        distortion = audioContext.createWaveShaper();
+        distortion.oversample = "4x";
+        distortion.curve =
+          distortionAmount === 0
+            ? createLinearCurve()
+            : createDistortionCurve(1 + distortionAmount / 6);
+
+        tsLevel = audioContext.createGain();
+        tsLevel.gain.value = driveAmount === 0 ? 1 : tsLevelAmount / 50;
+
+        dsIn = audioContext.createGain();
+        dsIn.gain.value = 1 + distortionAmount / 8;
+
+        dsLevel = audioContext.createGain();
+        dsLevel.gain.value = dsLevelAmount / 50;
+
+        if (driveAmount > 0) {
+          applyTsTone(tsToneAmount);
+        } else {
+          tsHighPass.frequency.value = 20;
+          tsLowPass.frequency.value = 20000;
+        }
+        applyDsTone(dsToneAmount);
+
+        osc.connect(gain);
+        gain.connect(tsHighPass);
+        tsHighPass.connect(driveIn);
+        driveIn.connect(drive);
+        drive.connect(tsLowPass);
+        tsLowPass.connect(tsLevel);
+        tsLevel.connect(driveOut);
+        driveOut.connect(dsHighPass);
+        dsHighPass.connect(dsIn);
+        dsIn.connect(distortion);
+        distortion.connect(dsLowPass);
+        dsLowPass.connect(dsLevel);
+        dsLevel.connect(analyser);
+        analyser.connect(audioContext.destination);
+
+        osc.start();
+        isRunning = true;
+        statusEl.textContent = "Running";
+        updateMeter();
+
+        if (!continuous) {
+          setTimeout(stopOscillator, 1000);
+        }
+      };
+
+      window.addEventListener("resize", () => {
+        resizeCanvas();
+        resizeSpectrogram();
+        if (latchedData) drawWaveform(latchedData);
+      });
+
+      resizeCanvas();
+      resizeSpectrogram();
+      initWindow();
+      render();
+      updateMeter();
+
+      playBtn.addEventListener("click", () => {
+        playMode = "clean";
+        if (isRunning) {
+          stopOscillator();
+          return;
+        }
+        playBtn.textContent = "Stop";
+        playBtn.dataset.state = "running";
+        playTone({ continuous: true });
+      });
+
+      driveSlider.addEventListener("input", (event) => {
+        applyDriveAmount(Number(event.target.value));
+      });
+      tsToneSlider.addEventListener("input", (event) => {
+        applyTsTone(Number(event.target.value));
+      });
+      tsLevelSlider.addEventListener("input", (event) => {
+        applyTsLevel(Number(event.target.value));
+      });
+      distortionSlider.addEventListener("input", (event) => {
+        applyDistortionAmount(Number(event.target.value));
+      });
+      dsToneSlider.addEventListener("input", (event) => {
+        applyDsTone(Number(event.target.value));
+      });
+      dsLevelSlider.addEventListener("input", (event) => {
+        applyDsLevel(Number(event.target.value));
+      });
+    </script>
+  </body>
+</html>
