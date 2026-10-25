@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>True Random Number Generator</title>
+    <style>
+      :root {
+        --bg: #0d0221;
+        --panel: #1a0b36;
+        --text: #e8dcff;
+        --muted: #9a86c8;
+        --pink: #ff2a6d;
+        --cyan: #05d9e8;
+        --yellow: #f9c80e;
+        --green: #4dffb4;
+        --border: rgba(255, 255, 255, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "IBM Plex Mono", "SF Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        background: radial-gradient(ellipse at 50% 120%, #3b0a5c 0%, var(--bg) 60%);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 32px 16px;
+      }
+
+      .machine {
+        width: min(760px, 100%);
+        background: linear-gradient(160deg, #22104a, var(--panel));
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: 0 0 40px rgba(255, 42, 109, 0.15), 0 20px 60px rgba(0, 0, 0, 0.5);
+      }
+
+      h1 {
+        margin: 0 0 4px;
+        font-size: 1.2rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--cyan);
+        text-shadow: 0 0 12px rgba(5, 217, 232, 0.6);
+      }
+
+      .subtitle {
+        margin: 0 0 20px;
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+
+      .range {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 20px;
+        font-size: 0.85rem;
+      }
+
+      .range input {
+        width: 110px;
+        padding: 8px 10px;
+        background: var(--bg);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font: inherit;
+      }
+
+      .display {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 200px;
+        border-radius: 14px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        overflow: hidden;
+      }
+
+      .display::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.18) 0 2px, transparent 2px 4px);
+        pointer-events: none;
+      }
+
+      #result {
+        font-size: clamp(5rem, 22vw, 9rem);
+        font-weight: 700;
+        color: var(--pink);
+        text-shadow: 0 0 24px rgba(255, 42, 109, 0.8);
+        font-variant-numeric: tabular-nums;
+      }
+
+      #result.spinning {
+        color: var(--yellow);
+        text-shadow: 0 0 16px rgba(249, 200, 14, 0.6);
+      }
+
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        margin-top: 20px;
+      }
+
+      button {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 10px;
+        background: linear-gradient(90deg, var(--pink), #b5179e);
+        color: white;
+        font: inherit;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: wait;
+      }
+
+      .entropy {
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+
+      .stats {
+        margin-top: 12px;
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+
+      details {
+        margin-top: 20px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: rgba(0, 0, 0, 0.25);
+      }
+
+      summary {
+        padding: 10px 14px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        color: var(--cyan);
+      }
+
+      #log {
+        padding: 0 14px 14px;
+        max-height: 520px;
+        overflow: auto;
+        font-size: 0.72rem;
+        line-height: 1.5;
+      }
+
+      #log:empty::before {
+        content: "No blocks yet. Press Generate.";
+        color: var(--muted);
+      }
+
+      .ledger-head {
+        margin-bottom: 10px;
+        color: var(--muted);
+        white-space: pre-wrap;
+      }
+
+      .block {
+        margin: 6px 0 0;
+        border-left: 2px solid var(--yellow);
+        border-radius: 0 8px 8px 0;
+      }
+
+      .block > summary {
+        padding: 6px 10px;
+        font-size: 0.72rem;
+        color: var(--yellow);
+      }
+
+      .block .hash {
+        color: var(--muted);
+      }
+
+      .block .ok {
+        color: var(--green);
+      }
+
+      .block .fail {
+        color: var(--pink);
+      }
+
+      .block-body {
+        padding: 0 10px 10px;
+      }
+
+      .meta {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        gap: 2px 12px;
+        margin-bottom: 8px;
+      }
+
+      .meta dt {
+        color: var(--muted);
+      }
+
+      .meta dd {
+        margin: 0;
+        word-break: break-all;
+      }
+
+      .trace {
+        margin: 0;
+        padding: 8px;
+        max-height: 240px;
+        overflow: auto;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 6px;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+
+      .verdict {
+        margin-top: 12px;
+        padding: 10px;
+        border: 1px dashed var(--green);
+        border-radius: 8px;
+        color: var(--green);
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="machine">
+      <h1>Quantum-Grade RNG</h1>
+      <p class="subtitle">
+        Cryptographic entropy &middot; Collatz diffusion &middot; Kaprekar compression &middot; Fermat attestation
+      </p>
+
+      <div class="range">
+        <label>Min <input id="min" type="number" value="1" /></label>
+        <label>Max <input id="max" type="number" value="100" /></label>
+      </div>
+
+      <div class="display"><span id="result">?</span></div>
+
+      <div class="controls">
+        <button id="generate">Generate</button>
+        <span class="entropy" id="entropy">Entropy pool: 0 bits (move your mouse to help)</span>
+      </div>
+      <div class="stats" id="stats"></div>
+
+      <details>
+        <summary>Pipeline audit ledger (fully transparent)</summary>
+        <div id="log"></div>
+      </details>
+    </main>
+
+    <script>
+      const hex32 = (v) => (v >>> 0).toString(16).padStart(8, "0");
+      const bin32 = (v) => (v >>> 0).toString(2).padStart(32, "0").replace(/(.{4})(?!$)/g, "$1 ");
+
+      // ---------------------------------------------------------------------
+      // Entropy pool: crypto randomness, timing jitter, and mouse movement are
+      // all folded into 128 bits of state. Every bit of it matters. Probably.
+      // ---------------------------------------------------------------------
+      const pool = new Uint32Array(4);
+      crypto.getRandomValues(pool);
+      let entropyEvents = 0;
+
+      function rotl(x, k) {
+        return ((x << k) | (x >>> (32 - k))) >>> 0;
+      }
+
+      const snapshot = () => `[${[...pool].map(hex32).join(" ")}]`;
+
+      // Mix a 32-bit value into the pool with a hand-rolled ARX round. When a
+      // trace array is passed, every half-step is recorded for the auditors.
+      function stir(value, trace) {
+        const note = (op) => trace && trace.push(`  ${op.padEnd(22)} pool=${snapshot()}`);
+        pool[0] = (pool[0] + (value >>> 0)) >>> 0;
+        note(`p0 += ${hex32(value)}`);
+        pool[3] = rotl(pool[3] ^ pool[0], 16);
+        note("p3 = (p3 ⊕ p0) <<< 16");
+        pool[2] = (pool[2] + pool[3]) >>> 0;
+        note("p2 += p3");
+        pool[1] = rotl(pool[1] ^ pool[2], 12);
+        note("p1 = (p1 ⊕ p2) <<< 12");
+        pool[0] = (pool[0] + pool[1]) >>> 0;
+        note("p0 += p1");
+        pool[3] = rotl(pool[3] ^ pool[0], 8);
+        note("p3 = (p3 ⊕ p0) <<< 8");
+        pool[2] = (pool[2] + pool[3]) >>> 0;
+        note("p2 += p3");
+        pool[1] = rotl(pool[1] ^ pool[2], 7);
+        note("p1 = (p1 ⊕ p2) <<< 7");
+        entropyEvents++;
+      }
+
+      window.addEventListener("mousemove", (e) => {
+        stir((e.clientX * 73856093) ^ (e.clientY * 19349663) ^ (performance.now() * 1000));
+        document.getElementById("entropy").textContent =
+          `Entropy pool: ${Math.min(128, entropyEvents)} bits (move your mouse to help)`;
+      });
+
+      // xorshift128 seeded from the pool.
+      function nextRandom() {
+        let t = pool[3];
+        const s = pool[0];
+        pool[3] = pool[2];
+        pool[2] = pool[1];
+        pool[1] = s;
+        t ^= t << 11;
+        t ^= t >>> 8;
+        pool[0] = (t ^ s ^ (s >>> 19)) >>> 0;
+        return pool[0];
+      }
+
+      function randomBelow(n) {
+        return nextRandom() % n;
+      }
+
+      // FNV-1a, run twice with different offsets so the ledger hashes look
+      // twice as trustworthy.
+      function fnv(str, offset = 0x811c9dc5) {
+        let h = offset;
+        for (let i = 0; i < str.length; i++) {
+          h ^= str.charCodeAt(i);
+          h = Math.imul(h, 0x01000193) >>> 0;
+        }
+        return h;
+      }
+
+      function digest(str) {
+        return hex32(fnv(str)) + hex32(fnv(str, 0xcbf29ce4));
+      }
+
+      // ---------------------------------------------------------------------
+      // Stage 0: Entropy intake. Stir timing jitter into the pool and draw a
+      // 64-bit odd seed.
+      // ---------------------------------------------------------------------
+      function entropyIntake() {
+        const steps = [`initial pool=${snapshot()}`];
+        const jitter = performance.now() * 1e6;
+        const wall = Date.now();
+        steps.push(`stir(performance.now() × 10⁶ = ${jitter})`);
+        stir(jitter, steps);
+        steps.push(`stir(Date.now() = ${wall})`);
+        stir(wall, steps);
+        const hi = nextRandom();
+        steps.push(`xorshift128 → hi = ${hex32(hi)}   pool=${snapshot()}`);
+        const lo = nextRandom();
+        steps.push(`xorshift128 → lo = ${hex32(lo)}   pool=${snapshot()}`);
+        const seed = (BigInt(hi) << 32n) | BigInt(lo) | 1n;
+        steps.push(`seed = (hi << 32) | lo | 1 = ${seed}`);
+        return { value: seed, steps };
+      }
+
+      // ---------------------------------------------------------------------
+      // Stage 1: Collatz diffusion. Walk the 3n+1 sequence of a 64-bit seed.
+      // Every starting value ever tested lands on 1, so this stage is "1".
+      // ---------------------------------------------------------------------
+      function collatz(seed) {
+        let n = seed;
+        let peak = n;
+        const steps = [];
+        while (n !== 1n) {
+          const even = n % 2n === 0n;
+          const next = even ? n / 2n : 3n * n + 1n;
+          steps.push(`#${steps.length + 1} ${n} ${even ? "even → n/2" : "odd → 3n+1"} = ${next}`);
+          n = next;
+          if (n > peak) peak = n;
+        }
+        steps.push(`reached 1 after ${steps.length} steps (peak ${peak})`);
+        return { value: Number(n), steps, note: `${steps.length - 1} steps` };
+      }
+
+      // ---------------------------------------------------------------------
+      // Stage 2: Fermat attestation. For prime p and a not divisible by p,
+      // a^(p-1) mod p === 1.
+      // ---------------------------------------------------------------------
+      const PRIMES = [101n, 257n, 65537n, 1000003n, 2147483647n, 4294967291n];
+
+      function modPow(base, exp, mod, steps) {
+        let result = 1n;
+        base %= mod;
+        for (let bit = 0; exp > 0n; bit++) {
+          const set = exp & 1n;
+          if (set) result = (result * base) % mod;
+          steps.push(
+            `bit ${String(bit).padStart(2)} = ${set} → result ${set ? "×= base" : "unchanged"} = ${result}; base² = ${
+              (base * base) % mod
+            }`
+          );
+          base = (base * base) % mod;
+          exp >>= 1n;
+        }
+        return result;
+      }
+
+      function fermat() {
+        const p = PRIMES[randomBelow(PRIMES.length)];
+        const a = 2n + (BigInt(nextRandom()) % (p - 2n));
+        const steps = [`p = ${p} (prime), a = ${a}, exponent p−1 = ${p - 1n} = 0b${(p - 1n).toString(2)}`];
+        const value = Number(modPow(a, p - 1n, p, steps));
+        steps.push(`${a}^${p - 1n} mod ${p} = ${value}`);
+        return { value, steps, note: `a=${a}, p=${p}` };
+      }
+
+      // ---------------------------------------------------------------------
+      // Stage 3: Wilson offset. For prime p, (p-1)! mod p === p-1, so adding
+      // 1 and reducing mod p gives 0.
+      // ---------------------------------------------------------------------
+      const SMALL_PRIMES = [5n, 7n, 11n, 13n, 17n, 19n, 23n, 29n, 31n, 37n];
+
+      function wilson() {
+        const p = SMALL_PRIMES[randomBelow(SMALL_PRIMES.length)];
+        const steps = [`p = ${p}`];
+        let fact = 1n;
+        for (let i = 2n; i < p; i++) {
+          const next = (fact * i) % p;
+          steps.push(`${fact} × ${i} mod ${p} = ${next}`);
+          fact = next;
+        }
+        const value = Number((fact + 1n) % p);
+        steps.push(`(${p - 1n})! ≡ ${fact} ≡ −1 (mod ${p}); (${fact} + 1) mod ${p} = ${value}`);
+        return { value, steps, note: `p=${p}` };
+      }
+
+      // ---------------------------------------------------------------------
+      // Stage 4: Roots of unity. Raise e^(2πi/k) to the k-th power by repeated
+      // complex multiplication, then round the real part. Always 1.
+      // ---------------------------------------------------------------------
+      function rootOfUnity() {
+        const k = 3 + randomBelow(97);
+        const theta = (2 * Math.PI) / k;
+        const steps = [`k = ${k}, θ = 2π/${k} = ${theta}`];
+        let re = 1;
+        let im = 0;
+        for (let i = 0; i < k; i++) {
+          const nextRe = re * Math.cos(theta) - im * Math.sin(theta);
+          im = re * Math.sin(theta) + im * Math.cos(theta);
+          re = nextRe;
+          steps.push(`z^${String(i + 1).padStart(2)} = ${re.toFixed(15)} ${im < 0 ? "−" : "+"} ${Math.abs(im).toFixed(15)}i`);
+        }
+        const value = Math.round(re);
+        steps.push(`round(Re(z^${k})) = round(${re}) = ${value}; residual Im = ${im.toExponential(3)}`);
+        return { value, steps, note: `k=${k}` };
+      }
+
+      // ---------------------------------------------------------------------
+      // Stage 5: Monte Carlo π normalization. Estimate π by throwing darts at
+      // a unit square, then divide the estimate by itself.
+      // ---------------------------------------------------------------------
+      function monteCarloPi() {
+        const darts = 20000;
+        const steps = [];
+        let inside = 0;
+        for (let i = 0; i < darts; i++) {
+          const x = nextRandom() / 0xffffffff;
+          const y = nextRandom() / 0xffffffff;
+          const hit = x * x + y * y <= 1;
+          if (hit) inside++;
+          if (i < 12) {
+            steps.push(`dart ${i + 1}: (${x.toFixed(6)}, ${y.toFixed(6)}) r² = ${(x * x + y * y).toFixed(6)} ${hit ? "inside" : "outside"}`);
+          } else if ((i + 1) % 2500 === 0) {
+            steps.push(`checkpoint ${i + 1}: inside = ${inside}, π ≈ 4·${inside}/${i + 1} = ${(4 * inside) / (i + 1)}`);
+          }
+        }
+        const estimate = (4 * inside) / darts;
+        const value = estimate / estimate;
+        steps.push(`normalize: ${estimate} ÷ ${estimate} = ${value}`);
+        return { value, steps, note: `π ≈ ${estimate}` };
+      }
+
+      // ---------------------------------------------------------------------
+      // Stage 6: Kaprekar compression. Any 4-digit number with at least two
+      // distinct digits converges to 6174 in at most 7 iterations.
+      // ---------------------------------------------------------------------
+      function kaprekar() {
+        let n = 1000 + randomBelow(9000);
+        const steps = [`drawn start = ${n}`];
+        if (n % 1111 === 0) {
+          n++; // repdigits collapse to 0, not 6174
+          steps.push(`repdigit detected, nudged to ${n}`);
+        }
+        while (n !== 6174) {
+          const digits = String(n).padStart(4, "0").split("");
+          const ascStr = [...digits].sort().join("");
+          const descStr = [...digits].sort().reverse().join("");
+          const next = Number(descStr) - Number(ascStr);
+          steps.push(`${String(n).padStart(4, "0")}: ${descStr} − ${ascStr} = ${String(next).padStart(4, "0")}`);
+          n = next;
+        }
+        steps.push(`fixed point: 7641 − 1467 = 6174`);
+        return { value: n, steps, note: `${steps.length - 2} iterations` };
+      }
+
+      // ---------------------------------------------------------------------
+      // Stage 7: Combine every stage's output into a single value.
+      // ---------------------------------------------------------------------
+      function combine(k, c, f, r, m, w) {
+        const value = k * c * f * r * m + w;
+        const steps = [
+          `kaprekar × collatz × fermat × unity × π/π + wilson`,
+          `= ${k} × ${c} × ${f} × ${r} × ${m} + ${w}`,
+          `= ${k * c} × ${f} × ${r} × ${m} + ${w}`,
+          `= ${k * c * f} × ${r} × ${m} + ${w}`,
+          `= ${k * c * f * r} × ${m} + ${w}`,
+          `= ${k * c * f * r * m} + ${w}`,
+          `= ${value}`,
+        ];
+        return { value, steps };
+      }
+
+      // ---------------------------------------------------------------------
+      // Stage 8: XOR whitening. Scramble with a random key, then unscramble
+      // with the same key for maximum security.
+      // ---------------------------------------------------------------------
+      function whiten(n) {
+        const key = nextRandom() & 0x7fffffff;
+        const scrambled = n ^ key;
+        const value = scrambled ^ key;
+        const steps = [
+          `  input  ${bin32(n)}  (${n})`,
+          `⊕ key    ${bin32(key)}  (${key})`,
+          `= masked ${bin32(scrambled)}  (${scrambled})`,
+          `⊕ key    ${bin32(key)}  (${key})`,
+          `= output ${bin32(value)}  (${value})`,
+        ];
+        return { value, steps, note: `key=${hex32(key)}` };
+      }
+
+      // ---------------------------------------------------------------------
+      // Stage 9: Lexical folding. Spell the number in English and replace it
+      // with its letter count. Every number eventually reaches "four", the
+      // only number whose name has as many letters as its value.
+      // ---------------------------------------------------------------------
+      const ONES = [
+        "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+        "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen",
+      ];
+      const TENS = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+      const SCALES = ["", "thousand", "million", "billion"];
+
+      function belowThousand(n) {
+        const parts = [];
+        if (n >= 100) {
+          parts.push(ONES[Math.floor(n / 100)], "hundred");
+          n %= 100;
+        }
+        if (n >= 20) {
+          parts.push(TENS[Math.floor(n / 10)] + (n % 10 ? "-" + ONES[n % 10] : ""));
+        } else if (n > 0) {
+          parts.push(ONES[n]);
+        }
+        return parts.join(" ");
+      }
+
+      function toWords(n) {
+        if (n === 0) return "zero";
+        const groups = [];
+        for (let scale = 0; n > 0; scale++, n = Math.floor(n / 1000)) {
+          const chunk = n % 1000;
+          if (chunk) groups.unshift(belowThousand(chunk) + (SCALES[scale] ? " " + SCALES[scale] : ""));
+        }
+        return groups.join(" ");
+      }
+
+      function lexicalFold(n) {
+        const steps = [];
+        for (;;) {
+          const words = toWords(n).split(/[ -]/);
+          const next = words.reduce((sum, w) => sum + w.length, 0);
+          steps.push(`${n} → ${words.map((w) => `${w}[${w.length}]`).join(" + ")} = ${next}`);
+          if (next === n) break;
+          n = next;
+        }
+        steps.push(`fixed point: "four" has four letters`);
+        return { value: n, steps, note: `${steps.length - 1} folds` };
+      }
+
+      // ---------------------------------------------------------------------
+      // Stage 10: Bogosort verification. Shuffle [1, 2, 3, result] until it
+      // sorts itself, then trust the largest element.
+      // ---------------------------------------------------------------------
+      function bogosort(result) {
+        const arr = [1, 2, 3, result];
+        const steps = [];
+        const sorted = () => arr.every((v, i) => i === 0 || arr[i - 1] <= v);
+        do {
+          const swaps = [];
+          for (let i = arr.length - 1; i > 0; i--) {
+            const j = randomBelow(i + 1);
+            swaps.push(`${i}↔${j}`);
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+          }
+          steps.push(`shuffle #${steps.length + 1} swaps(${swaps.join(", ")}) → [${arr.join(", ")}] ${sorted() ? "sorted" : "unsorted"}`);
+        } while (!sorted());
+        const value = arr[arr.length - 1];
+        steps.push(`max element = ${value}`);
+        return { value, steps, note: `${steps.length - 1} shuffles` };
+      }
+
+      // ---------------------------------------------------------------------
+      // The ledger: every stage becomes a block whose hash covers its full
+      // trace and the previous block's hash.
+      // ---------------------------------------------------------------------
+      function runStage(ledger, spec, fn) {
+        const started = performance.now();
+        const out = fn();
+        const micros = Math.round((performance.now() - started) * 1000);
+        const prev = ledger.length ? ledger[ledger.length - 1].hash : "0".repeat(16);
+        const hash = digest(prev + spec.name + String(out.value) + out.steps.join("\n"));
+        const passed = spec.expect === undefined || out.value === spec.expect;
+        ledger.push({ ...spec, ...out, micros, prev, hash, passed, index: ledger.length });
+        return out.value;
+      }
+
+      function merkleRoot(hashes) {
+        const levels = [hashes];
+        while (levels[levels.length - 1].length > 1) {
+          const level = levels[levels.length - 1];
+          const next = [];
+          for (let i = 0; i < level.length; i += 2) next.push(digest(level[i] + (level[i + 1] ?? level[i])));
+          levels.push(next);
+        }
+        return levels;
+      }
+
+      function generate(min, max) {
+        const ledger = [];
+        runStage(ledger, { name: "range intake", theorem: "Principle of polite acknowledgement" }, () => ({
+          value: `[${min}, ${max}]`,
+          steps: [`requested range [${min}, ${max}]`, `width ${max - min + 1}`, `acknowledged; retained for reference only`],
+        }));
+        const seed = runStage(ledger, { name: "entropy intake", theorem: "ARX diffusion + xorshift128 (Marsaglia, 2003)" }, entropyIntake);
+        const c = runStage(ledger, { name: "collatz diffusion", theorem: "Collatz conjecture (verified to 2⁶⁸)", expect: 1 }, () => collatz(seed));
+        const f = runStage(ledger, { name: "fermat attestation", theorem: "Fermat's little theorem", expect: 1 }, fermat);
+        const w = runStage(ledger, { name: "wilson offset", theorem: "Wilson's theorem", expect: 0 }, wilson);
+        const r = runStage(ledger, { name: "roots of unity", theorem: "De Moivre's formula", expect: 1 }, rootOfUnity);
+        const m = runStage(ledger, { name: "monte carlo π", theorem: "x ÷ x = 1 for x ≠ 0", expect: 1 }, monteCarloPi);
+        const k = runStage(ledger, { name: "kaprekar compression", theorem: "Kaprekar's routine (1949)", expect: 6174 }, kaprekar);
+        const combined = runStage(ledger, { name: "combine", theorem: "Arithmetic", expect: 6174 }, () => combine(k, c, f, r, m, w));
+        const x = runStage(ledger, { name: "xor whitening", theorem: "a ⊕ k ⊕ k = a", expect: 6174 }, () => whiten(combined));
+        const l = runStage(ledger, { name: "lexical folding", theorem: "Cosmic four (English letter counting)", expect: 4 }, () => lexicalFold(x));
+        const result = runStage(ledger, { name: "bogosort verification", theorem: "Infinite monkey theorem", expect: 4 }, () => bogosort(l));
+
+        // Notarize: fold the ledger into a Merkle root, interpret its first 32
+        // bits as a number, and confirm that it, too, spells its way to four.
+        const levels = merkleRoot(ledger.map((b) => b.hash));
+        const root = levels[levels.length - 1][0];
+        const certificate = parseInt(root.slice(0, 8), 16);
+        runStage(ledger, { name: "notarization", theorem: "Merkle tree + cosmic four", expect: result }, () => {
+          const fold = lexicalFold(certificate);
+          return {
+            value: fold.value,
+            steps: [
+              ...levels.map((lvl, i) => `merkle level ${i}: ${lvl.join(" ")}`),
+              `root = ${root}`,
+              `certificate = 0x${root.slice(0, 8)} = ${certificate}`,
+              ...fold.steps,
+              `certificate folds to ${fold.value}; pipeline result ${result} — ${fold.value === result ? "consensus" : "DISPUTE"}`,
+            ],
+            note: `cert ${certificate}`,
+          };
+        });
+
+        return { result, ledger, root };
+      }
+
+      // ---------------------------------------------------------------------
+      // UI
+      // ---------------------------------------------------------------------
+      const resultEl = document.getElementById("result");
+      const logEl = document.getElementById("log");
+      const statsEl = document.getElementById("stats");
+      const button = document.getElementById("generate");
+      const history = [];
+
+      function el(tag, props = {}, ...children) {
+        const node = document.createElement(tag);
+        Object.assign(node, props);
+        node.append(...children);
+        return node;
+      }
+
+      function renderLedger({ ledger, root, result }, elapsed) {
+        const passed = ledger.filter((b) => b.passed).length;
+        const totalSteps = ledger.reduce((sum, b) => sum + b.steps.length, 0);
+        logEl.replaceChildren(
+          el("div", {
+            className: "ledger-head",
+            textContent:
+              `ledger opened ${new Date().toISOString()}\n` +
+              `${ledger.length} blocks · ${totalSteps} recorded steps · ${elapsed} ms · ${navigator.hardwareConcurrency || "?"} logical cores consulted`,
+          })
+        );
+
+        for (const block of ledger) {
+          const summary = el(
+            "summary",
+            {},
+            `#${String(block.index).padStart(2, "0")} ${block.name} → ${block.value} `,
+            el("span", { className: block.passed ? "ok" : "fail", textContent: block.passed ? "✓" : "✗" }),
+            el("span", { className: "hash", textContent: ` ${block.hash.slice(0, 8)}…` })
+          );
+          const meta = el("dl", { className: "meta" });
+          const rows = [
+            ["theorem", block.theorem],
+            ["output", String(block.value)],
+            ["assertion", block.expect === undefined ? "none (informational)" : `output === ${block.expect} → ${block.passed}`],
+            ["detail", block.note ?? "—"],
+            ["duration", `${block.micros} µs`],
+            ["prev hash", block.prev],
+            ["block hash", block.hash],
+          ];
+          for (const [k, v] of rows) meta.append(el("dt", { textContent: k }), el("dd", { textContent: v }));
+          const body = el("div", { className: "block-body" }, meta, el("pre", { className: "trace", textContent: block.steps.join("\n") }));
+          logEl.append(el("details", { className: "block" }, summary, body));
+        }
+
+        logEl.append(
+          el("div", {
+            className: "verdict",
+            textContent:
+              `VERDICT: ${result}\n` +
+              `${passed}/${ledger.length} assertions held · merkle root ${root}\n` +
+              `This number was produced from ${128 + entropyEvents} bits of entropy and is certified random.`,
+          })
+        );
+      }
+
+      button.addEventListener("click", () => {
+        button.disabled = true;
+        resultEl.classList.add("spinning");
+
+        const min = Number(document.getElementById("min").value);
+        const max = Number(document.getElementById("max").value);
+
+        const started = performance.now();
+        const run = generate(min, max);
+        const elapsed = (performance.now() - started).toFixed(1);
+        renderLedger(run, elapsed);
+
+        let frame = 0;
+        const spin = setInterval(() => {
+          resultEl.textContent = String(min + randomBelow(Math.max(1, max - min + 1)));
+          if (++frame > 24) {
+            clearInterval(spin);
+            resultEl.classList.remove("spinning");
+            resultEl.textContent = String(run.result);
+            history.push(run.result);
+            const fours = history.filter((v) => v === 4).length;
+            statsEl.textContent = `Generated ${history.length} number(s) in ${elapsed} ms · distribution: ${
+              ((fours / history.length) * 100).toFixed(1)
+            }% fours, perfectly uniform`;
+            button.disabled = false;
+          }
+        }, 50);
+      });
+    </script>
+  </body>
+</html>

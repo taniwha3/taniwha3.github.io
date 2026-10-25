@@ -7,6 +7,7 @@ all: build
 build:
 	go run main.go build
 	cp ./site/tone.html ./docs/tone.html
+	cp ./site/random.html ./docs/random.html
 
 # Run the local server
 serve:
